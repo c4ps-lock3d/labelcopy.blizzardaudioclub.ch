@@ -19,9 +19,6 @@ return new class extends Migration
             $table->boolean('hasClip')->nullable();
             $table->timestamps();
         });
-        Schema::table('releases', function (Blueprint $table) {
-            $table->foreignIdFor(\App\Models\ReleaseTrack::class)->nullable()->constrained()->cascadeOnDelete();
-        });
     }
 
     /**
@@ -30,8 +27,5 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('release_tracks');
-        Schema::table('releases', function (Blueprint $table) {
-            $table->dropForeignIdFor(\App\Models\ReleaseTrack::class);
-        });
     }
 };

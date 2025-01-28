@@ -16,6 +16,6 @@ class ReleaseTrack extends Model
     protected $guarded = ['id'];
 
     public function releases(){
-        return $this->hasMany(Release::class);
+        return $this->belongsToMany(Release::class);
     }
 }

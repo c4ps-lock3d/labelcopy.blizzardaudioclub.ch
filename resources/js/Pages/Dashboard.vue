@@ -36,12 +36,18 @@ defineProps({
                                             Ajouter
                                         </PrimaryButton>
                                     </Link>
-
                                 </div>
                                 <div class="mt-4 space-y-4">
                                     <div v-for="release in releases" :key="release.id" 
                                         class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                                        {{ release.catalog }} - {{ release.name }} - {{ release.release_type.name }}
+                                        <Link :href="`/dashboard/${release.id}/edit-release`">{{ release.catalog }}
+                                            <span v-if="release.name">
+                                                - {{ release.name }}
+                                            </span>
+                                            <span v-if="release.release_type">
+                                                - {{ release.release_type.name }}
+                                            </span>
+                                        </Link>
                                     </div>
                                 </div>
                             </div>

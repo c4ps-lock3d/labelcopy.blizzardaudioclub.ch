@@ -7,32 +7,35 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Models\Release;
 
-Route::get('/', function () {
+/* Route::get('/', function () {
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
     ]);
-});
+}); */
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard', [
-        'releases' => Release::with('release_type')->get()
-    ]);
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/', function () {
+    return redirect('/login');
+})->middleware('guest');
 
-Route::get('/dashboard/add-release', function () {
-    return Inertia::render('AddRelease', [
-        'releases' => Release::with('release_type')->get()
-    ]);
-})->middleware(['auth', 'verified'])->name('dashboard.addrelease');
+// Dashboard
+Route::get('/dashboard', [ReleaseController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
+// Add
+Route::get('/dashboard/add-release', [ReleaseController::class, 'add'])->middleware(['auth', 'verified'])->name('dashboard.addrelease');
+Route::post('/dashboard/store-release', [ReleaseController::class, 'store'])->middleware(['auth', 'verified'])->name('store-release');
+
+// Edit
+Route::get('/dashboard/{release}/edit-release', [ReleaseController::class, 'edit'])->middleware(['auth', 'verified'])->name('dashboard.editrelease');
+Route::put('/dashboard/{release}/update-release', [ReleaseController::class, 'update'])->middleware(['auth', 'verified'])->name('update-release');
+
+// Profil
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    Route::post('store-release', [ReleaseController::class, 'store'])->name('store-release');
 });
 
 require __DIR__.'/auth.php';
