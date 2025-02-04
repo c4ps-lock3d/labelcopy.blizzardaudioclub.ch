@@ -1,13 +1,14 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
-import { Head, Link } from '@inertiajs/vue3';
+import { usePage, Head, Link } from '@inertiajs/vue3';
 defineProps({
     releases: {
         type: Array,
         required: true
     }
 });
+const { props } = usePage();
 </script>
 
 <template>
@@ -31,23 +32,27 @@ defineProps({
                             <div class="mt-6">
                                 <div class="flex items-center justify-between">
                                     <h3 class="text-lg font-medium">Liste des labelcopy</h3>
-                                    <Link :href="route('dashboard.addrelease')" class="ms-4">
-                                        <PrimaryButton>
-                                            Ajouter
-                                        </PrimaryButton>
-                                    </Link>
+                                    <div v-if="props.auth.user.name === 'c4ps-lock3d'">
+                                        <Link :href="route('dashboard.addrelease')" class="ms-4">
+                                            <PrimaryButton>
+                                                Ajouter
+                                            </PrimaryButton>
+                                        </Link>
+                                    </div>
                                 </div>
                                 <div class="mt-4 space-y-4">
-                                    <div v-for="release in releases" :key="release.id" 
-                                        class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                                        <Link :href="`/dashboard/${release.id}/edit-release`">{{ release.catalog }}
-                                            <span v-if="release.name">
-                                                - {{ release.name }}
-                                            </span>
-                                            <span v-if="release.release_type">
-                                                - {{ release.release_type.name }}
-                                            </span>
-                                        </Link>
+                                    <div v-for="release in releases" :key="release.id">
+                                        <div v-if="props.auth.user.name === release.catalog || props.auth.user.name === 'lynxadmin'"
+                                            class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                                            <Link :href="`/dashboard/${release.id}/edit-release`">{{ release.catalog }}
+                                                <span v-if="release.name">
+                                                    - {{ release.name }}
+                                                </span>
+                                                <span v-if="release.release_type">
+                                                    - {{ release.release_type.name }}
+                                                </span>
+                                            </Link>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

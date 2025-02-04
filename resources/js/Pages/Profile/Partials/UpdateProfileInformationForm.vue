@@ -18,7 +18,6 @@ const user = usePage().props.auth.user;
 
 const form = useForm({
     name: user.name,
-    email: user.email,
 });
 </script>
 
@@ -44,29 +43,13 @@ const form = useForm({
                 <TextInput
                     id="name"
                     type="text"
-                    class="mt-1 block w-full"
+                    class="mt-1 block w-full bg-gray-200 text-gray-500 cursor-not-allowed"
                     v-model="form.name"
-                    required
-                    autofocus
+                    disabled
                     autocomplete="name"
                 />
 
                 <InputError class="mt-2" :message="form.errors.name" />
-            </div>
-
-            <div>
-                <InputLabel for="email" value="Email" />
-
-                <TextInput
-                    id="email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    v-model="form.email"
-                    required
-                    autocomplete="username"
-                />
-
-                <InputError class="mt-2" :message="form.errors.email" />
             </div>
 
             <div v-if="mustVerifyEmail && user.email_verified_at === null">
@@ -90,7 +73,7 @@ const form = useForm({
                 </div>
             </div>
 
-            <div class="flex items-center gap-4">
+<!--             <div class="flex items-center gap-4">
                 <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
 
                 <Transition
@@ -106,7 +89,7 @@ const form = useForm({
                         Saved.
                     </p>
                 </Transition>
-            </div>
+            </div> -->
         </form>
     </section>
 </template>
