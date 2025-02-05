@@ -79,8 +79,12 @@ class ReleaseController extends Controller
         ]);
 
         $release->release_formats()->sync($validated['release_format_ids']);
+        
+        // Récupérer les IDs des pistes existantes
+        $existingTrackIds = $release->release_tracks()->pluck('id')->toArray();
 
-        // Sauvegarde des pistes
+         // Sauvegarde des pistes
+        $updatedTrackIds = [];
         foreach ($validated['tracks'] as $trackData) {
             if (isset($trackData['id'])) {
                 $release->release_tracks()
@@ -89,13 +93,19 @@ class ReleaseController extends Controller
                         'title' => $trackData['title'],
                         'number' => $trackData['number']
                     ]);
+                $updatedTrackIds[] = $trackData['id'];
             } else {
-                $release->release_tracks()->create([
+                $newTrack = $release->release_tracks()->create([
                     'title' => $trackData['title'],
                     'number' => $trackData['number']
                 ]);
+                $updatedTrackIds[] = $newTrack->id;
             }
         }
+
+        // Supprimer les pistes qui ne sont plus présentes dans la requête
+        $tracksToDelete = array_diff($existingTrackIds, $updatedTrackIds);
+        $release->release_tracks()->whereIn('id', $tracksToDelete)->delete();
     
         return redirect(route('dashboard', absolute: false));
     }
