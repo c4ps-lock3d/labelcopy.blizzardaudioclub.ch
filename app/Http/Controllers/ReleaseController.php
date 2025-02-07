@@ -68,6 +68,8 @@ class ReleaseController extends Controller
             'tracks.*.id' => 'nullable',  // Permettre id null pour nouvelles pistes
             'tracks.*.title' => 'required|string|max:255',
             'tracks.*.number' => 'required|integer|max:255',
+            'tracks.*.isSingle' => 'required|boolean',
+            'tracks.*.hasClip' => 'required|boolean',
         ]);
     
         $release->update([
@@ -91,13 +93,17 @@ class ReleaseController extends Controller
                     ->where('id', $trackData['id'])
                     ->update([
                         'title' => $trackData['title'],
-                        'number' => $trackData['number']
+                        'number' => $trackData['number'],
+                        'isSingle' => $trackData['isSingle'],
+                        'hasClip' => $trackData['hasClip'],
                     ]);
                 $updatedTrackIds[] = $trackData['id'];
             } else {
                 $newTrack = $release->release_tracks()->create([
                     'title' => $trackData['title'],
-                    'number' => $trackData['number']
+                    'number' => $trackData['number'],
+                    'isSingle' => $trackData['isSingle'],
+                    'hasClip' => $trackData['hasClip'],
                 ]);
                 $updatedTrackIds[] = $newTrack->id;
             }
