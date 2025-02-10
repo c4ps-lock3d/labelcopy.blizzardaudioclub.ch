@@ -90,7 +90,7 @@ const submit = () => {
                     <!-- Section Informations Principales -->
                     <div class="space-y-6 border-b border-gray-700 pb-6">
                         <h3 class="text-lg font-medium text-gray-100">Informations sur l'artiste</h3>
-                        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
                         <div>
                             <InputLabel for="artistName" value="Nom d'artiste" class="text-sm font-medium" />
                             <TextInput
@@ -121,7 +121,7 @@ const submit = () => {
 
                     <!-- Section Types et Formats -->
                     <h3 class="text-lg font-medium text-gray-100">Informations sur la sortie</h3>
-                    <div class="grid grid-cols-2 gap-8">
+                    <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
                         
                                 <div>
                                     <InputLabel for="catalog" value="N° de catalogue" class="text-sm font-medium" />
@@ -189,14 +189,14 @@ const submit = () => {
                     </div>
                     <div class="grid grid-cols-1">
                         <div>
-                                <InputLabel value="Tracklist" class="text-sm font-medium" />
+                                <InputLabel value="Tracklist" class="text-sm font-medium mt-3" />
                                 <div v-for="(track, index) in form.tracks" :key="track.id || 'new'" class="relative">
                                     <div class="grid grid-cols-12 gap-2 mt-2 items-center">
                                         <TextInput
                                             type="text"
                                             v-model="track.number"
                                             class="col-span-1 block w-full transition duration-150 ease-in-out"
-                                            placeholder="#"
+                                            disabled
                                         />
                                         <TextInput
                                             type="text"
