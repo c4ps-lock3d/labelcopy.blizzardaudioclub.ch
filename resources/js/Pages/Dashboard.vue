@@ -32,7 +32,7 @@ const { props } = usePage();
                             <div class="mt-6">
                                 <div class="flex items-center justify-between">
                                     <h3 class="text-lg font-medium">Liste des labelcopy</h3>
-                                    <div v-if="props.auth.user.name === 'c4ps-lock3d'">
+                                    <div v-if="props.auth.user.name === 'lynxadmin'">
                                         <Link :href="route('dashboard.addrelease')" class="ms-4">
                                             <PrimaryButton>
                                                 Ajouter
