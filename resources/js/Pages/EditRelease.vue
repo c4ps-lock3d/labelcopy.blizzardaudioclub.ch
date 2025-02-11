@@ -119,7 +119,7 @@ const submit = () => {
                     <!-- Section Informations Principales -->
                     <div class="space-y-6 border-b border-gray-700 pb-6">
                         <h3 class="text-xl font-bold text-gray-100">Informations sur l'artiste</h3>
-                        <div class="p-3">
+                        <div class="">
                         <div class="grid grid-cols-1 gap-6 md:grid-cols-2 mb-6">
                             <div>
                                 <InputLabel for="artistName" value="Nom d'artiste" class="text-sm font-medium" />
