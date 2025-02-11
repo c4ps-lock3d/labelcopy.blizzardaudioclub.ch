@@ -16,10 +16,10 @@ class ReleaseMember extends Model
     protected $guarded = ['id'];
 
     public function releases(){
-        return $this->hasMany(Release::class);
+        return $this->belongsToMany(Release::class);
     }
 
-    public function release_member_reference (){
+/*     public function release_member_reference (){
         return $this->belongsTo(ReleaseMemberReference::class);
-    }
+    } */
 }

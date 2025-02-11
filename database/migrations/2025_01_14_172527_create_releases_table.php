@@ -15,12 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('catalog');
             $table->string('name')->nullable();
-            $table->integer('price')->nullable();
-            $table->string('style')->nullable();
             $table->string('artistName')->nullable();
             $table->string('artistIBAN')->nullable();
-            $table->string('artistBiography')->nullable();
-            $table->string('description')->nullable();
             $table->timestamps();
         });
     }

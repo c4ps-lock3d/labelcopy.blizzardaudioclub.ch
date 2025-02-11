@@ -27,7 +27,7 @@ class Release extends Model
     public function release_social (){
         return $this->belongsTo(ReleaseSocial::class);
     }
-    public function release_member (){
-        return $this->belongsTo(ReleaseMember::class);
+    public function release_members (){
+        return $this->belongsToMany(ReleaseMember::class, 'release_release_member');
     }
 }
