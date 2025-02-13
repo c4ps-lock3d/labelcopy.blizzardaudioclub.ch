@@ -64,6 +64,8 @@ class ReleaseController extends Controller
             'artistName' => 'required|string|max:255',
             'artistIBAN' => 'required|string|max:255',
             'artistBiography' => 'required|string',
+            'credits' => 'required|string',
+            'remerciements' => 'required|string',
             'description' => 'required|string',
             'release_type_id' => 'required|exists:release_types,id',
             'release_format_ids' => 'required|array',
@@ -86,6 +88,8 @@ class ReleaseController extends Controller
             'artistName' => $validated['artistName'],
             'artistIBAN' => $validated['artistIBAN'],
             'artistBiography' => $validated['artistBiography'],
+            'credits' => $validated['credits'],
+            'remerciements' => $validated['remerciements'],
             'description' => $validated['description'],
             'release_type_id' => $validated['release_type_id']
         ]);
