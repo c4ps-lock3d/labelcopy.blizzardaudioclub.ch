@@ -36,6 +36,8 @@ const form = useForm({
     artistName: props.release.artistName,
     artistIBAN: props.release.artistIBAN,
     artistBiography: props.release.artistBiography,
+    style: props.release.style,
+    price: props.release.price,
     description: props.release.description,
     credits: props.release.credits,
     remerciements: props.release.remerciements,
@@ -162,7 +164,7 @@ const submit = () => {
                                 <InputError class="mt-2" :message="form.errors.artistIBAN" />
                             </div>
                         </div>
-                        <InputLabel for="artistBiography" value="Bio de l'artiste" class="text-sm font-medium" />
+                        <InputLabel for="artistBiography" value="Biographie de l’artiste " class="text-sm font-medium" />
                         <TextArea
                             id="artistBiography"
                             type="text"
@@ -184,14 +186,14 @@ const submit = () => {
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mr-4 size-6">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
                             </svg>
-                            Informations sur les membres</h3>
-                            <InputLabel value="Membres" class="text-sm font-medium" />
-                                <table class="min-w-full divide-y divide-gray-700 !mt-1">
+                            Informations sur le(s) membre(s)</h3>
+                            <InputLabel value="" class="text-sm font-medium" />
+                                <table class="min-w-full rounded-md overflow-hidden border-gray-700 !mt-1">
                                     <thead>
                                         <tr>
-                                            <th scope="col" class="w-16 px-3 py-2.5 text-left text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap rounded-tl-md">Prénom</th>
+                                            <th scope="col" class="w-16 px-3 py-2.5 text-left text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Prénom</th>
                                             <th scope="col" class="w-full px-3 py-2.5 text-left text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Nom</th>
-                                            <th scope="col" class="w-16 px-3 py-2.5 text-sm font-semibold bg-gray-700 text-gray-100 rounded-tr-md">
+                                            <th scope="col" class="w-16 px-3 py-2.5 text-sm font-semibold bg-gray-700 text-gray-100">
                                                 <button 
                                                         type="button" 
                                                         @click="addNewMember"
@@ -205,7 +207,7 @@ const submit = () => {
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-gray-700">
-                                        <tr v-for="(member, index) in form.members" :key="member.id || 'new'" class="hover:bg-gray-700/50">
+                                        <tr v-for="(member, index) in form.members" :key="member.id || 'new'" class="bg-gray-700/50">
                                             <td class="px-1.5 py-2">
                                                 <TextInput
                                                     type="text"
@@ -249,7 +251,7 @@ const submit = () => {
                                 <path stroke-linecap="round" stroke-linejoin="round" d="m9 9 10.5-3m0 6.553v3.75a2.25 2.25 0 0 1-1.632 2.163l-1.32.377a1.803 1.803 0 1 1-.99-3.467l2.31-.66a2.25 2.25 0 0 0 1.632-2.163Zm0 0V2.25L9 5.25v10.303m0 0v3.75a2.25 2.25 0 0 1-1.632 2.163l-1.32.377a1.803 1.803 0 0 1-.99-3.467l2.31-.66A2.25 2.25 0 0 0 9 15.553Z" />
                             </svg>
                             Informations sur la sortie</h3>
-                            <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
+                            <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
                                     <div>
                                         <InputLabel for="catalog" value="N° de catalogue" class="text-sm font-medium" />
                                         <TextInput
@@ -262,7 +264,6 @@ const submit = () => {
                                         />
                                         <InputError class="" :message="form.errors.catalog" />
                                     </div>
-
                                     <div>
                                         <InputLabel for="name" value="Nom de la sortie" class="text-sm font-medium" />
                                         <TextInput
@@ -275,8 +276,20 @@ const submit = () => {
                                         />
                                         <InputError class="" :message="form.errors.name" />
                                     </div>
+                                    <div>
+                                        <InputLabel for="style" value="Style musical" class="text-sm font-medium" />
+                                        <TextInput
+                                            id="style"
+                                            type="text"
+                                            class="mt-1 block w-full transition duration-150 ease-in-out"
+                                            v-model="form.style"
+                                            required
+                                            autocomplete="style"
+                                        />
+                                        <InputError class="" :message="form.errors.style" />
+                                    </div>
                                 <div>
-                                    <InputLabel value="Formats de sortie" class="text-sm font-medium mb-1" />
+                                    <InputLabel value="Format(s)" class="text-sm font-medium mb-1" />
                                     <div class="grid grid-cols-4 gap-2">
                                         <div v-for="format in props.releaseFormats" :key="format.id" 
                                             class="flex items-center p-2.5 bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors">
@@ -294,7 +307,7 @@ const submit = () => {
                                     </div>
                                 </div>
                                 <div>
-                                    <InputLabel value="Type de sortie" class="text-sm font-medium mb-1" />
+                                    <InputLabel value="Type" class="text-sm font-medium mb-1" />
                                     <div class="grid grid-cols-3 gap-2">
                                         <div v-for="type in props.releaseTypes" :key="type.id" 
                                             class="flex items-center p-2.5 bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors">
@@ -311,9 +324,21 @@ const submit = () => {
                                         </div>
                                     </div>
                                 </div>
+                                <div>
+                                    <InputLabel for="price" value="Prix" class="text-sm font-medium" />
+                                    <TextInput
+                                        id="price"
+                                        type="text"
+                                        class="mt-1 block w-full transition duration-150 ease-in-out"
+                                        v-model="form.price"
+                                        required
+                                        autocomplete="price"
+                                    />
+                                    <InputError class="" :message="form.errors.price" />
+                                </div>
                             </div>
                                 <div class="pt-3">
-                                    <InputLabel for="description" value="Description de la sortie" class="text-sm font-medium" />
+                                    <InputLabel for="description" value="Description" class="text-sm font-medium" />
                                     <TextArea
                                         id="description"
                                         type="text"
@@ -326,14 +351,14 @@ const submit = () => {
                                     <InputError class="mt-2" :message="form.errors.description" />
                                 </div>
                                 <InputLabel value="Tracklist" class="text-sm font-medium" />
-                                <table class="min-w-full divide-y divide-gray-700 !mt-1">
+                                <table class="min-w-full rounded-md overflow-hidden border-gray-700 !mt-1">
                                     <thead>
                                         <tr>
-                                            <th scope="col" class="w-8 px-3 py-2.5 text-left text-sm font-semibold text-gray-100 bg-gray-700 rounded-tl-md">#</th>
+                                            <th scope="col" class="w-8 px-3 py-2.5 text-left text-sm font-semibold text-gray-100 bg-gray-700">#</th>
                                             <th scope="col" class="w-full px-3 py-2.5 text-left text-sm font-semibold bg-gray-700 text-gray-100">Titre</th>
                                             <th scope="col" class="w-16 px-3 py-2.5 text-center text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Single ?</th>
                                             <th scope="col" class="w-16 px-3 py-2.5 text-center text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Vidéoclip ?</th>
-                                            <th scope="col" class="w-16 px-3 py-2.5 text-center text-sm font-semibold bg-gray-700 text-gray-100 rounded-tr-md">
+                                            <th scope="col" class="w-16 px-3 py-2.5 text-center text-sm font-semibold bg-gray-700 text-gray-100">
                                                 <button 
                                                         type="button" 
                                                         @click="addNewTrack"
@@ -347,7 +372,7 @@ const submit = () => {
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-gray-700">
-                                        <tr v-for="(track, index) in form.tracks" :key="track.id || 'new'" class="hover:bg-gray-700/50">
+                                        <tr v-for="(track, index) in form.tracks" :key="track.id || 'new'" class="bg-gray-700/50">
                                             <td class="px-3 py-2 text-white">
                                                 {{track.number}}
                                             </td>

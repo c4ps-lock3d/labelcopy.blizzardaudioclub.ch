@@ -66,6 +66,8 @@ class ReleaseController extends Controller
             'artistBiography' => 'required|string',
             'credits' => 'required|string',
             'remerciements' => 'required|string',
+            'style' => 'required|string',
+            'price' => 'required|integer',
             'description' => 'required|string',
             'release_type_id' => 'required|exists:release_types,id',
             'release_format_ids' => 'required|array',
@@ -90,6 +92,8 @@ class ReleaseController extends Controller
             'artistBiography' => $validated['artistBiography'],
             'credits' => $validated['credits'],
             'remerciements' => $validated['remerciements'],
+            'style' => $validated['style'],
+            'price' => $validated['price'],
             'description' => $validated['description'],
             'release_type_id' => $validated['release_type_id']
         ]);
