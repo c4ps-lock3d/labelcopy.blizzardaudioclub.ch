@@ -8,6 +8,7 @@ import { Head, useForm } from '@inertiajs/vue3';
 
 const form = useForm({
     catalog: '',
+    email: '',
 });
 
 const submit = () => {
@@ -35,7 +36,7 @@ const submit = () => {
                     <div class="p-6 text-gray-900 dark:text-gray-100">
                         <form @submit.prevent="submit">
                             <div>
-                                <InputLabel for="catalog" value="Catalog" />
+                                <InputLabel for="catalog" value="N° de catalogue" />
 
                                 <TextInput
                                     id="catalog"
@@ -48,6 +49,20 @@ const submit = () => {
                                 />
 
                                 <InputError class="mt-2" :message="form.errors.catalog" />
+                            </div>
+                            <div class="mt-4">
+                                <InputLabel for="email" value="E-mail d'invitation" />
+
+                                <TextInput
+                                    id="email"
+                                    type="text"
+                                    class="mt-1 block w-full"
+                                    v-model="form.email"
+                                    required
+                                    autocomplete="email"
+                                />
+
+                                <InputError class="mt-2" :message="form.errors.email" />
                             </div>
                             <div class="mt-4 flex items-center justify-end">
                                 <PrimaryButton

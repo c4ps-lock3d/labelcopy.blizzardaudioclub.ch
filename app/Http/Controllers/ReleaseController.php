@@ -43,14 +43,21 @@ class ReleaseController extends Controller
         ]);
     }
 
-    public function store(Request $request, Release $release): RedirectResponse
+    public function store(Request $request, Release $release, User $user): RedirectResponse
     {
         $request->validate([
             'catalog' => 'required|string|max:6',
+            'email' => 'required|string|email|max:255|unique:users',
         ]);
 
         $release->create([
             'catalog' => $request->catalog,
+        ]);
+
+        $user->create([
+            'name' => $request->catalog,
+            'email' => $request->email,
+            'password' => Hash::make($request->catalog),
         ]);
 
         return redirect(route('dashboard', absolute: false));
