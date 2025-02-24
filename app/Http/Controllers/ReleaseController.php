@@ -89,6 +89,7 @@ class ReleaseController extends Controller
             'members.*.id' => 'nullable',  // Permettre id null pour nouveaux membres
             'members.*.firstname' => 'required|string|max:255',
             'members.*.lastname' => 'required|string|max:255',
+            'members.*.is_reference' => 'nullable'
         ]);
     
         $release->update([
@@ -146,12 +147,14 @@ class ReleaseController extends Controller
                     ->update([
                         'firstname' => $memberData['firstname'],
                         'lastname' => $memberData['lastname'],
+                        'is_reference' => $memberData['is_reference'],
                     ]);
                 $updatedMemberIds[] = $memberData['id'];
             } else {
                 $newMember = $release->release_members()->create([
                     'firstname' => $memberData['firstname'],
                     'lastname' => $memberData['lastname'],
+                    'is_reference' => $memberData['is_reference'],
                 ]);
                 $updatedMemberIds[] = $newMember->id;
             }

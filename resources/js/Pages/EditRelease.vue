@@ -65,7 +65,15 @@ const form = useForm({
         id: member.id,
         firstname: member.firstname,
         lastname: member.lastname,
+        birth_date: member.birth_date,
+        is_reference: Boolean(member.is_reference),
+        street: member.street || '',
+        city: member.city || '',
+        zip_code: member.zip_code || '',
+        phone_number: member.phone_number || '',
     })) || [],
+
+
     
     releaseTypes: props.releaseTypes,
     releaseFormats: props.releaseFormats,
@@ -98,6 +106,12 @@ const deleteTrack = (index) => {
 
 const deleteMember = (index) => {
     form.members.splice(index, 1);
+};
+
+const updateReferenceMember = () => {
+    form.members.forEach((member, index) => {
+        member.is_reference = index === form.reference_member_id;
+    });
 };
 
 const submit = () => {
@@ -239,6 +253,16 @@ const submit = () => {
                                         </tr>
                                     </tbody>
                                 </table>
+                                <InputLabel value="Membre de référence" class="text-sm font-medium mb-1" />
+                                <select
+                                    v-model="form.reference_member_id"
+                                    @change="updateReferenceMember"
+                                    class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                                >
+                                    <option v-for="(member, index) in form.members" :key="member.id || 'new'" :value="index">
+                                        {{ member.firstname }} {{ member.lastname }}
+                                    </option>
+                                </select>
                     </div>
                 </div>
             </div>

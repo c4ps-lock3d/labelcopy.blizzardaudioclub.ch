@@ -18,8 +18,4 @@ class ReleaseMember extends Model
     public function releases(){
         return $this->belongsToMany(Release::class);
     }
-
-/*     public function release_member_reference (){
-        return $this->belongsTo(ReleaseMemberReference::class);
-    } */
 }
