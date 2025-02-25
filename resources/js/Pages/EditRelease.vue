@@ -62,17 +62,28 @@ const form = useForm({
             hasClip: false
         }],
 
-    members: props.release.release_members?.map(member => ({
+    members: props.release.release_members?.length > 0 
+        ? props.release.release_members?.map(member => ({
         id: member.id,
         firstname: member.firstname,
         lastname: member.lastname,
         birth_date: member.birth_date,
         is_reference: Boolean(member.is_reference),
-        street: member.street || '',
-        city: member.city || '',
-        zip_code: member.zip_code || '',
-        phone_number: member.phone_number || '',
-    })) || [],
+        street: member.street,
+        city: member.city,
+        zip_code: member.zip_code,
+        phone_number: member.phone_number,
+    }))
+    : [{
+            id: null,
+            firstname: '',
+            lastname: '',
+            is_reference: false,
+            street: '',
+            city: '',
+            zip_code: '',
+            phone_number: '',
+        }],
 
 
     
@@ -207,7 +218,8 @@ const submit = () => {
                             <thead>
                                 <tr>
                                     <th scope="col" class="w-16 px-3 py-2.5 text-left text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Prénom</th>
-                                    <th scope="col" class="w-full px-3 py-2.5 text-left text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Nom</th>
+                                    <th scope="col" class="px-3 py-2.5 text-left text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Nom</th>
+                                    <th scope="col" class="w-full px-3 py-2.5 text-left text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Date de naissance</th>
                                     <th scope="col" class="w-16 px-3 py-2.5 text-sm font-semibold bg-gray-700 text-gray-100">
                                         <button 
                                                 type="button" 
@@ -228,15 +240,23 @@ const submit = () => {
                                             type="text"
                                             v-model="member.firstname"
                                             class="transition duration-150 ease-in-out"
-                                            placeholder="Titre"
+                                            placeholder="Prénom"
                                         />
                                     </td>
                                     <td class="px-1.5 py-2">
                                         <TextInput
                                             type="text"
                                             v-model="member.lastname"
+                                            class="transition duration-150 ease-in-out"
+                                            placeholder="Nom"
+                                        />
+                                    </td>
+                                    <td class="px-1.5 py-2">
+                                        <TextInput
+                                            type="date"
+                                            v-model="member.birth_date"
                                             class="w-full transition duration-150 ease-in-out"
-                                            placeholder="Titre"
+                                            placeholder="Date de naissance"
                                         />
                                     </td>
                                     <td class="whitespace-nowrap px-3 py-2">
@@ -254,16 +274,65 @@ const submit = () => {
                                 </tr>
                             </tbody>
                         </table>
-                        <InputLabel value="Membre de référence" class="text-sm font-medium mb-1" />
-                        <select
-                            v-model="form.reference_member_id"
-                            @change="updateReferenceMember"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-indigo-600 dark:focus:ring-indigo-600"
-                        >
-                            <option v-for="(member, index) in form.members" :key="member.id || 'new'" :value="index">
-                                {{ member.firstname }} {{ member.lastname }}
-                            </option>
-                        </select>
+                        <div>
+                            <InputLabel value="Membre de référence" class="text-sm font-medium mb-1" />
+                            <select
+                                v-model="form.reference_member_id"
+                                @change="updateReferenceMember"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-indigo-600 dark:focus:ring-indigo-600"
+                            >
+                                <option v-for="(member, index) in form.members" :key="member.id || 'new'" :value="index">
+                                    {{ member.firstname }} {{ member.lastname }}
+                                </option>
+                            </select>
+                        </div>
+                        <div v-for="(member, index) in form.members" :key="member.id">
+                            <div v-if="member.is_reference">
+                                <InputLabel for="city" value="Ville" class="text-sm font-medium" />
+                                <TextInput
+                                    id="city"
+                                    type="text"
+                                    class="mt-1 block w-full transition duration-150 ease-in-out"
+                                    v-model="member.city"
+                                    required
+                                    autocomplete="city"
+                                />
+                                <InputError class="" :message="form.errors.city" />
+      
+                                <InputLabel for="street" value="Rue" class="text-sm font-medium" />
+                                <TextInput
+                                    id="street"
+                                    type="text"
+                                    class="mt-1 block w-full transition duration-150 ease-in-out"
+                                    v-model="member.street"
+                                    required
+                                    autocomplete="street"
+                                />
+                                <InputError class="" :message="form.errors.street" />
+
+                                <InputLabel for="zip_code" value="NPA" class="text-sm font-medium" />
+                                <TextInput
+                                    id="zip_code"
+                                    type="text"
+                                    class="mt-1 block w-full transition duration-150 ease-in-out"
+                                    v-model="member.zip_code"
+                                    required
+                                    autocomplete="zip_code"
+                                />
+                                <InputError class="" :message="form.errors.zip_code" />
+
+                                <InputLabel for="phone_number" value="Numéro de téléphone" class="text-sm font-medium" />
+                                <TextInput
+                                    id="phone_number"
+                                    type="text"
+                                    class="mt-1 block w-full transition duration-150 ease-in-out"
+                                    v-model="member.phone_number"
+                                    required
+                                    autocomplete="phone_number"
+                                />
+                                <InputError class="" :message="form.errors.phone_number" />
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

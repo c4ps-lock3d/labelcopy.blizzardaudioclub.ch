@@ -89,6 +89,11 @@ class ReleaseController extends Controller
             'members.*.id' => 'nullable',  // Permettre id null pour nouveaux membres
             'members.*.firstname' => 'required|string|max:255',
             'members.*.lastname' => 'required|string|max:255',
+            'members.*.city' => 'required|string|max:255',
+            'members.*.street' => 'required|string|max:255',
+            'members.*.zip_code' => 'required|string|max:255',
+            'members.*.phone_number' => 'required|string|max:255',
+            'members.*.birth_date' => 'required|date',
             'members.*.is_reference' => 'nullable'
         ]);
     
@@ -147,14 +152,24 @@ class ReleaseController extends Controller
                     ->update([
                         'firstname' => $memberData['firstname'],
                         'lastname' => $memberData['lastname'],
+                        'birth_date' => $memberData['birth_date'],
                         'is_reference' => $memberData['is_reference'],
+                        'city' => $memberData['city'],
+                        'street' => $memberData['street'],
+                        'zip_code' => $memberData['zip_code'],
+                        'phone_number' => $memberData['phone_number'],
                     ]);
                 $updatedMemberIds[] = $memberData['id'];
             } else {
                 $newMember = $release->release_members()->create([
                     'firstname' => $memberData['firstname'],
                     'lastname' => $memberData['lastname'],
+                    'birth_date' => $memberData['birth_date'],
                     'is_reference' => $memberData['is_reference'],
+                    'city' => $memberData['city'],
+                    'street' => $memberData['street'],
+                    'zip_code' => $memberData['zip_code'],
+                    'phone_number' => $memberData['phone_number'],
                 ]);
                 $updatedMemberIds[] = $newMember->id;
             }
