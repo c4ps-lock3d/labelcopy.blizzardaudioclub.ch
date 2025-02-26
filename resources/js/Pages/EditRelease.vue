@@ -27,6 +27,10 @@ const props = defineProps({
     releaseMembers: {
         type: Array,
         required: true
+    },
+    releaseSocials: {
+        type: Array,
+        required: true
     }
 });
 
@@ -45,6 +49,11 @@ const form = useForm({
     release_type_id: props.release.release_type_id || null,
     release_format_ids: props.release.release_formats?.map(format => format.id) || [],
     reference_member_id: props.release.release_members?.findIndex(member => member.is_reference) ?? 0,
+    
+    socials: props.release.release_socials.map(social => ({
+            id: social.id,
+            link: social.link
+        })),
     
     tracks: props.release.release_tracks?.length > 0 
         ? props.release.release_tracks.map(track => ({
@@ -92,6 +101,7 @@ const form = useForm({
     releaseFormats: props.releaseFormats,
     releaseTracks: props.releaseTracks,
     releaseMembers: props.releaseMembers,
+    releaseSocials: props.releaseSocials,
 });
 
 const addNewTrack = () => {
@@ -113,12 +123,23 @@ const addNewMember = () => {
     });
 };
 
+const addNewSocial = () => {
+    form.socials.push({
+        id: null,
+        link: '',
+    });
+};
+
 const deleteTrack = (index) => {
     form.tracks.splice(index, 1);
 };
 
 const deleteMember = (index) => {
     form.members.splice(index, 1);
+};
+
+const deleteSocial = (index) => {
+    form.socials.splice(index, 1);
 };
 
 const updateReferenceMember = () => {
@@ -132,6 +153,9 @@ const submit = () => {
         return;
     }
     if (form.members.some(member => !member.firstname) || form.members.some(member => !member.lastname)) {
+        return;
+    }
+    if (form.socials.some(social => !social.link)) {
         return;
     }
     form.put(route('update-release', props.release.id));
@@ -177,18 +201,61 @@ const submit = () => {
                             <InputError class="mt-2" :message="form.errors.artistName" />
                         </div>
                         <div>
-                        <InputLabel for="artistBiography" value="Biographie de l’artiste " class="text-sm font-medium" />
-                        <TextArea
-                            id="artistBiography"
-                            type="text"
-                            class="mt-1 block w-full transition duration-150 ease-in-out"
-                            v-model="form.artistBiography"
-                            rows="5"
-                            required
-                            autocomplete="artistBiography"
-                        />
-                        <InputError class="mt-2" :message="form.errors.artistBiography" />
+                            <InputLabel for="artistBiography" value="Biographie de l’artiste " class="text-sm font-medium" />
+                            <TextArea
+                                id="artistBiography"
+                                type="text"
+                                class="mt-1 block w-full transition duration-150 ease-in-out"
+                                v-model="form.artistBiography"
+                                rows="5"
+                                required
+                                autocomplete="artistBiography"
+                            />
+                            <InputError class="mt-2" :message="form.errors.artistBiography" />
                         </div>
+                        <InputLabel value="Réseaux sociaux" class="text-sm font-medium" />
+                        <table class="min-w-full rounded-md overflow-hidden border-gray-700 !mt-1">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="w-full px-3 py-2.5 text-left text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Lien</th>
+                                    <th scope="col" class="w-16 px-3 py-2.5 text-sm font-semibold bg-gray-700 text-gray-100">
+                                        <button 
+                                                type="button" 
+                                                @click="addNewSocial"
+                                                class="w-9 h-9 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700 transition-colors flex items-center justify-center"
+                                            >
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                            </svg>
+                                        </button>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-700">
+                                <tr v-for="(social, index) in form.socials" :key="social.id || 'new'" class="bg-gray-700/50">
+                                    <td class="px-1.5 py-2">
+                                        <TextInput
+                                            type="text"
+                                            v-model="social.link"
+                                            class="w-full transition duration-150 ease-in-out"
+                                            placeholder="Lien"
+                                        />
+                                    </td>
+                                    <td class="whitespace-nowrap px-3 py-2">
+                                        <button
+                                            v-if="form.socials.length > 0 && index === form.socials.length - 1"
+                                            type="button" 
+                                            @click="deleteSocial(index)"
+                                            class="w-9 h-9 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors flex items-center justify-center"
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                                            </svg>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>

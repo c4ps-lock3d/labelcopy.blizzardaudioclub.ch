@@ -24,8 +24,8 @@ class Release extends Model
     public function release_tracks (){
         return $this->belongsToMany(ReleaseTrack::class, 'release_release_track');
     }
-    public function release_social (){
-        return $this->belongsTo(ReleaseSocial::class);
+    public function release_socials (){
+        return $this->belongsToMany(ReleaseSocial::class, 'release_release_social');
     }
     public function release_members (){
         return $this->belongsToMany(ReleaseMember::class, 'release_release_member');

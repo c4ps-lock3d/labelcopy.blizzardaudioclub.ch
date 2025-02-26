@@ -9,6 +9,7 @@ use App\Models\ReleaseFormat;
 use App\Models\ReleaseType;
 use App\Models\ReleaseTrack;
 use App\Models\ReleaseMember;
+use App\Models\ReleaseSocial;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -35,11 +36,13 @@ class ReleaseController extends Controller
     public function edit(Release $release): Response
     {
         return Inertia::render('EditRelease', [
-            'release' => Release::with('release_type', 'release_formats', 'release_tracks', 'release_members')->findOrFail($release->id), // Récupérer la release à éditer
-            'releaseFormats' => ReleaseFormat::all(), // Récupérer tous les formats de release
-            'releaseTypes' => ReleaseType::all(), // Récupérer tous les formats de release
-            'releaseTracks' => ReleaseTrack::all(), // Récupérer tous les formats de release
-            'releaseMembers' => ReleaseMember::all(), // Récupérer tous les formats de release
+            'release' => Release::with('release_type', 'release_formats', 'release_tracks', 'release_members', 'release_socials')->findOrFail($release->id), // Récupérer la release à éditer
+            'releaseFormats' => ReleaseFormat::all(),
+            'releaseTypes' => ReleaseType::all(),
+            'releaseTracks' => ReleaseTrack::all(),
+            'releaseMembers' => ReleaseMember::all(),
+            'releaseSocials' => ReleaseSocial::all(),
+
         ]);
     }
 
@@ -94,7 +97,10 @@ class ReleaseController extends Controller
             'members.*.zip_code' => 'required|string|max:255',
             'members.*.phone_number' => 'required|string|max:255',
             'members.*.birth_date' => 'required|date',
-            'members.*.is_reference' => 'nullable'
+            'members.*.is_reference' => 'nullable',
+            'socials' => 'array',
+            'socials.*.id' => 'nullable',
+            'socials.*.link' => 'required|string|max:255',
         ]);
     
         $release->update([
@@ -118,6 +124,9 @@ class ReleaseController extends Controller
 
         // Récupérer les IDs des membres existants
         $existingMemberIds = $release->release_members()->pluck('id')->toArray();
+
+        // Récupérer les IDs des réseaux sociaux existants
+        $existingSocialIds = $release->release_socials()->pluck('id')->toArray();
 
          // Sauvegarde des pistes
         $updatedTrackIds = [];
@@ -175,6 +184,24 @@ class ReleaseController extends Controller
             }
         }
 
+        // Sauvegarde des réseaux sociaux
+        $updatedSocialIds = [];
+        foreach ($validated['socials'] as $socialData) {
+            if (isset($socialData['id'])) {
+                $release->release_socials()
+                    ->where('id', $socialData['id'])
+                    ->update([
+                        'link' => $socialData['link'],
+                    ]);
+                $updatedSocialIds[] = $socialData['id'];
+            } else {
+                $newSocial = $release->release_socials()->create([
+                    'link' => $socialData['link'],
+                ]);
+                $updatedSocialIds[] = $newSocial->id;
+            }
+        }
+
         // Supprimer les pistes qui ne sont plus présentes dans la requête
         $tracksToDelete = array_diff($existingTrackIds, $updatedTrackIds);
         $release->release_tracks()->whereIn('id', $tracksToDelete)->delete();
@@ -182,6 +209,10 @@ class ReleaseController extends Controller
         // Supprimer les membres qui ne sont plus présentes dans la requête
         $membersToDelete = array_diff($existingMemberIds, $updatedMemberIds);
         $release->release_members()->whereIn('id', $membersToDelete)->delete();
+
+        // Supprimer les réseaux sociaux qui ne sont plus présentes dans la requête
+        $socialsToDelete = array_diff($existingSocialIds, $updatedSocialIds);
+        $release->release_socials()->whereIn('id', $socialsToDelete)->delete();
     
         return redirect(route('dashboard', absolute: false));
     }
