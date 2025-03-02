@@ -40,6 +40,7 @@ const form = useForm({
     artistName: props.release.artistName,
     artistIBAN: props.release.artistIBAN,
     artistBiography: props.release.artistBiography,
+    artistWebsite: props.release.artistWebsite,
     style: props.release.style,
     price: props.release.price,
     description: props.release.description,
@@ -77,6 +78,7 @@ const form = useForm({
         firstname: member.firstname,
         lastname: member.lastname,
         birth_date: member.birth_date,
+        IRSC: member.IRSC,
         is_reference: Boolean(member.is_reference),
         street: member.street,
         city: member.city,
@@ -88,6 +90,7 @@ const form = useForm({
             firstname: '',
             lastname: '',
             birth_date: '',
+            irsc: '',
             is_reference: false,
             street: '',
             city: '',
@@ -197,7 +200,7 @@ const submit = () => {
                             Informations sur l'artiste</h3>
                         <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
                             <div>
-                                <InputLabel for="artistName" value="Nom d'artiste" class="text-sm font-medium" />
+                                <InputLabel for="artistName" value="Nom d'artiste" class="required text-sm font-medium" />
                                 <TextInput
                                     id="artistName"
                                     type="text"
@@ -208,7 +211,7 @@ const submit = () => {
                                 />
                                 <InputError class="mt-2" :message="form.errors.artistName" />
                        
-                                <InputLabel for="artistBiography" value="Biographie de l’artiste " class="text-sm font-medium mt-6" />
+                                <InputLabel for="artistBiography" value="Biographie de l’artiste" class="required text-sm font-medium mt-6" />
                                 <TextArea
                                     id="artistBiography"
                                     type="text"
@@ -221,7 +224,18 @@ const submit = () => {
                                 <InputError class="mt-2" :message="form.errors.artistBiography" />
                             </div>
                             <div>
-                                <InputLabel value="Réseaux sociaux" class="text-sm font-medium" />
+                                <InputLabel for="artistWebsite" value="Site web de l’artiste" class="text-sm font-medium" />
+                                <TextInput
+                                    id="artistWebsite"
+                                    type="text"
+                                    class="mt-1 block w-full transition duration-150 ease-in-out"
+                                    v-model="form.artistWebsite"
+                                    autocomplete="artistWebsite"
+                                    placeholder="https://example.ch"
+                                />
+                                <InputError class="mt-2" :message="form.errors.artistWebsite" />
+
+                                <InputLabel value="Réseaux sociaux" class="text-sm font-medium mt-6" />
                                 <table class="min-w-full rounded-md overflow-hidden border-gray-700 !mt-1">
                                     <thead>
                                         <tr>
@@ -282,9 +296,10 @@ const submit = () => {
                         <table class="min-w-full rounded-md overflow-hidden border-gray-700 !mt-1">
                             <thead>
                                 <tr>
-                                    <th scope="col" class="w-16 px-3 py-2.5 text-left text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Prénom</th>
-                                    <th scope="col" class="px-3 py-2.5 text-left text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Nom</th>
-                                    <th scope="col" class="w-full px-3 py-2.5 text-left text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Date de naissance</th>
+                                    <th scope="col" class="required w-16 px-3 py-2.5 text-left text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Prénom</th>
+                                    <th scope="col" class="required px-3 py-2.5 text-left text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Nom</th>
+                                    <th scope="col" class="required px-3 py-2.5 text-left text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Date de naissance</th>
+                                    <th scope="col" class="w-full px-3 py-2.5 text-left text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">IRSC</th>
                                     <th scope="col" class="w-16 px-3 py-2.5 text-sm font-semibold bg-gray-700 text-gray-100">
                                         <button 
                                                 type="button" 
@@ -320,8 +335,16 @@ const submit = () => {
                                         <TextInput
                                             type="date"
                                             v-model="member.birth_date"
-                                            class="w-full transition duration-150 ease-in-out"
+                                            class="transition duration-150 ease-in-out"
                                             placeholder="Date de naissance"
+                                        />
+                                    </td>
+                                    <td class="px-1.5 py-2">
+                                        <TextInput
+                                            type="text"
+                                            v-model="member.IRSC"
+                                            class="w-full transition duration-150 ease-in-out"
+                                            placeholder="IRSC"
                                         />
                                     </td>
                                     <td class="whitespace-nowrap px-3 py-2">
@@ -340,7 +363,7 @@ const submit = () => {
                             </tbody>
                         </table>
                         <div>
-                            <InputLabel value="Membre de référence" class="text-sm font-medium mb-1" />
+                            <InputLabel value="Membre de référence" class="required text-sm font-medium mb-1" />
                             <select
                                 v-model="form.reference_member_id"
                                 @change="updateReferenceMember"
@@ -354,7 +377,7 @@ const submit = () => {
                         <div v-for="(member, index) in form.members" :key="member.id">
                             <div v-if="member.is_reference" class="grid grid-cols-1 gap-6 md:grid-cols-2 mb-6">
                                 <div>
-                                <InputLabel for="zip_code" value="NPA" class="text-sm font-medium" />
+                                <InputLabel for="zip_code" value="NPA" class="required text-sm font-medium" />
                                 <TextInput
                                     id="zip_code"
                                     type="text"
@@ -366,7 +389,7 @@ const submit = () => {
                                 <InputError class="" :message="form.errors.zip_code" />
                                 </div>
                                 <div>
-                                <InputLabel for="city" value="Ville" class="text-sm font-medium" />
+                                <InputLabel for="city" value="Ville" class="required text-sm font-medium" />
                                 <TextInput
                                     id="city"
                                     type="text"
@@ -378,7 +401,7 @@ const submit = () => {
                                 <InputError class="" :message="form.errors.city" />
                                 </div>
                                 <div>
-                                <InputLabel for="street" value="Rue" class="text-sm font-medium" />
+                                <InputLabel for="street" value="Rue" class="required text-sm font-medium" />
                                 <TextInput
                                     id="street"
                                     type="text"
@@ -390,7 +413,7 @@ const submit = () => {
                                 <InputError class="" :message="form.errors.street" />
                                 </div>
                                 <div>
-                                <InputLabel for="phone_number" value="Numéro de téléphone" class="text-sm font-medium" />
+                                <InputLabel for="phone_number" value="Numéro de téléphone" class="required text-sm font-medium" />
                                 <TextInput
                                     id="phone_number"
                                     type="text"
@@ -417,7 +440,7 @@ const submit = () => {
                             Informations sur la sortie</h3>
                             <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
                                     <div>
-                                        <InputLabel for="catalog" value="N° de catalogue" class="text-sm font-medium" />
+                                        <InputLabel for="catalog" value="N° de catalogue" class="required text-sm font-medium" />
                                         <TextInput
                                             id="catalog"
                                             type="text"
@@ -429,7 +452,7 @@ const submit = () => {
                                         <InputError class="" :message="form.errors.catalog" />
                                     </div>
                                     <div>
-                                        <InputLabel for="name" value="Nom de la sortie" class="text-sm font-medium" />
+                                        <InputLabel for="name" value="Nom de la sortie" class="required text-sm font-medium" />
                                         <TextInput
                                             id="name"
                                             type="text"
@@ -441,7 +464,7 @@ const submit = () => {
                                         <InputError class="" :message="form.errors.name" />
                                     </div>
                                     <div>
-                                        <InputLabel for="style" value="Style musical" class="text-sm font-medium" />
+                                        <InputLabel for="style" value="Style musical" class="required text-sm font-medium" />
                                         <TextInput
                                             id="style"
                                             type="text"
@@ -453,7 +476,7 @@ const submit = () => {
                                         <InputError class="" :message="form.errors.style" />
                                     </div>
                                 <div>
-                                    <InputLabel value="Format(s)" class="text-sm font-medium mb-1" />
+                                    <InputLabel value="Format(s)" class="required text-sm font-medium mb-1" />
                                     <div class="grid grid-cols-4 gap-2">
                                         <div v-for="format in props.releaseFormats" :key="format.id" 
                                             class="flex items-center p-2.5 bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors">
@@ -471,7 +494,7 @@ const submit = () => {
                                     </div>
                                 </div>
                                 <div>
-                                    <InputLabel value="Type" class="text-sm font-medium mb-1" />
+                                    <InputLabel value="Type" class="required text-sm font-medium mb-1" />
                                     <div class="grid grid-cols-3 gap-2">
                                         <div v-for="type in props.releaseTypes" :key="type.id" 
                                             class="flex items-center p-2.5 bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors">
@@ -489,7 +512,7 @@ const submit = () => {
                                     </div>
                                 </div>
                                 <div>
-                                    <InputLabel for="price" value="Prix" class="text-sm font-medium" />
+                                    <InputLabel for="price" value="Prix" class="required text-sm font-medium" />
                                     <TextInput
                                         id="price"
                                         type="text"
@@ -502,7 +525,7 @@ const submit = () => {
                                 </div>
                             </div>
                                 <div class="pt-3">
-                                    <InputLabel for="description" value="Description" class="text-sm font-medium" />
+                                    <InputLabel for="description" value="Description" class="required text-sm font-medium" />
                                     <TextArea
                                         id="description"
                                         type="text"
@@ -519,7 +542,7 @@ const submit = () => {
                                     <thead>
                                         <tr>
                                             <th scope="col" class="w-8 px-3 py-2.5 text-left text-sm font-semibold text-gray-100 bg-gray-700">#</th>
-                                            <th scope="col" class="w-full px-3 py-2.5 text-left text-sm font-semibold bg-gray-700 text-gray-100">Titre</th>
+                                            <th scope="col" class="required w-full px-3 py-2.5 text-left text-sm font-semibold bg-gray-700 text-gray-100">Titre</th>
                                             <th scope="col" class="w-16 px-3 py-2.5 text-center text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Single ?</th>
                                             <th scope="col" class="w-16 px-3 py-2.5 text-center text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Vidéoclip ?</th>
                                             <th scope="col" class="w-16 px-3 py-2.5 text-center text-sm font-semibold bg-gray-700 text-gray-100">
@@ -579,7 +602,7 @@ const submit = () => {
                                     </table>
                                     <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
                                         <div>
-                                            <InputLabel for="credits" value="Crédits" class="text-sm font-medium" />
+                                            <InputLabel for="credits" value="Crédits" class="required text-sm font-medium" />
                                             <TextArea
                                                 id="credits"
                                                 type="text"
@@ -599,7 +622,6 @@ const submit = () => {
                                                 class="mt-1 block w-full transition duration-150 ease-in-out"
                                                 v-model="form.remerciements"
                                                 rows="5"
-                                                required
                                                 autocomplete="remerciements"
                                             />
                                             <InputError class="mt-2" :message="form.errors.remerciements" />
@@ -628,7 +650,7 @@ const submit = () => {
                                 </svg>
                                 Informations financières</h3>
                                 <div>
-                                    <InputLabel for="artistIBAN" value="IBAN de l'artiste" class="text-sm font-medium" />
+                                    <InputLabel for="artistIBAN" value="IBAN de l'artiste" class="required text-sm font-medium" />
                                     <TextInput
                                         id="artistIBAN"
                                         type="text"
