@@ -98,8 +98,6 @@ const form = useForm({
             phone_number: '',
         }],
 
-
-    
     releaseTypes: props.releaseTypes,
     releaseFormats: props.releaseFormats,
     releaseTracks: props.releaseTracks,
