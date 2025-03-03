@@ -46,6 +46,15 @@ const form = useForm({
     description: props.release.description,
     credits: props.release.credits,
     remerciements: props.release.remerciements,
+/*     remarques: props.release.remarques,
+    envies: props.release.envies, */
+    besoinFinancement: props.release.besoinFinancement,
+    produitsDerives: props.release.produitsDerives,
+    besoinSubvention: props.release.besoinSubvention,
+    besoinBooking: props.release.besoinBooking,
+    besoinPromo: props.release.besoinPromo,
+    besoinDigitalMarketing: props.release.besoinDigitalMarketing,
+    besoinContacts: props.release.besoinContacts,
 
     release_type_id: props.release.release_type_id || null,
     release_format_ids: props.release.release_formats?.map(format => format.id) || [],
@@ -196,7 +205,7 @@ const submit = () => {
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                             </svg>
                             Informations sur l'artiste</h3>
-                        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                        <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
                             <div>
                                 <InputLabel for="artistName" value="Nom d'artiste" class="required text-sm font-medium" />
                                 <TextInput
@@ -373,7 +382,7 @@ const submit = () => {
                             </select>
                         </div>
                         <div v-for="(member, index) in form.members" :key="member.id">
-                            <div v-if="member.is_reference" class="grid grid-cols-1 gap-6 md:grid-cols-2 mb-6">
+                            <div v-if="member.is_reference" class="grid grid-cols-1 gap-8 md:grid-cols-2 mb-6">
                                 <div>
                                 <InputLabel for="zip_code" value="NPA" class="required text-sm font-medium" />
                                 <TextInput
@@ -635,7 +644,81 @@ const submit = () => {
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mr-4 size-6">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M15.59 14.37a6 6 0 0 1-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 0 0 6.16-12.12A14.98 14.98 0 0 0 9.631 8.41m5.96 5.96a14.926 14.926 0 0 1-5.841 2.58m-.119-8.54a6 6 0 0 0-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 0 0-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 0 1-2.448-2.448 14.9 14.9 0 0 1 .06-.312m-2.24 2.39a4.493 4.493 0 0 0-1.757 4.306 4.493 4.493 0 0 0 4.306-1.758M16.5 9a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z" />
                                 </svg>
-                                Aide et soutiens</h3>
+                                Aide et soutien pour...</h3>
+                                <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
+                                    <div>
+                                        <InputLabel for="produitsDerives" value="la création de produits dérivés ?" class="text-sm font-medium" />
+                                        <TextArea
+                                            id="produitsDerives"
+                                            type="text"
+                                            class="mt-1 block w-full transition duration-150 ease-in-out"
+                                            v-model="form.produitsDerives"
+                                            rows="5"
+                                            autocomplete="produitsDerives"
+                                        />
+                                        <InputError class="mt-2" :message="form.errors.produitsDerives" />
+                                    </div>
+                                    <div>
+                                        <InputLabel for="besoinSubvention" value="les dossiers de demande de subventions ?" class="text-sm font-medium" />
+                                        <TextArea
+                                            id="besoinSubvention"
+                                            type="text"
+                                            class="mt-1 block w-full transition duration-150 ease-in-out"
+                                            v-model="form.besoinSubvention"
+                                            rows="5"
+                                            autocomplete="besoinSubvention"
+                                        />
+                                        <InputError class="mt-2" :message="form.errors.besoinSubvention" />
+                                    </div>
+                                    <div>
+                                        <InputLabel for="besoinBooking" value="le booking ?" class="text-sm font-medium" />
+                                        <TextArea
+                                            id="besoinBooking"
+                                            type="text"
+                                            class="mt-1 block w-full transition duration-150 ease-in-out"
+                                            v-model="form.besoinBooking"
+                                            rows="5"
+                                            autocomplete="besoinBooking"
+                                        />
+                                        <InputError class="mt-2" :message="form.errors.besoinBooking" />
+                                    </div>
+                                    <div>
+                                        <InputLabel for="besoinPromo" value="la promo ?" class="text-sm font-medium" />
+                                        <TextArea
+                                            id="besoinPromo"
+                                            type="text"
+                                            class="mt-1 block w-full transition duration-150 ease-in-out"
+                                            v-model="form.besoinPromo"
+                                            rows="5"
+                                            autocomplete="besoinPromo"
+                                        />
+                                        <InputError class="mt-2" :message="form.errors.besoinPromo" />
+                                    </div>
+                                    <div>
+                                        <InputLabel for="besoinDigitalMarketing" value="faire/recourir à du digital marketing ?" class="text-sm font-medium" />
+                                        <TextArea
+                                            id="besoinDigitalMarketing"
+                                            type="text"
+                                            class="mt-1 block w-full transition duration-150 ease-in-out"
+                                            v-model="form.besoinDigitalMarketing"
+                                            rows="5"
+                                            autocomplete="besoinDigitalMarketing"
+                                        />
+                                        <InputError class="mt-2" :message="form.errors.besoinDigitalMarketing" />
+                                    </div>
+                                    <div>
+                                        <InputLabel for="besoinContacts" value="mix, mastering, graphisme, vidéos, photos, merch, etc. ?" class="text-sm font-medium" />
+                                        <TextArea
+                                            id="besoinContacts"
+                                            type="text"
+                                            class="mt-1 block w-full transition duration-150 ease-in-out"
+                                            v-model="form.besoinContacts"
+                                            rows="5"
+                                            autocomplete="besoinContacts"
+                                        />
+                                        <InputError class="mt-2" :message="form.errors.besoinContacts" />
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -659,6 +742,18 @@ const submit = () => {
                                     />
                                     <InputError class="mt-2" :message="form.errors.artistIBAN" />
                                 </div>
+                                <div>
+                                    <InputLabel for="besoinFinancement" value="besoinFinancement" class="text-sm font-medium" />
+                                    <TextArea
+                                        id="besoinFinancement"
+                                        type="text"
+                                        class="mt-1 block w-full transition duration-150 ease-in-out"
+                                        v-model="form.besoinFinancement"
+                                        rows="5"
+                                        autocomplete="besoinFinancement"
+                                    />
+                                    <InputError class="mt-2" :message="form.errors.besoinFinancement" />
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -670,6 +765,32 @@ const submit = () => {
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M10.34 15.84c-.688-.06-1.386-.09-2.09-.09H7.5a4.5 4.5 0 1 1 0-9h.75c.704 0 1.402-.03 2.09-.09m0 9.18c.253.962.584 1.892.985 2.783.247.55.06 1.21-.463 1.511l-.657.38c-.551.318-1.26.117-1.527-.461a20.845 20.845 0 0 1-1.44-4.282m3.102.069a18.03 18.03 0 0 1-.59-4.59c0-1.586.205-3.124.59-4.59m0 9.18a23.848 23.848 0 0 1 8.835 2.535M10.34 6.66a23.847 23.847 0 0 0 8.835-2.535m0 0A23.74 23.74 0 0 0 18.795 3m.38 1.125a23.91 23.91 0 0 1 1.014 5.395m-1.014 8.855c-.118.38-.245.754-.38 1.125m.38-1.125a23.91 23.91 0 0 0 1.014-5.395m0-3.46c.495.413.811 1.035.811 1.73 0 .695-.316 1.317-.811 1.73m0-3.46a24.347 24.347 0 0 1 0 3.46" />
                                 </svg>
                                 Autre chose ?</h3>
+<!--                                 <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
+                                    <div>
+                                        <InputLabel for="remarques" value="Remarques" class="text-sm font-medium" />
+                                        <TextArea
+                                            id="remarques"
+                                            type="text"
+                                            class="mt-1 block w-full transition duration-150 ease-in-out"
+                                            v-model="form.remarques"
+                                            rows="5"
+                                            autocomplete="remarques"
+                                        />
+                                        <InputError class="mt-2" :message="form.errors.remarques" />
+                                    </div>
+                                    <div>
+                                        <InputLabel for="envies" value="Envies particulières" class="text-sm font-medium" />
+                                        <TextArea
+                                            id="envies"
+                                            type="text"
+                                            class="mt-1 block w-full transition duration-150 ease-in-out"
+                                            v-model="form.envies"
+                                            rows="5"
+                                            autocomplete="envies"
+                                        />
+                                        <InputError class="mt-2" :message="form.errors.envies" />
+                                    </div>
+                                </div> -->
                             </div>
                             <div class="flex justify-end pt-6">
                                 <PrimaryButton
