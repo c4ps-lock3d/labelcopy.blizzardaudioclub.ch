@@ -80,8 +80,8 @@ class ReleaseController extends Controller
             'style' => 'required|string',
             'price' => 'required|integer',
             'description' => 'required|string',
-/*             'remarques' => 'nullable|string',
-            'envies' => 'nullable|string', */
+            'remarques' => 'nullable|string',
+            'envies' => 'nullable|string',
             'besoinFinancement' => 'nullable|string',
             'produitsDerives' => 'nullable|string',
             'besoinSubvention' => 'nullable|string',
@@ -123,8 +123,8 @@ class ReleaseController extends Controller
             'artistWebsite' => $validated['artistWebsite'],
             'credits' => $validated['credits'],
             'remerciements' => $validated['remerciements'],
-/*             'remarques' => $validated['remarques'],
-            'envies' => $validated['envies'], */
+            'remarques' => $validated['remarques'],
+            'envies' => $validated['envies'],
             'besoinFinancement' => $validated['besoinFinancement'],
             'produitsDerives' => $validated['produitsDerives'],
             'besoinSubvention' => $validated['besoinSubvention'],
