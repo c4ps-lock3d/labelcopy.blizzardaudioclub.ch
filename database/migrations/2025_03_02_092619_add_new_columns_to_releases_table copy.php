@@ -24,6 +24,8 @@ return new class extends Migration
             $table->string('besoinContacts')->nullable();
             $table->string('cleRepartition')->nullable();
             $table->string('CodeBarre')->nullable();
+            $table->string('envies')->nullable();
+            $table->string('remarques')->nullable();
         });
     }
 
@@ -44,6 +46,8 @@ return new class extends Migration
             $table->dropColumn('besoinDigitalMarketing');
             $table->dropColumn('besoinContacts');
             $table->dropColumn('CodeBarre');
+            $table->dropColumn('envies');
+            $table->dropColumn('remarques');
         });
     }
 };
