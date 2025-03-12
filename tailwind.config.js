@@ -15,6 +15,14 @@ export default {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
+            colors: {
+                globalBackgroundColor: '#1d2124',
+                globalCardColor: '#343a40',
+                globalButtonColor: '#FFD940',
+                globalButtonHoverColor: '#f3c200',
+                tBody: '#495057',
+                tHead: '#6c757d',
+            },
         },
     },
 

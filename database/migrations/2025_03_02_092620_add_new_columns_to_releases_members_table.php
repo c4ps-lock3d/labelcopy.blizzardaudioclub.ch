@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('release_members', function (Blueprint $table) {
-            $table->string('IRSC')->nullable();
+            $table->string('IPI')->nullable();
         });
     }
 
@@ -22,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('release_members', function (Blueprint $table) {
-            $table->dropColumn('IRSC');
+            $table->dropColumn('IPI');
         });
     }
 };

@@ -49,6 +49,8 @@ const form = useForm({
     remarques: props.release.remarques,
     envies: props.release.envies,
     besoinFinancement: props.release.besoinFinancement,
+    sourceFinancement: props.release.sourceFinancement,
+    budget: props.release.budget,
     produitsDerives: props.release.produitsDerives,
     besoinSubvention: props.release.besoinSubvention,
     besoinBooking: props.release.besoinBooking,
@@ -87,7 +89,7 @@ const form = useForm({
         firstname: member.firstname,
         lastname: member.lastname,
         birth_date: member.birth_date,
-        IRSC: member.IRSC,
+        IPI: member.IPI,
         is_reference: Boolean(member.is_reference),
         street: member.street,
         city: member.city,
@@ -99,7 +101,7 @@ const form = useForm({
             firstname: '',
             lastname: '',
             birth_date: '',
-            irsc: '',
+            IPI: '',
             is_reference: false,
             street: '',
             city: '',
@@ -192,10 +194,10 @@ const submit = () => {
             </h2>
         </template>
 
-        <div class="py-12">
+        <div class="py-6">
         <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
         <form @submit.prevent="submit" class="space-y-6">
-        <div class="overflow-hidden bg-white shadow-lg rounded-lg dark:bg-gray-800">
+        <div class="overflow-hidden bg-white shadow-lg rounded-lg dark:bg-globalCardColor">
             <div class="p-8">
                 
                     <!-- Section Informations Principales -->
@@ -246,12 +248,12 @@ const submit = () => {
                                 <table class="min-w-full rounded-md overflow-hidden border-gray-700 !mt-1">
                                     <thead>
                                         <tr>
-                                            <th scope="col" class="w-full px-3 py-2.5 text-left text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Lien</th>
-                                            <th scope="col" class="w-16 px-3 py-2.5 text-sm font-semibold bg-gray-700 text-gray-100">
+                                            <th scope="col" class="w-full px-3 py-2.5 text-left text-sm font-semibold bg-tHead text-gray-100 whitespace-nowrap">Lien</th>
+                                            <th scope="col" class="w-16 px-3 py-2.5 text-sm font-semibold bg-tHead text-gray-100">
                                                 <button 
                                                         type="button" 
                                                         @click="addNewSocial"
-                                                        class="w-9 h-9 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700 transition-colors flex items-center justify-center"
+                                                        class="w-9 h-9 bg-globalButtonColor text-black text-sm rounded-md hover:bg-globalButtonHoverColor transition-colors flex items-center justify-center"
                                                     >
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
                                                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
@@ -261,7 +263,7 @@ const submit = () => {
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-gray-700">
-                                        <tr v-for="(social, index) in form.socials" :key="social.id || 'new'" class="bg-gray-700/50">
+                                        <tr v-for="(social, index) in form.socials" :key="social.id || 'new'" class="bg-tBody">
                                             <td class="px-1.5 py-2">
                                                 <TextInput
                                                     type="text"
@@ -276,7 +278,7 @@ const submit = () => {
                                                     v-if="form.socials.length > 0 && index === form.socials.length - 1"
                                                     type="button" 
                                                     @click="deleteSocial(index)"
-                                                    class="w-9 h-9 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors flex items-center justify-center"
+                                                    class="w-9 h-9 bg-globalButtonColor text-black rounded-md hover:bg-globalButtonHoverColor transition-colors flex items-center justify-center"
                                                 >
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
                                                         <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
@@ -306,12 +308,12 @@ const submit = () => {
                                     <th scope="col" class="required w-16 px-3 py-2.5 text-left text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Prénom</th>
                                     <th scope="col" class="required px-3 py-2.5 text-left text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Nom</th>
                                     <th scope="col" class="required px-3 py-2.5 text-left text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Date de naissance</th>
-                                    <th scope="col" class="w-full px-3 py-2.5 text-left text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">IRSC</th>
+                                    <th scope="col" class="w-full px-3 py-2.5 text-left text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">N° IPI (SUISA)</th>
                                     <th scope="col" class="w-16 px-3 py-2.5 text-sm font-semibold bg-gray-700 text-gray-100">
                                         <button 
                                                 type="button" 
                                                 @click="addNewMember"
-                                                class="w-9 h-9 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700 transition-colors flex items-center justify-center"
+                                                class="w-9 h-9 bg-globalButtonColor text-black text-sm rounded-md hover:bg-globalButtonHoverColor transition-colors flex items-center justify-center"
                                             >
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
@@ -349,9 +351,9 @@ const submit = () => {
                                     <td class="px-1.5 py-2">
                                         <TextInput
                                             type="text"
-                                            v-model="member.IRSC"
+                                            v-model="member.IPI"
                                             class="w-full transition duration-150 ease-in-out"
-                                            placeholder="IRSC"
+                                            placeholder="IPI"
                                         />
                                     </td>
                                     <td class="whitespace-nowrap px-3 py-2">
@@ -359,7 +361,7 @@ const submit = () => {
                                             v-if="form.members.length > 1 && index === form.members.length - 1"
                                             type="button" 
                                             @click="deleteMember(index)"
-                                            class="w-9 h-9 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors flex items-center justify-center"
+                                            class="w-9 h-9 bg-globalButtonColor text-black rounded-md hover:bg-globalButtonHoverColor transition-colors flex items-center justify-center"
                                         >
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
@@ -556,7 +558,7 @@ const submit = () => {
                                                 <button 
                                                         type="button" 
                                                         @click="addNewTrack"
-                                                        class="w-9 h-9 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700 transition-colors flex items-center justify-center"
+                                                        class="w-9 h-9 bg-globalButtonColor text-black text-sm rounded-md hover:bg-globalButtonHoverColor transition-colors flex items-center justify-center"
                                                     >
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
                                                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
@@ -597,7 +599,7 @@ const submit = () => {
                                                         v-if="form.tracks.length > 1 && index === form.tracks.length - 1"
                                                         type="button" 
                                                         @click="deleteTrack(index)"
-                                                        class="w-9 h-9 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors flex items-center justify-center"
+                                                        class="w-9 h-9 bg-globalButtonColor text-black rounded-md hover:bg-globalButtonHoverColor transition-colors flex items-center justify-center"
                                                     >
                                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
                                                             <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
@@ -731,19 +733,40 @@ const submit = () => {
                                 </svg>
                                 Informations financières</h3>
                                 <div>
-                                    <InputLabel for="artistIBAN" value="IBAN de l'artiste" class="required text-sm font-medium" />
+                                    <InputLabel for="artistIBAN" value="IBAN de l'artiste" class="text-sm font-medium" />
                                     <TextInput
                                         id="artistIBAN"
                                         type="text"
                                         class="mt-1 block w-full transition duration-150 ease-in-out"
                                         v-model="form.artistIBAN"
-                                        required
                                         autocomplete="artistIBAN"
                                     />
                                     <InputError class="mt-2" :message="form.errors.artistIBAN" />
                                 </div>
                                 <div>
-                                    <InputLabel for="besoinFinancement" value="besoinFinancement" class="text-sm font-medium" />
+                                    <InputLabel for="budget" value="Budget pour le projet" class="text-sm font-medium" />
+                                    <TextInput
+                                        id="budget"
+                                        type="text"
+                                        class="mt-1 block w-full transition duration-150 ease-in-out"
+                                        v-model="form.budget"
+                                        autocomplete="budget"
+                                    />
+                                    <InputError class="mt-2" :message="form.errors.budget" />
+                                </div>
+                                <div>
+                                    <InputLabel for="sourceFinancement" value="Source pour le financement du projet" class="text-sm font-medium" />
+                                    <TextInput
+                                        id="sourceFinancement"
+                                        type="text"
+                                        class="mt-1 block w-full transition duration-150 ease-in-out"
+                                        v-model="form.sourceFinancement"
+                                        autocomplete="sourceFinancement"
+                                    />
+                                    <InputError class="mt-2" :message="form.errors.sourceFinancement" />
+                                </div>
+                                <div>
+                                    <InputLabel for="besoinFinancement" value="Besoin de soutien financier de la part du label ? Si oui,à quelle hauteur ?" class="text-sm font-medium" />
                                     <TextArea
                                         id="besoinFinancement"
                                         type="text"
