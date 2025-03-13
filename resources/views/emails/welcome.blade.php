@@ -9,4 +9,5 @@ Button Text
 
 Merci,<br>
 L'équipe Blizzard Audio Club
+{{ $catalog }}
 </x-mail::message>

@@ -56,16 +56,16 @@ class ReleaseController extends Controller
         ]);
 
         $release->create([
-            'catalog' => $request->catalog,
+            'catalog' => $validated['catalog'],
         ]);
 
         $user->create([
-            'name' => $request->catalog,
-            'email' => $request->email,
-            'password' => Hash::make($request->catalog),
+            'name' => $validated['catalog'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['catalog']),
         ]);
 
-        Mail::to($request->email)->send(new welcomeMail());
+        Mail::to($validated['email'])->send(new welcomeMail($validated['catalog']));
 
         return redirect(route('dashboard', absolute: false));
     }
