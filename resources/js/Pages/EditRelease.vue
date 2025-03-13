@@ -194,10 +194,10 @@ const submit = () => {
             </h2>
         </template>
 
-        <div class="py-6">
+        <div class="py-12">
         <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-        <form @submit.prevent="submit" class="space-y-6">
-        <div class="overflow-hidden bg-white shadow-lg rounded-lg dark:bg-globalCardColor">
+        <form @submit.prevent="submit" class="space-y-10">
+        <div class="overflow-hidden bg-white shadow-lg rounded-lg dark:bg-gray-800">
             <div class="p-8">
                 
                     <!-- Section Informations Principales -->
@@ -248,8 +248,8 @@ const submit = () => {
                                 <table class="min-w-full rounded-md overflow-hidden border-gray-700 !mt-1">
                                     <thead>
                                         <tr>
-                                            <th scope="col" class="w-full px-3 py-2.5 text-left text-sm font-semibold bg-tHead text-gray-100 whitespace-nowrap">Lien</th>
-                                            <th scope="col" class="w-16 px-3 py-2.5 text-sm font-semibold bg-tHead text-gray-100">
+                                            <th scope="col" class="w-full px-3 py-2.5 text-left text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Lien</th>
+                                            <th scope="col" class="w-16 px-3 py-2.5 text-sm font-semibold bg-gray-700 text-gray-100">
                                                 <button 
                                                         type="button" 
                                                         @click="addNewSocial"
@@ -263,7 +263,7 @@ const submit = () => {
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-gray-700">
-                                        <tr v-for="(social, index) in form.socials" :key="social.id || 'new'" class="bg-tBody">
+                                        <tr v-for="(social, index) in form.socials" :key="social.id || 'new'" class="bg-gray-700/50">
                                             <td class="px-1.5 py-2">
                                                 <TextInput
                                                     type="text"

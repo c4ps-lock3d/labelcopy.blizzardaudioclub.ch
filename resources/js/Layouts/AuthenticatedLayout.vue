@@ -12,9 +12,9 @@ const showingNavigationDropdown = ref(false);
 
 <template>
     <div>
-        <div class="min-h-screen bg-gray-100 dark:bg-globalBackgroundColor">
+        <div class="min-h-screen bg-gray-100 dark:bg-gray-950">
             <nav
-                class="border-b border-gray-100 bg-white dark:border-gray-700 dark:bg-globalCardColor"
+                class="border-b border-gray-100 bg-white dark:border-gray-700 dark:bg-gray-800"
             >
                 <!-- Primary Navigation Menu -->
                 <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -181,7 +181,7 @@ const showingNavigationDropdown = ref(false);
 
             <!-- Page Heading -->
             <header
-                class="bg-white dark:bg-globalBackgroundColor"
+                class="bg-white dark:bg-gray-800"
                 v-if="$slots.header"
             >
                 <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">

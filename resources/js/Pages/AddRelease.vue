@@ -36,7 +36,7 @@ const submit = () => {
                     <div class="p-6 text-gray-900 dark:text-gray-100">
                         <form @submit.prevent="submit">
                             <div>
-                                <InputLabel for="catalog" value="N° de catalogue" />
+                                <InputLabel for="catalog" value="N° de catalogue" class="required" />
 
                                 <TextInput
                                     id="catalog"
@@ -51,7 +51,7 @@ const submit = () => {
                                 <InputError class="mt-2" :message="form.errors.catalog" />
                             </div>
                             <div class="mt-4">
-                                <InputLabel for="email" value="E-mail d'invitation" />
+                                <InputLabel for="email" value="E-mail d'invitation" class="required"/>
 
                                 <TextInput
                                     id="email"

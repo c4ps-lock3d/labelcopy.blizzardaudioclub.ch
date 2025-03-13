@@ -18,6 +18,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\welcomeMail;
 
 class ReleaseController extends Controller
 {
@@ -48,7 +50,7 @@ class ReleaseController extends Controller
 
     public function store(Request $request, Release $release, User $user): RedirectResponse
     {
-        $request->validate([
+        $validated = $request->validate([
             'catalog' => 'required|string|max:6',
             'email' => 'required|string|email|max:255|unique:users',
         ]);
@@ -62,6 +64,8 @@ class ReleaseController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->catalog),
         ]);
+
+        Mail::to($request->email)->send(new welcomeMail());
 
         return redirect(route('dashboard', absolute: false));
     }

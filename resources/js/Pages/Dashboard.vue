@@ -29,9 +29,9 @@ const { props } = usePage();
                     >
                         <div class="p-6 text-gray-900 dark:text-gray-100">
                             <!-- Liste des releases -->
-                            <div class="mt-6">
+                            <div class="">
                                 <div class="flex items-center justify-between">
-                                    <h3 class="text-lg font-medium">Liste des labelcopy</h3>
+                                    <h3 class="text-lg font-medium">Sorties</h3>
                                     <div v-if="props.auth.user.name === 'lynxadmin'">
                                         <Link :href="route('dashboard.addrelease')" class="ms-4">
                                             <PrimaryButton>
