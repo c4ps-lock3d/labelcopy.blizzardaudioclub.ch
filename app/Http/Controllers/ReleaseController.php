@@ -44,15 +44,14 @@ class ReleaseController extends Controller
             'releaseTracks' => ReleaseTrack::all(),
             'releaseMembers' => ReleaseMember::all(),
             'releaseSocials' => ReleaseSocial::all(),
-
         ]);
     }
 
     public function store(Request $request, Release $release, User $user): RedirectResponse
     {
         $validated = $request->validate([
-            'catalog' => 'required|string|max:6',
-            'email' => 'required|string|email|max:255|unique:users',
+            'catalog' => 'required|string|max:6|unique:releases',
+            'email' => 'required|string|email|max:255',
         ]);
 
         $release->create([
@@ -79,6 +78,8 @@ class ReleaseController extends Controller
             'artistIBAN' => 'nullable|string',
             'artistBiography' => 'required|string',
             'artistWebsite' => 'nullable|string',
+            'CodeBarre' => 'nullable|string',
+            'cleRepartition' => 'nullable|string',
             'credits' => 'required|string',
             'remerciements' => 'nullable|string',
             'style' => 'required|string',
@@ -104,6 +105,7 @@ class ReleaseController extends Controller
             'tracks.*.number' => 'required|integer',
             'tracks.*.isSingle' => 'required|boolean',
             'tracks.*.hasClip' => 'required|boolean',
+            'tracks.*.IRSC' => 'nullable|string',
             'members' => 'array',
             'members.*.id' => 'nullable',  // Permettre id null pour nouveaux membres
             'members.*.firstname' => 'required|string',
@@ -127,6 +129,8 @@ class ReleaseController extends Controller
             'artistIBAN' => $validated['artistIBAN'],
             'artistBiography' => $validated['artistBiography'],
             'artistWebsite' => $validated['artistWebsite'],
+            'CodeBarre' => $validated['CodeBarre'],
+            'cleRepartition' => $validated['cleRepartition'],
             'credits' => $validated['credits'],
             'remerciements' => $validated['remerciements'],
             'remarques' => $validated['remarques'],
@@ -168,6 +172,7 @@ class ReleaseController extends Controller
                         'number' => $trackData['number'],
                         'isSingle' => $trackData['isSingle'],
                         'hasClip' => $trackData['hasClip'],
+                        'IRSC' => $trackData['IRSC'],
                     ]);
                 $updatedTrackIds[] = $trackData['id'];
             } else {
@@ -176,6 +181,7 @@ class ReleaseController extends Controller
                     'number' => $trackData['number'],
                     'isSingle' => $trackData['isSingle'],
                     'hasClip' => $trackData['hasClip'],
+                    'IRSC' => $trackData['IRSC'],
                 ]);
                 $updatedTrackIds[] = $newTrack->id;
             }

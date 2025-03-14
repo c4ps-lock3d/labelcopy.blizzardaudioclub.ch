@@ -1,13 +1,15 @@
 <x-mail::message>
-# Introduction
+# Bienvenue dans le Blizzard !
 
-The body of your message.
+Explications sur le labelcopy
+
+Informations de connexion :
+- Nom d'utilisateur : {{ $catalog }}
 
 <x-mail::button :url="''">
 Button Text
 </x-mail::button>
 
-Merci,<br>
+A tout bientôt,<br>
 L'équipe Blizzard Audio Club
-{{ $catalog }}
 </x-mail::message>

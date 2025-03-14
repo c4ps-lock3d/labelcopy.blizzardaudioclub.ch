@@ -29,7 +29,7 @@ const { props } = usePage();
                     >
                         <div class="p-6 text-gray-900 dark:text-gray-100">
                             <!-- Liste des releases -->
-                            <div class="">
+                            <div>
                                 <div class="flex items-center justify-between">
                                     <h3 class="text-lg font-medium">Sorties</h3>
                                     <div v-if="props.auth.user.name === 'lynxadmin'">
@@ -40,16 +40,16 @@ const { props } = usePage();
                                         </Link>
                                     </div>
                                 </div>
-                                <div class="mt-4 space-y-4">
+                                <div class="space-y-4">
                                     <div v-for="release in releases" :key="release.id">
                                         <div v-if="props.auth.user.name === release.catalog || props.auth.user.name === 'lynxadmin'"
-                                            class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                                            class="mt-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                                             <Link :href="`/dashboard/${release.id}/edit-release`">{{ release.catalog }}
+                                                <span v-if="release.artistName">
+                                                    - {{ release.artistName }}
+                                                </span>
                                                 <span v-if="release.name">
                                                     - {{ release.name }}
-                                                </span>
-                                                <span v-if="release.release_type">
-                                                    - {{ release.release_type.name }}
                                                 </span>
                                             </Link>
                                         </div>

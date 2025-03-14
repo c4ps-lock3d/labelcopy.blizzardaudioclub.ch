@@ -44,6 +44,8 @@ const form = useForm({
     style: props.release.style,
     price: props.release.price,
     description: props.release.description,
+    CodeBarre: props.release.CodeBarre,
+    cleRepartition: props.release.cleRepartition,
     credits: props.release.credits,
     remerciements: props.release.remerciements,
     remarques: props.release.remarques,
@@ -73,14 +75,16 @@ const form = useForm({
             title: track.title,
             number: track.number,
             isSingle: Boolean(track.isSingle),
-            hasClip: Boolean(track.hasClip)
+            hasClip: Boolean(track.hasClip),
+            IRSC: track.IRSC || '',
         }))
         : [{
             id: null,
             title: '',
             number: 1,
             isSingle: false,
-            hasClip: false
+            hasClip: false,
+            IRSC: '',
         }],
 
     members: props.release.release_members?.length > 0 
@@ -89,7 +93,7 @@ const form = useForm({
         firstname: member.firstname,
         lastname: member.lastname,
         birth_date: member.birth_date,
-        IPI: member.IPI,
+        IPI: member.IPI || '',
         is_reference: Boolean(member.is_reference),
         street: member.street,
         city: member.city,
@@ -190,7 +194,7 @@ const submit = () => {
             <h2
                 class="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200"
             >
-                Dashboard > Editer une release
+                Dashboard > Labelcopy
             </h2>
         </template>
 
@@ -353,7 +357,6 @@ const submit = () => {
                                             type="text"
                                             v-model="member.IPI"
                                             class="w-full transition duration-150 ease-in-out"
-                                            placeholder="IPI"
                                         />
                                     </td>
                                     <td class="whitespace-nowrap px-3 py-2">
@@ -453,10 +456,11 @@ const submit = () => {
                                         <TextInput
                                             id="catalog"
                                             type="text"
-                                            class="mt-1 block w-full transition duration-150 ease-in-out"
+                                            class="!bg-gray-800 mt-1 block w-full transition duration-150 ease-in-out"
                                             v-model="form.catalog"
                                             required
                                             autocomplete="catalog"
+                                            disabled
                                         />
                                         <InputError class="" :message="form.errors.catalog" />
                                     </div>
@@ -554,6 +558,7 @@ const submit = () => {
                                             <th scope="col" class="required w-full px-3 py-2.5 text-left text-sm font-semibold bg-gray-700 text-gray-100">Titre</th>
                                             <th scope="col" class="w-16 px-3 py-2.5 text-center text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Single ?</th>
                                             <th scope="col" class="w-16 px-3 py-2.5 text-center text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Vidéoclip ?</th>
+                                            <th scope="col" class="w-16 px-3 py-2.5 text-left text-sm font-semibold bg-gray-700 text-gray-100">IRSC</th>
                                             <th scope="col" class="w-16 px-3 py-2.5 text-center text-sm font-semibold bg-gray-700 text-gray-100">
                                                 <button 
                                                         type="button" 
@@ -592,51 +597,83 @@ const submit = () => {
                                                         type="checkbox"
                                                         v-model="track.hasClip"
                                                         class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                                                    />
-                                                </td>
-                                                <td class="whitespace-nowrap px-3 py-2">
-                                                    <button
-                                                        v-if="form.tracks.length > 1 && index === form.tracks.length - 1"
-                                                        type="button" 
-                                                        @click="deleteTrack(index)"
-                                                        class="w-9 h-9 bg-globalButtonColor text-black rounded-md hover:bg-globalButtonHoverColor transition-colors flex items-center justify-center"
-                                                    >
-                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-                                                        </svg>
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                    <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
-                                        <div>
-                                            <InputLabel for="credits" value="Crédits" class="required text-sm font-medium" />
-                                            <TextArea
-                                                id="credits"
-                                                type="text"
-                                                class="mt-1 block w-full transition duration-150 ease-in-out"
-                                                v-model="form.credits"
-                                                rows="5"
-                                                required
-                                                autocomplete="credits"
-                                            />
-                                            <InputError class="mt-2" :message="form.errors.credits" />
-                                        </div>
-                                        <div>
-                                            <InputLabel for="remerciements" value="Remerciements" class="text-sm font-medium" />
-                                            <TextArea
-                                                id="remerciements"
-                                                type="text"
-                                                class="mt-1 block w-full transition duration-150 ease-in-out"
-                                                v-model="form.remerciements"
-                                                rows="5"
-                                                autocomplete="remerciements"
-                                            />
-                                            <InputError class="mt-2" :message="form.errors.remerciements" />
-                                        </div>
+                                                />
+                                            </td>
+                                            <td class="px-3 py-2">
+                                                <TextInput
+                                                    type="text"
+                                                    v-model="track.IRSC"
+                                                    class="transition duration-150 ease-in-out"
+                                                />
+                                            </td>
+                                            <td class="whitespace-nowrap px-3 py-2">
+                                                <button
+                                                    v-if="form.tracks.length > 1 && index === form.tracks.length - 1"
+                                                    type="button" 
+                                                    @click="deleteTrack(index)"
+                                                    class="w-9 h-9 bg-globalButtonColor text-black rounded-md hover:bg-globalButtonHoverColor transition-colors flex items-center justify-center"
+                                                >
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                                                    </svg>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
+                                    <div>
+                                        <InputLabel for="cleRepartition" value="Clé de répartition précise des morceaux" class="text-sm font-medium" />
+                                        <TextArea
+                                            id="cleRepartition"
+                                            type="text"
+                                            class="mt-1 block w-full transition duration-150 ease-in-out"
+                                            v-model="form.cleRepartition"
+                                            rows="5"
+                                            autocomplete="cleRepartition"
+                                        />
+                                        <InputError class="" :message="form.errors.cleRepartition" />
+                                    </div>
+                                    <div>
+                                        <InputLabel for="CodeBarre" value="Code-Barre(s)" class="text-sm font-medium" />
+                                        <TextInput
+                                            id="CodeBarre"
+                                            type="text"
+                                            class="mt-1 block w-full transition duration-150 ease-in-out"
+                                            v-model="form.CodeBarre"
+                                            autocomplete="CodeBarre"
+                                        />
+                                        <InputError class="" :message="form.errors.CodeBarre" />
                                     </div>
                                 </div>
+                                <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
+                                    <div>
+                                        <InputLabel for="credits" value="Crédits" class="required text-sm font-medium" />
+                                        <TextArea
+                                            id="credits"
+                                            type="text"
+                                            class="mt-1 block w-full transition duration-150 ease-in-out"
+                                            v-model="form.credits"
+                                            rows="5"
+                                            required
+                                            autocomplete="credits"
+                                        />
+                                        <InputError class="mt-2" :message="form.errors.credits" />
+                                    </div>
+                                    <div>
+                                        <InputLabel for="remerciements" value="Remerciements" class="text-sm font-medium" />
+                                        <TextArea
+                                            id="remerciements"
+                                            type="text"
+                                            class="mt-1 block w-full transition duration-150 ease-in-out"
+                                            v-model="form.remerciements"
+                                            rows="5"
+                                            autocomplete="remerciements"
+                                        />
+                                        <InputError class="mt-2" :message="form.errors.remerciements" />
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="overflow-hidden bg-white shadow-lg rounded-lg dark:bg-gray-800">
