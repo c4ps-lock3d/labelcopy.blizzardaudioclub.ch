@@ -20,6 +20,7 @@ const props = defineProps({
 const form = useForm({
     token: props.token,
     email: props.email,
+    name: props.name,
     password: '',
     password_confirmation: '',
 });
@@ -36,7 +37,7 @@ const submit = () => {
         <Head title="Reset Password" />
 
         <form @submit.prevent="submit">
-            <div>
+<!--             <div>
                 <InputLabel for="email" value="Email" />
 
                 <TextInput
@@ -50,6 +51,21 @@ const submit = () => {
                 />
 
                 <InputError class="mt-2" :message="form.errors.email" />
+            </div> -->
+            <div>
+                <InputLabel for="name" value="Nom d'utilisateur" />
+
+                <TextInput
+                    id="name"
+                    type="text"
+                    class="mt-1 block w-full"
+                    v-model="form.name"
+                    required
+                    autofocus
+                    autocomplete="username"
+                />
+
+                <InputError class="mt-2" :message="form.errors.name" />
             </div>
 
             <div class="mt-4">

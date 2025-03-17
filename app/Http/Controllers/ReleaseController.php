@@ -20,6 +20,8 @@ use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\welcomeMail;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Validation\ValidationException;
 
 class ReleaseController extends Controller
 {
@@ -64,7 +66,18 @@ class ReleaseController extends Controller
             'password' => Hash::make($validated['catalog']),
         ]);
 
-        Mail::to($validated['email'])->send(new welcomeMail($validated['catalog']));
+        //Mail::to($validated['email'])->send(new welcomeMail($validated['catalog']));
+        $status = Password::sendResetLink(
+            $request->only('email')
+        );
+
+        if ($status == Password::RESET_LINK_SENT) {
+            return back()->with('status', __($status));
+        }
+
+        throw ValidationException::withMessages([
+            'email' => [trans($status)],
+        ]);
 
         return redirect(route('dashboard', absolute: false));
     }
