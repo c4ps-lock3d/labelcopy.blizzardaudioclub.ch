@@ -60,22 +60,14 @@ class ReleaseController extends Controller
             'catalog' => $validated['catalog'],
         ]);
 
-        $user->create([
+        $user = User::create([
             'name' => $validated['catalog'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['catalog']),
         ]);
 
-        //Mail::to($validated['email'])->send(new welcomeMail($validated['catalog']));
-        $status = Password::sendResetLink(
-            $request->only('email')
-        );
-
-        if ($status !== Password::RESET_LINK_SENT) {
-            throw ValidationException::withMessages([
-                'email' => [trans($status)],
-            ]);
-        }
+        $expiresAt = now()->addDay();
+        $user->sendWelcomeNotification($expiresAt);
 
         return redirect(route('dashboard', absolute: false));
     }
