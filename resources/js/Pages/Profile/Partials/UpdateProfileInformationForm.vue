@@ -34,7 +34,7 @@ const form = useForm({
             class="mt-6 space-y-6"
         >
             <div>
-                <InputLabel for="email" value="Addresse e-mail" />
+                <InputLabel for="email" value="Adresse e-mail" />
 
                 <TextInput
                     id="email"
