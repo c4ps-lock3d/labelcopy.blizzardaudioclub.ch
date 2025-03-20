@@ -30,4 +30,7 @@ class Release extends Model
     public function release_members (){
         return $this->belongsToMany(ReleaseMember::class, 'release_release_member');
     }
+    public function users (){
+        return $this->belongsToMany(User::class, 'release_user');
+    }
 }

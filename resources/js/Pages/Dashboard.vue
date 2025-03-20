@@ -42,8 +42,7 @@ const { props } = usePage();
                                 </div>
                                 <div class="space-y-4">
                                     <div v-for="release in releases" :key="release.id">
-                                        <div v-if="props.auth.user.name === release.catalog || props.auth.user.name === 'lynxadmin'"
-                                            class="mt-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                                        <div class="mt-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                                             <Link :href="`/dashboard/${release.id}/edit-release`">{{ release.catalog }}
                                                 <span v-if="release.artistName">
                                                     - {{ release.artistName }}

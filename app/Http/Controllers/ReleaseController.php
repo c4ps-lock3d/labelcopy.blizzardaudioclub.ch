@@ -27,8 +27,19 @@ class ReleaseController extends Controller
 {
     public function index(): Response
     {
+        $user = auth()->user();
+    
+        // Vérifier si l'utilisateur est "lynxadmin"
+        if ($user->name === "lynxadmin") {
+            // Récupérer toutes les releases
+            $releases = Release::with('release_type')->get();
+        } else {
+            // Récupérer uniquement les releases associées à l'utilisateur via la table pivot
+            $releases = $user->releases()->with('release_type')->get();
+        }
+    
         return Inertia::render('Dashboard', [
-            'releases' => Release::with('release_type')->get()
+            'releases' => $releases,
         ]);
     }
 
@@ -52,24 +63,41 @@ class ReleaseController extends Controller
     public function store(Request $request, Release $release, User $user): RedirectResponse
     {
         $validated = $request->validate([
-            'catalog' => 'required|string|max:6|unique:releases',
-            'email' => 'required|string|email|max:255',
+            'catalog' => 'required|string|max:6',
+            'email' => 'required|string|email',
         ]);
 
-        $release->create([
+        // Vérifier si l'email existe déjà
+        $existingUser = User::where('email', $validated['email'])->first();
+
+        if ($existingUser) {
+            // Si l'utilisateur existe, associez-le simplement à la release
+            $release = Release::create([
+                'catalog' => $validated['catalog'],
+            ]);
+    
+            $release->users()->attach($existingUser->id);
+    
+            return redirect(route('dashboard'))->with('success', 'Release créée et utilisateur existant associé.');
+        }
+
+        $release = Release::create([
             'catalog' => $validated['catalog'],
         ]);
 
         $user = User::create([
-            'name' => $validated['catalog'],
+            'name' => $validated['email'],
             'email' => $validated['email'],
-            'password' => Hash::make($validated['catalog']),
+            'password' => Hash::make($validated['email']),
         ]);
+
+        // Associer l'utilisateur à la release dans la table pivot
+        $release->users()->attach($user->id);
 
         $expiresAt = now()->addDay();
         $user->sendWelcomeNotification($expiresAt);
 
-        return redirect(route('dashboard', absolute: false));
+        return redirect(route('dashboard'))->with('success', 'Release et utilisateur créés avec succès.');
     }
 
     public function update(Request $request, Release $release): RedirectResponse
