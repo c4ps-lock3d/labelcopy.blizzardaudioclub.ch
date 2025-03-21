@@ -53,12 +53,11 @@ const form = useForm({
     besoinFinancement: props.release.besoinFinancement,
     sourceFinancement: props.release.sourceFinancement,
     budget: props.release.budget,
-    produitsDerives: props.release.produitsDerives,
-    besoinSubvention: props.release.besoinSubvention,
-    besoinBooking: props.release.besoinBooking,
-    besoinPromo: props.release.besoinPromo,
-    besoinDigitalMarketing: props.release.besoinDigitalMarketing,
-    besoinContacts: props.release.besoinContacts,
+    isProduitsDerives: props.release.isProduitsDerives,
+    isBesoinSubvention: props.release.isBesoinSubvention,
+    isBesoinPromo: props.release.isBesoinPromo,
+    isBesoinDigitalMarketing: props.release.isBesoinDigitalMarketing,
+    isBesoinContacts: props.release.isBesoinContacts,
 
     release_type_id: props.release.release_type_id || null,
     release_format_ids: props.release.release_formats?.map(format => format.id) || [],
@@ -315,10 +314,10 @@ const submit = () => {
                                     <th scope="col" class="w-full px-3 py-2.5 text-left text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">N° IPI (SUISA)</th>
                                     <th scope="col" class="w-16 px-3 py-2.5 text-sm font-semibold bg-gray-700 text-gray-100">
                                         <button 
-                                                type="button" 
-                                                @click="addNewMember"
-                                                class="w-9 h-9 bg-globalButtonColor text-black text-sm rounded-md hover:bg-globalButtonHoverColor transition-colors flex items-center justify-center"
-                                            >
+                                            type="button" 
+                                            @click="addNewMember"
+                                            class="w-9 h-9 bg-globalButtonColor text-black text-sm rounded-md hover:bg-globalButtonHoverColor transition-colors flex items-center justify-center"
+                                        >
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                                             </svg>
@@ -558,7 +557,7 @@ const submit = () => {
                                             <th scope="col" class="required w-full px-3 py-2.5 text-left text-sm font-semibold bg-gray-700 text-gray-100">Titre</th>
                                             <th scope="col" class="w-16 px-3 py-2.5 text-center text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Single ?</th>
                                             <th scope="col" class="w-16 px-3 py-2.5 text-center text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Vidéoclip ?</th>
-                                            <th scope="col" class="w-16 px-3 py-2.5 text-left text-sm font-semibold bg-gray-700 text-gray-100">IRSC</th>
+                                            <th scope="col" class="w-16 px-3 py-2.5 text-left text-sm font-semibold bg-gray-700 text-gray-100">ISRC</th>
                                             <th scope="col" class="w-16 px-3 py-2.5 text-center text-sm font-semibold bg-gray-700 text-gray-100">
                                                 <button 
                                                         type="button" 
@@ -684,77 +683,50 @@ const submit = () => {
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M15.59 14.37a6 6 0 0 1-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 0 0 6.16-12.12A14.98 14.98 0 0 0 9.631 8.41m5.96 5.96a14.926 14.926 0 0 1-5.841 2.58m-.119-8.54a6 6 0 0 0-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 0 0-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 0 1-2.448-2.448 14.9 14.9 0 0 1 .06-.312m-2.24 2.39a4.493 4.493 0 0 0-1.757 4.306 4.493 4.493 0 0 0 4.306-1.758M16.5 9a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z" />
                                 </svg>
                                 Aide et soutien pour...</h3>
-                                <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
-                                    <div>
-                                        <InputLabel for="produitsDerives" value="la création de produits dérivés ?" class="text-sm font-medium" />
-                                        <TextArea
-                                            id="produitsDerives"
-                                            type="text"
-                                            class="mt-1 block w-full transition duration-150 ease-in-out"
-                                            v-model="form.produitsDerives"
-                                            rows="5"
-                                            autocomplete="produitsDerives"
+                                <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
+                                    <div class="flex items-center space-x-4">
+                                        <input
+                                            type="checkbox"
+                                            v-model="form.isProduitsDerives"
+                                            class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                                         />
-                                        <InputError class="mt-2" :message="form.errors.produitsDerives" />
+                                        <InputLabel for="isProduitsDerives" value="la création de produits dérivés" class="text-sm font-medium" />
+                                        <InputError class="mt-2" :message="form.errors.isProduitsDerives" />
                                     </div>
-                                    <div>
-                                        <InputLabel for="besoinSubvention" value="les dossiers de demande de subventions ?" class="text-sm font-medium" />
-                                        <TextArea
-                                            id="besoinSubvention"
-                                            type="text"
-                                            class="mt-1 block w-full transition duration-150 ease-in-out"
-                                            v-model="form.besoinSubvention"
-                                            rows="5"
-                                            autocomplete="besoinSubvention"
+                                    <div class="flex items-center space-x-4">
+                                        <input
+                                            type="checkbox"
+                                            v-model="form.isBesoinSubvention"
+                                            class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                                         />
-                                        <InputError class="mt-2" :message="form.errors.besoinSubvention" />
+                                        <InputLabel for="isBesoinSubvention" value="les dossiers de demande de subventions" class="text-sm font-medium" />
+                                        <InputError class="mt-2" :message="form.errors.isBesoinSubvention" />
                                     </div>
-                                    <div>
-                                        <InputLabel for="besoinBooking" value="le booking ?" class="text-sm font-medium" />
-                                        <TextArea
-                                            id="besoinBooking"
-                                            type="text"
-                                            class="mt-1 block w-full transition duration-150 ease-in-out"
-                                            v-model="form.besoinBooking"
-                                            rows="5"
-                                            autocomplete="besoinBooking"
+                                    <div class="flex items-center space-x-4">
+                                        <input
+                                            type="checkbox"
+                                            v-model="form.isBesoinPromo"
+                                            class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                                         />
-                                        <InputError class="mt-2" :message="form.errors.besoinBooking" />
+                                        <InputLabel for="isBesoinPromo" value="la promo" class="text-sm font-medium" />
+                                        <InputError class="mt-2" :message="form.errors.isBesoinPromo" />
                                     </div>
-                                    <div>
-                                        <InputLabel for="besoinPromo" value="la promo ?" class="text-sm font-medium" />
-                                        <TextArea
-                                            id="besoinPromo"
-                                            type="text"
-                                            class="mt-1 block w-full transition duration-150 ease-in-out"
-                                            v-model="form.besoinPromo"
-                                            rows="5"
-                                            autocomplete="besoinPromo"
+                                    <div class="flex items-center space-x-4">
+                                        <input
+                                            type="checkbox"
+                                            v-model="form.isBesoinDigitalMarketing"
+                                            class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                                         />
-                                        <InputError class="mt-2" :message="form.errors.besoinPromo" />
-                                    </div>
-                                    <div>
-                                        <InputLabel for="besoinDigitalMarketing" value="faire/recourir à du digital marketing ?" class="text-sm font-medium" />
-                                        <TextArea
-                                            id="besoinDigitalMarketing"
-                                            type="text"
-                                            class="mt-1 block w-full transition duration-150 ease-in-out"
-                                            v-model="form.besoinDigitalMarketing"
-                                            rows="5"
-                                            autocomplete="besoinDigitalMarketing"
-                                        />
+                                        <InputLabel for="isBesoinDigitalMarketing" value="faire/recourir à du digital marketing" class="text-sm font-medium" />
                                         <InputError class="mt-2" :message="form.errors.besoinDigitalMarketing" />
                                     </div>
-                                    <div>
-                                        <InputLabel for="besoinContacts" value="mix, mastering, graphisme, vidéos, photos, merch, etc. ?" class="text-sm font-medium" />
-                                        <TextArea
-                                            id="besoinContacts"
-                                            type="text"
-                                            class="mt-1 block w-full transition duration-150 ease-in-out"
-                                            v-model="form.besoinContacts"
-                                            rows="5"
-                                            autocomplete="besoinContacts"
+                                    <div class="flex items-center space-x-4">
+                                        <input
+                                            type="checkbox"
+                                            v-model="form.isBesoinContacts"
+                                            class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                                         />
+                                        <InputLabel for="isBesoinContacts" value="mix, mastering, graphisme, vidéos, photos, merch, etc." class="text-sm font-medium" />
                                         <InputError class="mt-2" :message="form.errors.besoinContacts" />
                                     </div>
                                 </div>
