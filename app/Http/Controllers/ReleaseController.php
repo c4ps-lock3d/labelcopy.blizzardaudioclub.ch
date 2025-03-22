@@ -65,6 +65,9 @@ class ReleaseController extends Controller
         $validated = $request->validate([
             'catalog' => 'required|string|max:6',
             'email' => 'required|string|email',
+            'firstname' => 'required|string',
+            'lastname' => 'required|string',
+            'isReference' => 'required|boolean',
         ]);
 
         // Vérifier si l'email existe déjà
@@ -84,6 +87,15 @@ class ReleaseController extends Controller
         $release = Release::create([
             'catalog' => $validated['catalog'],
         ]);
+
+        $releaseMember = ReleaseMember::create([
+            'firstname' => $validated['firstname'],
+            'lastname' => $validated['lastname'],
+            'isReference' => $validated['isReference'],
+        ]);
+
+        // Associer le membre à la release dans la table pivot
+        $release->releaseMembers()->attach($releaseMember->id);
 
         $user = User::create([
             'name' => $validated['email'],

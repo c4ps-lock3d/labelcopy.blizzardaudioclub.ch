@@ -9,6 +9,8 @@ import { Head, useForm } from '@inertiajs/vue3';
 const form = useForm({
     catalog: '',
     email: '',
+    firstname: '',
+    lastname: '',
 });
 
 const submit = () => {
@@ -37,7 +39,6 @@ const submit = () => {
                         <form @submit.prevent="submit">
                             <div>
                                 <InputLabel for="catalog" value="N° de catalogue" class="required" />
-
                                 <TextInput
                                     id="catalog"
                                     type="text"
@@ -47,12 +48,10 @@ const submit = () => {
                                     autofocus
                                     autocomplete="catalog"
                                 />
-
                                 <InputError class="mt-2" :message="form.errors.catalog" />
                             </div>
                             <div class="mt-4">
-                                <InputLabel for="email" value="E-mail d'invitation" class="required"/>
-
+                                <InputLabel for="email" value="E-mail de l'artiste de référence" class="required"/>
                                 <TextInput
                                     id="email"
                                     type="text"
@@ -61,8 +60,31 @@ const submit = () => {
                                     required
                                     autocomplete="email"
                                 />
-
                                 <InputError class="mt-2" :message="form.errors.email" />
+                            </div>
+                            <div class="mt-4">
+                                <InputLabel for="firstname" value="Prénom de l'artiste de référence" class="required"/>
+                                <TextInput
+                                    id="firstname"
+                                    type="text"
+                                    class="mt-1 block w-full"
+                                    v-model="form.firstname"
+                                    required
+                                    autocomplete="firstname"
+                                />
+                                <InputError class="mt-2" :message="form.errors.firstname" />
+                            </div>
+                            <div class="mt-4">
+                                <InputLabel for="lastname" value="Nom de l'artiste de référence" class="required"/>
+                                <TextInput
+                                    id="lastname"
+                                    type="text"
+                                    class="mt-1 block w-full"
+                                    v-model="form.lastname"
+                                    required
+                                    autocomplete="lastname"
+                                />
+                                <InputError class="mt-2" :message="form.errors.lastname" />
                             </div>
                             <div class="mt-4 flex items-center justify-end">
                                 <PrimaryButton
@@ -70,7 +92,7 @@ const submit = () => {
                                     :class="{ 'opacity-25': form.processing }"
                                     :disabled="form.processing"
                                 >
-                                    Ajouter
+                                    Ajouter et envoyer l'invitation
                                 </PrimaryButton>
                             </div>
                         </form>

@@ -28,33 +28,39 @@ const { props } = usePage();
                         class="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800"
                     >
                         <div class="p-6 text-gray-900 dark:text-gray-100">
-                            <!-- Liste des releases -->
-                            <div>
-                                <div class="flex items-center justify-between">
-                                    <h3 class="text-lg font-medium">Sorties</h3>
-                                    <div v-if="props.auth.user.name === 'lynxadmin'">
-                                        <Link :href="route('dashboard.addrelease')" class="ms-4">
-                                            <PrimaryButton>
-                                                Ajouter
-                                            </PrimaryButton>
-                                        </Link>
-                                    </div>
-                                </div>
-                                <div class="space-y-4">
-                                    <div v-for="release in releases" :key="release.id">
-                                        <div class="mt-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                                            <Link :href="`/dashboard/${release.id}/edit-release`">{{ release.catalog }}
-                                                <span v-if="release.artistName">
-                                                    - {{ release.artistName }}
-                                                </span>
-                                                <span v-if="release.name">
-                                                    - {{ release.name }}
-                                                </span>
-                                            </Link>
-                                        </div>
-                                    </div>
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-medium">Sorties</h3>
+                                <div v-if="props.auth.user.name === 'lynxadmin'">
+                                    <Link :href="route('dashboard.addrelease')" class="ms-4">
+                                        <PrimaryButton>
+                                            Ajouter
+                                        </PrimaryButton>
+                                    </Link>
                                 </div>
                             </div>
+                            <!-- Liste des releases -->
+                            <table class="min-w-full rounded-md overflow-hidden border-gray-700 !mt-4">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class="px-1.5 py-2 text-left text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Catalogue</th>
+                                        <th scope="col" class="px-1.5 py-2 text-left text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Artiste</th>
+                                        <th scope="col" class="px-1.5 py-2 text-left text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Titre</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-700">
+                                    <tr v-for="release in releases" :key="release.id" class="bg-gray-700/50">
+                                        <td  class="px-1.5 py-2">
+                                            <div v-if="release.catalog">{{ release.catalog }}</div>
+                                        </td>
+                                        <td class="px-1.5 py-2">
+                                            <div v-if="release.artistName">{{ release.artistName }}</div>
+                                        </td>
+                                        <td class="px-1.5 py-2">
+                                            <div v-if="release.name">{{ release.name }}</div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
