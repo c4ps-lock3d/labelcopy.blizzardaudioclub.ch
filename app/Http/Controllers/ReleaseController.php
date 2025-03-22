@@ -60,14 +60,14 @@ class ReleaseController extends Controller
         ]);
     }
 
-    public function store(Request $request, Release $release, User $user): RedirectResponse
+    public function store(Request $request, Release $release, User $user, ReleaseMember $releaseMember): RedirectResponse
     {
         $validated = $request->validate([
             'catalog' => 'required|string|max:6',
             'email' => 'required|string|email',
             'firstname' => 'required|string',
             'lastname' => 'required|string',
-            'isReference' => 'required|boolean',
+            'is_reference' => 'is_reference|boolean',
         ]);
 
         // Vérifier si l'email existe déjà
@@ -91,11 +91,11 @@ class ReleaseController extends Controller
         $releaseMember = ReleaseMember::create([
             'firstname' => $validated['firstname'],
             'lastname' => $validated['lastname'],
-            'isReference' => $validated['isReference'],
+            'is_reference' => $validated['is_reference'],
         ]);
 
         // Associer le membre à la release dans la table pivot
-        $release->releaseMembers()->attach($releaseMember->id);
+        $release->release_members()->attach($releaseMember->id);
 
         $user = User::create([
             'name' => $validated['email'],
