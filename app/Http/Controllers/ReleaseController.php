@@ -67,7 +67,7 @@ class ReleaseController extends Controller
             'email' => 'required|string|email',
             'firstname' => 'required|string',
             'lastname' => 'required|string',
-            'is_reference' => 'is_reference|boolean',
+            'is_reference' => 'required|boolean',
         ]);
 
         // Vérifier si l'email existe déjà

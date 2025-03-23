@@ -11,7 +11,7 @@ const form = useForm({
     email: '',
     firstname: '',
     lastname: '',
-    isReference: true,
+    is_reference: true,
 });
 
 const submit = () => {
