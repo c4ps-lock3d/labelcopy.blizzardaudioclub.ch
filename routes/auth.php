@@ -17,7 +17,7 @@ use \App\Models\User;
 
 Route::group(['middleware' => ['web', WelcomesNewUsers::class,]], function () {
     Route::get('welcome/{user}', [MyWelcomeController::class, 'showWelcomeForm'])->name('welcome');
-    Route::post('welcome/{user}', [MyWelcomeController::class, 'savePassword']);
+    Route::post('welcome/{user}', [MyWelcomeController::class, 'savePassword'])->name('welcomesave');
 });
 
 Route::middleware('guest')->group(function () {

@@ -70,7 +70,7 @@ const submit = () => {
                                     type="text"
                                     class="mt-1 block w-full"
                                     v-model="form.firstname"
-                                    required
+                                    
                                     autocomplete="firstname"
                                 />
                                 <InputError class="mt-2" :message="form.errors.firstname" />
@@ -82,7 +82,7 @@ const submit = () => {
                                     type="text"
                                     class="mt-1 block w-full"
                                     v-model="form.lastname"
-                                    required
+                                    
                                     autocomplete="lastname"
                                 />
                                 <InputError class="mt-2" :message="form.errors.lastname" />

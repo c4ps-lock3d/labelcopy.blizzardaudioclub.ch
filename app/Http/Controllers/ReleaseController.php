@@ -65,13 +65,14 @@ class ReleaseController extends Controller
         $validated = $request->validate([
             'catalog' => 'required|string|max:6',
             'email' => 'required|string|email',
-            'firstname' => 'required|string',
-            'lastname' => 'required|string',
+            'firstname' => 'nullable|string',
+            'lastname' => 'nullable|string',
             'is_reference' => 'required|boolean',
         ]);
 
         // Vérifier si l'email existe déjà
         $existingUser = User::where('email', $validated['email'])->first();
+        $existingMember = ReleaseMember::where('email', $validated['email'])->first();
 
         if ($existingUser) {
             // Si l'utilisateur existe, associez-le simplement à la release
@@ -80,6 +81,7 @@ class ReleaseController extends Controller
             ]);
     
             $release->users()->attach($existingUser->id);
+            $release->release_members()->attach($existingMember->id);
     
             return redirect(route('dashboard'))->with('success', 'Release créée et utilisateur existant associé.');
         }
@@ -91,9 +93,9 @@ class ReleaseController extends Controller
         $releaseMember = ReleaseMember::create([
             'firstname' => $validated['firstname'],
             'lastname' => $validated['lastname'],
+            'email' => $validated['email'],
             'is_reference' => $validated['is_reference'],
         ]);
-
         // Associer le membre à la release dans la table pivot
         $release->release_members()->attach($releaseMember->id);
 
@@ -102,7 +104,6 @@ class ReleaseController extends Controller
             'email' => $validated['email'],
             'password' => Hash::make($validated['email']),
         ]);
-
         // Associer l'utilisateur à la release dans la table pivot
         $release->users()->attach($user->id);
 
