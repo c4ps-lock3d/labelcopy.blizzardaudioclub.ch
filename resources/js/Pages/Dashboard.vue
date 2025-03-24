@@ -56,38 +56,40 @@ const toggleIsActive = async (release) => {
                             <table class="min-w-full rounded-md overflow-hidden border-gray-700 !mt-4">
                                 <thead>
                                     <tr>
-                                        <th scope="col" class="px-2.5 py-3 text-left text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Catalogue</th>
-                                        <th scope="col" class="px-2.5 py-3 text-left text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Artiste</th>
+                                        <th scope="col" class="px-2.5 py-3 w-1/6 text-left text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Catalogue</th>
+                                        <th scope="col" class="px-2.5 py-3 w-1/6 text-left text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Artiste</th>
                                         <th scope="col" class="px-2.5 py-3 w-full text-left text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Titre</th>
-                                        <th scope="col" class="px-2.5 py-3 w-16 text-left text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap"></th>
-                                        <th v-if="props.auth.user.name === 'lynxadmin'" scope="col" class="px-2.5 py-3 w-16 text-left text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap"></th>
+                                        <th v-if="props.auth.user.name === 'lynxadmin'" scope="col" class="px-2.5 py-3 w-16 text-left text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Éditable</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-gray-700">
-                                    <tr v-for="release in releases" :key="release.id" class="bg-gray-700/50">
-                                        <td  class="px-2.5 py-3">
-                                            <div v-if="release.catalog">{{ release.catalog }}</div>
-                                        </td>
-                                        <td class="px-2.5 py-3">
-                                            <div v-if="release.artistName">{{ release.artistName }}</div>
-                                        </td>
-                                        <td class="px-2.5 py-3">
-                                            <div v-if="release.name">{{ release.name }}</div>
-                                        </td>
-                                        <td v-if="props.auth.user.name === 'lynxadmin'" class="px-2.5 py-3 text-center">
-                                            <input
-                                                type="checkbox"
-                                                v-model="release.isActive"
-                                                @change="toggleIsActive(release)"
-                                                class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                                            />
-                                        </td>
-                                        <td class="px-2.5 py-3">
-                                            <Link :href="route('dashboard.editrelease', release.id)">
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 mr-2">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
-                                                </svg>
-                                            </Link>
+                                    <tr v-for="release in releases" :key="release.id" class="bg-gray-700/50 hover:bg-gray-700/40">
+                                        <Link :href="route('dashboard.editrelease', release.id)" class="contents">
+                                            <td  class="px-2.5 py-3">
+                                                <div v-if="release.catalog">{{ release.catalog }}</div>
+                                            </td>
+                                            <td class="px-2.5 py-3">
+                                                <div v-if="release.artistName">{{ release.artistName }}</div>
+                                            </td>
+                                            <td class="px-2.5 py-3">
+                                                <div v-if="release.name">{{ release.name }}</div>
+                                            </td>
+                                        </Link>
+                                        <td v-if="props.auth.user.name === 'lynxadmin'" class="px-2.5 text-center">
+                                            <label class="relative inline-flex items-center cursor-pointer">
+                                                <input
+                                                    type="checkbox"
+                                                    v-model="release.isActive"
+                                                    @change="toggleIsActive(release)"
+                                                    class="sr-only peer"
+                                                />
+                                                <div
+                                                    class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-500 rounded-full peer dark:bg-gray-700 peer-checked:bg-indigo-600 mt-1.5"
+                                                ></div>
+                                                <div
+                                                    class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-5 mt-1.5"
+                                                ></div>
+                                            </label>
                                         </td>
                                     </tr>
                                 </tbody>

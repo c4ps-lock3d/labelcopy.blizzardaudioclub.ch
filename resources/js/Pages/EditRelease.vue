@@ -322,86 +322,89 @@ const submit = () => {
                         </svg>
                         Informations sur le(s) membre(s)</h3>
                         <InputLabel value="" class="text-sm font-medium" />
-                        <table class="min-w-full rounded-md overflow-hidden border-gray-700 !mt-1">
-                            <thead>
-                                <tr>
-                                    <th scope="col" class="required w-16 px-3 py-2.5 text-left text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Prénom</th>
-                                    <th scope="col" class="required px-3 py-2.5 text-left text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Nom</th>
-                                    <th scope="col" class="required px-3 py-2.5 text-left text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Date de naissance</th>
-                                    <th scope="col" class="w-full px-3 py-2.5 text-left text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">N° IPI (SUISA)</th>
-                                    <th scope="col" class="w-16 px-3 py-2.5 text-sm font-semibold bg-gray-700 text-gray-100">
-                                        <button 
-                                            type="button" 
-                                            @click="addNewMember"
-                                            class="w-9 h-9 bg-globalButtonColor text-black text-sm rounded-md hover:bg-globalButtonHoverColor transition-colors flex items-center justify-center"
-                                        >
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                                            </svg>
-                                        </button>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-700">
-                                <tr v-for="(member, index) in form.members" :key="member.id || 'new'" class="bg-gray-700/50">
-                                    <td class="px-1.5 py-2">
-                                        <TextInput
-                                            type="text"
-                                            v-model="member.firstname"
-                                            :class="{
-                                                '!bg-gray-700/50': member.is_reference,
-                                                'mt-1 block transition duration-150 ease-in-out': true
-                                            }"
-                                            placeholder="Prénom"
-                                            :disabled="member.is_reference"
-                                        />
-                                    </td>
-                                    <td class="px-1.5 py-2">
-                                        <TextInput
-                                            type="text"
-                                            v-model="member.lastname"
-                                            :class="{
-                                                '!bg-gray-700/50': member.is_reference,
-                                                'mt-1 block transition duration-150 ease-in-out': true
-                                            }"                                            placeholder="Nom"
-                                            :disabled="member.is_reference"
-                                        />
-                                    </td>
-                                    <td class="px-1.5 py-2">
-                                        <TextInput
-                                            type="date"
-                                            v-model="member.birth_date"
-                                            class="transition duration-150 ease-in-out"
-                                            placeholder="Date de naissance"
-                                        />
-                                    </td>
-                                    <td class="px-1.5 py-2">
-                                        <TextInput
-                                            type="text"
-                                            v-model="member.IPI"
-                                            class="w-full transition duration-150 ease-in-out"
-                                        />
-                                    </td>
-                                    <td class="whitespace-nowrap px-3 py-2">
-                                        <button
-                                            v-if="form.members.length > 1 && index === form.members.length - 1"
-                                            type="button" 
-                                            @click="deleteMember(index)"
-                                            class="w-9 h-9 bg-globalButtonColor text-black rounded-md hover:bg-globalButtonHoverColor transition-colors flex items-center justify-center"
-                                        >
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-                                            </svg>
-                                        </button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full rounded-md overflow-hidden border-gray-700 !mt-1">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class="required w-16 px-3 py-2.5 text-left text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Prénom</th>
+                                        <th scope="col" class="required px-3 py-2.5 text-left text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Nom</th>
+                                        <th scope="col" class="required px-3 py-2.5 text-left text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Date de naissance</th>
+                                        <th scope="col" class="w-full px-3 py-2.5 text-left text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">N° IPI (SUISA)</th>
+                                        <th scope="col" class="w-16 px-3 py-2.5 text-sm font-semibold bg-gray-700 text-gray-100">
+                                            <button 
+                                                type="button" 
+                                                @click="addNewMember"
+                                                class="w-9 h-9 bg-globalButtonColor text-black text-sm rounded-md hover:bg-globalButtonHoverColor transition-colors flex items-center justify-center"
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                                </svg>
+                                            </button>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-700">
+                                    <tr v-for="(member, index) in form.members" :key="member.id || 'new'" class="bg-gray-700/50">
+                                        <td class="px-1.5 py-2">
+                                            <TextInput
+                                                type="text"
+                                                v-model="member.firstname"
+                                                :class="{
+                                                    '!bg-gray-700/50': member.is_reference,
+                                                    'mt-1 block transition duration-150 ease-in-out': true
+                                                }"
+                                                placeholder="Prénom"
+                                                :disabled="member.is_reference"
+                                            />
+                                        </td>
+                                        <td class="px-1.5 py-2">
+                                            <TextInput
+                                                type="text"
+                                                v-model="member.lastname"
+                                                :class="{
+                                                    '!bg-gray-700/50': member.is_reference,
+                                                    'mt-1 block transition duration-150 ease-in-out': true
+                                                }"
+                                                placeholder="Nom"
+                                                :disabled="member.is_reference"
+                                            />
+                                        </td>
+                                        <td class="px-1.5 py-2">
+                                            <TextInput
+                                                type="date"
+                                                v-model="member.birth_date"
+                                                class="transition duration-150 ease-in-out"
+                                                placeholder="Date de naissance"
+                                            />
+                                        </td>
+                                        <td class="px-1.5 py-2">
+                                            <TextInput
+                                                type="text"
+                                                v-model="member.IPI"
+                                                class="w-full transition duration-150 ease-in-out"
+                                            />
+                                        </td>
+                                        <td class="whitespace-nowrap px-3 py-2">
+                                            <button
+                                                v-if="form.members.length > 1 && index === form.members.length - 1"
+                                                type="button" 
+                                                @click="deleteMember(index)"
+                                                class="w-9 h-9 bg-globalButtonColor text-black rounded-md hover:bg-globalButtonHoverColor transition-colors flex items-center justify-center"
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                                                </svg>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                         <div v-for="(member, index) in form.members" :key="member.id">
                             <div v-if="member.is_reference">
                                 <InputLabel for="" :value="`Coordonnées du membre de référence (${member.firstname} ${member.lastname})`" class="text-sm font-medium" />
                                 <div class="mt-1 flex items-center p-2.5 bg-gray-700 rounded-lg transition-colors">
-                                    <div class="grid grid-cols-1 gap-6 md:grid-cols-4 mb-2">
+                                    <div class="grid grid-cols-1 gap-6 md:grid-cols-4 mb-2 w-full">
                                         <div>
                                         <InputLabel for="zip_code" value="NPA" class="required text-sm font-medium" />
                                         <TextInput
@@ -508,7 +511,7 @@ const submit = () => {
                                     <InputLabel value="Format(s)" class="required text-sm font-medium mb-1" />
                                     <div class="grid grid-cols-4 gap-2">
                                         <div v-for="format in props.releaseFormats" :key="format.id" 
-                                            class="flex items-center p-2.5 bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors">
+                                            class="flex items-center p-2.5 bg-gray-900 rounded-lg hover:bg-gray-900/50 transition-colors">
                                             <input
                                                 type="checkbox"
                                                 :id="'format-' + format.id"
@@ -526,7 +529,7 @@ const submit = () => {
                                     <InputLabel value="Type" class="required text-sm font-medium mb-1" />
                                     <div class="grid grid-cols-3 gap-2">
                                         <div v-for="type in props.releaseTypes" :key="type.id" 
-                                            class="flex items-center p-2.5 bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors">
+                                            class="flex items-center p-2.5 bg-gray-900 rounded-lg hover:bg-gray-900/50 transition-colors">
                                             <input
                                                 type="radio"
                                                 :id="'type-' + type.id"
@@ -545,10 +548,14 @@ const submit = () => {
                                     <TextInput
                                         id="price"
                                         type="text"
-                                        class="mt-1 block w-full transition duration-150 ease-in-out"
+                                        :class="{
+                                                    '!bg-gray-800': props.auth.user.name !== 'lynxadmin',
+                                                    'w-full mt-1 block transition duration-150 ease-in-out': true
+                                                }"
                                         v-model="form.price"
                                         required
                                         autocomplete="price"
+                                        :disabled="props.auth.user.name !== 'lynxadmin'"
                                     />
                                     <InputError class="" :message="form.errors.price" />
                                 </div>
@@ -567,76 +574,78 @@ const submit = () => {
                                     <InputError class="mt-2" :message="form.errors.description" />
                                 </div>
                                 <InputLabel value="Tracklist" class="text-sm font-medium" />
-                                <table class="min-w-full rounded-md overflow-hidden border-gray-700 !mt-1">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col" class="w-8 px-3 py-2.5 text-left text-sm font-semibold text-gray-100 bg-gray-700">#</th>
-                                            <th scope="col" class="required w-full px-3 py-2.5 text-left text-sm font-semibold bg-gray-700 text-gray-100">Titre</th>
-                                            <th scope="col" class="w-16 px-3 py-2.5 text-center text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Single ?</th>
-                                            <th scope="col" class="w-16 px-3 py-2.5 text-center text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Vidéoclip ?</th>
-                                            <th v-if="props.auth.user.name === 'lynxadmin'" scope="col" class="w-16 px-3 py-2.5 text-left text-sm font-semibold bg-gray-700 text-gray-100">ISRC</th>
-                                            <th scope="col" class="w-16 px-3 py-2.5 text-center text-sm font-semibold bg-gray-700 text-gray-100">
-                                                <button 
+                                <div class="overflow-x-auto">
+                                    <table class="min-w-full rounded-md overflow-hidden border-gray-700 !mt-1">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col" class="w-8 px-3 py-2.5 text-left text-sm font-semibold text-gray-100 bg-gray-700">#</th>
+                                                <th scope="col" class="required w-full px-3 py-2.5 text-left text-sm font-semibold bg-gray-700 text-gray-100">Titre</th>
+                                                <th scope="col" class="px-3 py-2.5 text-center text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Single ?</th>
+                                                <th scope="col" class="px-3 py-2.5 text-center text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Vidéoclip ?</th>
+                                                <th v-if="props.auth.user.name === 'lynxadmin'" scope="col" class="px-3 py-2.5 text-left text-sm font-semibold bg-gray-700 text-gray-100">ISRC</th>
+                                                <th scope="col" class="px-3 py-2.5 text-center text-sm font-semibold bg-gray-700 text-gray-100">
+                                                    <button 
+                                                            type="button" 
+                                                            @click="addNewTrack"
+                                                            class="w-9 h-9 bg-globalButtonColor text-black text-sm rounded-md hover:bg-globalButtonHoverColor transition-colors flex items-center justify-center"
+                                                        >
+                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                                        </svg>
+                                                    </button>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-gray-700">
+                                            <tr v-for="(track, index) in form.tracks" :key="track.id || 'new'" class="bg-gray-700/50">
+                                                <td class="px-3 py-2 text-white">
+                                                    {{track.number}}
+                                                </td>
+                                                <td class="px-3 py-2">
+                                                    <TextInput
+                                                        type="text"
+                                                        v-model="track.title"
+                                                        class="w-full min-w-[300px] transition duration-150 ease-in-out"
+                                                        placeholder="Titre"
+                                                    />
+                                                </td>
+                                                <td class="whitespace-nowrap px-3 py-2 text-center">
+                                                    <input
+                                                            type="checkbox"
+                                                            v-model="track.isSingle"
+                                                            class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                                        />                                                
+                                                </td>
+                                                <td class="whitespace-nowrap px-3 py-2 text-center">
+                                                    <input
+                                                            type="checkbox"
+                                                            v-model="track.hasClip"
+                                                            class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                                    />
+                                                </td>
+                                                <td v-if="props.auth.user.name === 'lynxadmin'" class="px-3 py-2">
+                                                    <TextInput
+                                                        type="text"
+                                                        v-model="track.IRSC"
+                                                        class="transition duration-150 ease-in-out"
+                                                    />
+                                                </td>
+                                                <td class="whitespace-nowrap px-3 py-2">
+                                                    <button
+                                                        v-if="form.tracks.length > 1 && index === form.tracks.length - 1"
                                                         type="button" 
-                                                        @click="addNewTrack"
-                                                        class="w-9 h-9 bg-globalButtonColor text-black text-sm rounded-md hover:bg-globalButtonHoverColor transition-colors flex items-center justify-center"
+                                                        @click="deleteTrack(index)"
+                                                        class="w-9 h-9 bg-globalButtonColor text-black rounded-md hover:bg-globalButtonHoverColor transition-colors flex items-center justify-center"
                                                     >
-                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                                                    </svg>
-                                                </button>
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-gray-700">
-                                        <tr v-for="(track, index) in form.tracks" :key="track.id || 'new'" class="bg-gray-700/50">
-                                            <td class="px-3 py-2 text-white">
-                                                {{track.number}}
-                                            </td>
-                                            <td class="px-3 py-2">
-                                                <TextInput
-                                                    type="text"
-                                                    v-model="track.title"
-                                                    class="w-full transition duration-150 ease-in-out"
-                                                    placeholder="Titre"
-                                                />
-                                            </td>
-                                            <td class="whitespace-nowrap px-3 py-2 text-center">
-                                                <input
-                                                        type="checkbox"
-                                                        v-model="track.isSingle"
-                                                        class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                                                    />                                                
-                                            </td>
-                                            <td class="whitespace-nowrap px-3 py-2 text-center">
-                                                <input
-                                                        type="checkbox"
-                                                        v-model="track.hasClip"
-                                                        class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                                                />
-                                            </td>
-                                            <td v-if="props.auth.user.name === 'lynxadmin'" class="px-3 py-2">
-                                                <TextInput
-                                                    type="text"
-                                                    v-model="track.IRSC"
-                                                    class="transition duration-150 ease-in-out"
-                                                />
-                                            </td>
-                                            <td class="whitespace-nowrap px-3 py-2">
-                                                <button
-                                                    v-if="form.tracks.length > 1 && index === form.tracks.length - 1"
-                                                    type="button" 
-                                                    @click="deleteTrack(index)"
-                                                    class="w-9 h-9 bg-globalButtonColor text-black rounded-md hover:bg-globalButtonHoverColor transition-colors flex items-center justify-center"
-                                                >
-                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-                                                    </svg>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                                                        </svg>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                                 <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
                                     <div>
                                         <InputLabel for="cleRepartition" value="Clé de répartition précise des morceaux" class="text-sm font-medium" />
