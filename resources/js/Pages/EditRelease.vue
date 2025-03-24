@@ -8,6 +8,10 @@ import TextArea from '@/Components/TextArea.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 
 const props = defineProps({
+    auth: {
+        type: Object,
+        required: true,
+    },
     release: {
         type: Object,
         required: true
@@ -53,11 +57,12 @@ const form = useForm({
     besoinFinancement: props.release.besoinFinancement,
     sourceFinancement: props.release.sourceFinancement,
     budget: props.release.budget,
-    isProduitsDerives: props.release.isProduitsDerives,
-    isBesoinSubvention: props.release.isBesoinSubvention,
-    isBesoinPromo: props.release.isBesoinPromo,
-    isBesoinDigitalMarketing: props.release.isBesoinDigitalMarketing,
-    isBesoinContacts: props.release.isBesoinContacts,
+    isProduitsDerives: Boolean(props.release.isProduitsDerives),
+    isBesoinSubvention: Boolean(props.release.isBesoinSubvention),
+    isBesoinPromo: Boolean(props.release.isBesoinPromo),
+    isBesoinDigitalMarketing: Boolean(props.release.isBesoinDigitalMarketing),
+    isBesoinContacts: Boolean(props.release.isBesoinContacts),
+    isActive: Boolean(props.release.isActive),
 
     release_type_id: props.release.release_type_id || null,
     release_format_ids: props.release.release_formats?.map(format => format.id) || [],
@@ -94,10 +99,10 @@ const form = useForm({
         birth_date: member.birth_date,
         IPI: member.IPI || '',
         is_reference: Boolean(member.is_reference),
-        street: member.street,
-        city: member.city,
-        zip_code: member.zip_code,
-        phone_number: member.phone_number,
+        street: member.street || '',
+        city: member.city || '',
+        zip_code: member.zip_code || '',
+        phone_number: member.phone_number || '',
     }))
     : [{
             id: null,
@@ -135,6 +140,13 @@ const addNewMember = () => {
         id: null,
         firstname: '',
         lastname: '',
+        birth_date: '',
+        IPI: '',
+        is_reference: false,
+        street: '',
+        city: '',
+        zip_code: '',
+        phone_number: '',
     });
 };
 
@@ -165,11 +177,11 @@ const deleteSocial = (index) => {
     form.socials.splice(index, 1);
 };
 
-const updateReferenceMember = () => {
+/* const updateReferenceMember = () => {
     form.members.forEach((member, index) => {
         member.is_reference = index === form.reference_member_id;
     });
-};
+}; */
 
 const submit = () => {
     if (form.tracks.some(track => !track.title) || form.tracks.some(track => !track.number )) {
@@ -186,14 +198,14 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Dashboard" />
+    <Head :title="`Labelcopy ${form.catalog}`" />
 
     <AuthenticatedLayout>
         <template #header>
             <h2
                 class="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200"
             >
-                Dashboard > Labelcopy
+                Dashboard > Labelcopy {{ form.catalog }}
             </h2>
         </template>
 
@@ -331,16 +343,23 @@ const submit = () => {
                                         <TextInput
                                             type="text"
                                             v-model="member.firstname"
-                                            class="transition duration-150 ease-in-out"
+                                            :class="{
+                                                '!bg-gray-700/50': member.is_reference,
+                                                'mt-1 block transition duration-150 ease-in-out': true
+                                            }"
                                             placeholder="Prénom"
+                                            :disabled="member.is_reference"
                                         />
                                     </td>
                                     <td class="px-1.5 py-2">
                                         <TextInput
                                             type="text"
                                             v-model="member.lastname"
-                                            class="transition duration-150 ease-in-out"
-                                            placeholder="Nom"
+                                            :class="{
+                                                '!bg-gray-700/50': member.is_reference,
+                                                'mt-1 block transition duration-150 ease-in-out': true
+                                            }"                                            placeholder="Nom"
+                                            :disabled="member.is_reference"
                                         />
                                     </td>
                                     <td class="px-1.5 py-2">
@@ -373,67 +392,60 @@ const submit = () => {
                                 </tr>
                             </tbody>
                         </table>
-                        <div>
-                            <InputLabel value="Membre de référence" class="required text-sm font-medium mb-1" />
-                            <select
-                                v-model="form.reference_member_id"
-                                @change="updateReferenceMember"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-indigo-600 dark:focus:ring-indigo-600"
-                            >
-                                <option v-for="(member, index) in form.members" :key="member.id || 'new'" :value="index">
-                                    {{ member.firstname }} {{ member.lastname }}
-                                </option>
-                            </select>
-                        </div>
                         <div v-for="(member, index) in form.members" :key="member.id">
-                            <div v-if="member.is_reference" class="grid grid-cols-1 gap-8 md:grid-cols-2 mb-6">
-                                <div>
-                                <InputLabel for="zip_code" value="NPA" class="required text-sm font-medium" />
-                                <TextInput
-                                    id="zip_code"
-                                    type="text"
-                                    class="mt-1 block w-full transition duration-150 ease-in-out"
-                                    v-model="member.zip_code"
-                                    required
-                                    autocomplete="zip_code"
-                                />
-                                <InputError class="" :message="form.errors.zip_code" />
-                                </div>
-                                <div>
-                                <InputLabel for="city" value="Ville" class="required text-sm font-medium" />
-                                <TextInput
-                                    id="city"
-                                    type="text"
-                                    class="mt-1 block w-full transition duration-150 ease-in-out"
-                                    v-model="member.city"
-                                    required
-                                    autocomplete="city"
-                                />
-                                <InputError class="" :message="form.errors.city" />
-                                </div>
-                                <div>
-                                <InputLabel for="street" value="Rue" class="required text-sm font-medium" />
-                                <TextInput
-                                    id="street"
-                                    type="text"
-                                    class="mt-1 block w-full transition duration-150 ease-in-out"
-                                    v-model="member.street"
-                                    required
-                                    autocomplete="street"
-                                />
-                                <InputError class="" :message="form.errors.street" />
-                                </div>
-                                <div>
-                                <InputLabel for="phone_number" value="Numéro de téléphone" class="required text-sm font-medium" />
-                                <TextInput
-                                    id="phone_number"
-                                    type="text"
-                                    class="mt-1 block w-full transition duration-150 ease-in-out"
-                                    v-model="member.phone_number"
-                                    required
-                                    autocomplete="phone_number"
-                                />
-                                <InputError class="" :message="form.errors.phone_number" />
+                            <div v-if="member.is_reference">
+                                <InputLabel for="" :value="`Coordonnées du membre de référence (${member.firstname} ${member.lastname})`" class="text-sm font-medium" />
+                                <div class="mt-1 flex items-center p-2.5 bg-gray-700 rounded-lg transition-colors">
+                                    <div class="grid grid-cols-1 gap-6 md:grid-cols-4 mb-2">
+                                        <div>
+                                        <InputLabel for="zip_code" value="NPA" class="required text-sm font-medium" />
+                                        <TextInput
+                                            id="zip_code"
+                                            type="text"
+                                            class="mt-1 block w-full transition duration-150 ease-in-out"
+                                            v-model="member.zip_code"
+                                            required
+                                            autocomplete="zip_code"
+                                        />
+                                        <InputError class="" :message="form.errors.zip_code" />
+                                        </div>
+                                        <div>
+                                        <InputLabel for="city" value="Ville" class="required text-sm font-medium" />
+                                        <TextInput
+                                            id="city"
+                                            type="text"
+                                            class="mt-1 block w-full transition duration-150 ease-in-out"
+                                            v-model="member.city"
+                                            required
+                                            autocomplete="city"
+                                        />
+                                        <InputError class="" :message="form.errors.city" />
+                                        </div>
+                                        <div>
+                                        <InputLabel for="street" value="Rue" class="required text-sm font-medium" />
+                                        <TextInput
+                                            id="street"
+                                            type="text"
+                                            class="mt-1 block w-full transition duration-150 ease-in-out"
+                                            v-model="member.street"
+                                            required
+                                            autocomplete="street"
+                                        />
+                                        <InputError class="" :message="form.errors.street" />
+                                        </div>
+                                        <div>
+                                        <InputLabel for="phone_number" value="Numéro de téléphone" class="required text-sm font-medium" />
+                                        <TextInput
+                                            id="phone_number"
+                                            type="text"
+                                            class="mt-1 block w-full transition duration-150 ease-in-out"
+                                            v-model="member.phone_number"
+                                            required
+                                            autocomplete="phone_number"
+                                        />
+                                        <InputError class="" :message="form.errors.phone_number" />
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -557,7 +569,7 @@ const submit = () => {
                                             <th scope="col" class="required w-full px-3 py-2.5 text-left text-sm font-semibold bg-gray-700 text-gray-100">Titre</th>
                                             <th scope="col" class="w-16 px-3 py-2.5 text-center text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Single ?</th>
                                             <th scope="col" class="w-16 px-3 py-2.5 text-center text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Vidéoclip ?</th>
-                                            <th scope="col" class="w-16 px-3 py-2.5 text-left text-sm font-semibold bg-gray-700 text-gray-100">ISRC</th>
+                                            <th v-if="props.auth.user.name === 'lynxadmin'" scope="col" class="w-16 px-3 py-2.5 text-left text-sm font-semibold bg-gray-700 text-gray-100">ISRC</th>
                                             <th scope="col" class="w-16 px-3 py-2.5 text-center text-sm font-semibold bg-gray-700 text-gray-100">
                                                 <button 
                                                         type="button" 
@@ -598,7 +610,7 @@ const submit = () => {
                                                         class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                                                 />
                                             </td>
-                                            <td class="px-3 py-2">
+                                            <td v-if="props.auth.user.name === 'lynxadmin'" class="px-3 py-2">
                                                 <TextInput
                                                     type="text"
                                                     v-model="track.IRSC"
@@ -633,7 +645,8 @@ const submit = () => {
                                         />
                                         <InputError class="" :message="form.errors.cleRepartition" />
                                     </div>
-                                    <div>
+                                    <div v-if="props.auth.user.name === 'lynxadmin'"
+                                    >
                                         <InputLabel for="CodeBarre" value="Code-Barre(s)" class="text-sm font-medium" />
                                         <TextInput
                                             id="CodeBarre"
@@ -718,7 +731,7 @@ const submit = () => {
                                             class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                                         />
                                         <InputLabel for="isBesoinDigitalMarketing" value="faire/recourir à du digital marketing" class="text-sm font-medium" />
-                                        <InputError class="mt-2" :message="form.errors.besoinDigitalMarketing" />
+                                        <InputError class="mt-2" :message="form.errors.isBesoinDigitalMarketing" />
                                     </div>
                                     <div class="flex items-center space-x-4">
                                         <input
@@ -727,7 +740,7 @@ const submit = () => {
                                             class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                                         />
                                         <InputLabel for="isBesoinContacts" value="mix, mastering, graphisme, vidéos, photos, merch, etc." class="text-sm font-medium" />
-                                        <InputError class="mt-2" :message="form.errors.besoinContacts" />
+                                        <InputError class="mt-2" :message="form.errors.isBesoinContacts" />
                                     </div>
                                 </div>
                             </div>
@@ -764,12 +777,13 @@ const submit = () => {
                                     <InputError class="mt-2" :message="form.errors.budget" />
                                 </div>
                                 <div>
-                                    <InputLabel for="sourceFinancement" value="Source pour le financement du projet" class="text-sm font-medium" />
-                                    <TextInput
+                                    <InputLabel for="sourceFinancement" value="Source(s) pour le financement du projet" class="text-sm font-medium" />
+                                    <TextArea
                                         id="sourceFinancement"
                                         type="text"
                                         class="mt-1 block w-full transition duration-150 ease-in-out"
                                         v-model="form.sourceFinancement"
+                                        rows="5"
                                         autocomplete="sourceFinancement"
                                     />
                                     <InputError class="mt-2" :message="form.errors.sourceFinancement" />

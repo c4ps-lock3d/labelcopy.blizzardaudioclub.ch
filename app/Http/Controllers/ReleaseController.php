@@ -57,17 +57,21 @@ class ReleaseController extends Controller
             'releaseTracks' => ReleaseTrack::all(),
             'releaseMembers' => ReleaseMember::all(),
             'releaseSocials' => ReleaseSocial::all(),
+            'auth' => [
+                'user' => auth()->user(),
+            ],
         ]);
     }
 
     public function store(Request $request, Release $release, User $user, ReleaseMember $releaseMember): RedirectResponse
     {
         $validated = $request->validate([
-            'catalog' => 'required|string|max:6',
+            'catalog' => 'required|string|max:6|unique:releases,catalog',
             'email' => 'required|string|email',
-            'firstname' => 'nullable|string',
-            'lastname' => 'nullable|string',
+            'firstname' => 'required|string',
+            'lastname' => 'required|string',
             'is_reference' => 'required|boolean',
+            'isActive' => 'required|boolean',
         ]);
 
         // Vérifier si l'email existe déjà
@@ -78,6 +82,7 @@ class ReleaseController extends Controller
             // Si l'utilisateur existe, associez-le simplement à la release
             $release = Release::create([
                 'catalog' => $validated['catalog'],
+                'isActive' => $validated['isActive'] ?? true, // Définit isActive à true par défaut
             ]);
     
             $release->users()->attach($existingUser->id);
@@ -88,6 +93,7 @@ class ReleaseController extends Controller
 
         $release = Release::create([
             'catalog' => $validated['catalog'],
+            'isActive' => $validated['isActive'] ?? true, // Définit isActive à true par défaut
         ]);
 
         $releaseMember = ReleaseMember::create([
@@ -113,6 +119,33 @@ class ReleaseController extends Controller
         return redirect(route('dashboard'))->with('success', 'Release et utilisateur créés avec succès.');
     }
 
+    public function checkEmail(Request $request)
+    {
+        $member = ReleaseMember::where('email', $request->email)->first();
+        if ($member) {
+            return response()->json([
+                'exists' => true,
+                'firstname' => $member->firstname,
+                'lastname' => $member->lastname,
+            ]);
+        }
+
+        return response()->json(['exists' => false]);
+    }
+
+    public function updateStatus(Request $request, Release $release)
+    {
+        $validated = $request->validate([
+            'isActive' => 'required|boolean',
+        ]);
+
+        $release->update([
+            'isActive' => $validated['isActive'],
+        ]);
+
+        return response()->json(['success' => true]);
+    }
+
     public function update(Request $request, Release $release): RedirectResponse
     {
         $validated = $request->validate([
@@ -134,12 +167,11 @@ class ReleaseController extends Controller
             'budget' => 'nullable|integer',
             'sourceFinancement' => 'nullable|string',
             'besoinFinancement' => 'nullable|string',
-            'isProduitsDerives' => 'nullable|boolean',
-            'isBesoinSubvention' => 'nullable|boolean',
-            'isBesoinBooking' => 'nullable|boolean',
-            'isBesoinPromo' => 'nullable|boolean',
-            'isBesoinDigitalMarketing' => 'nullable|boolean',
-            'isBesoinContacts' => 'nullable|boolean',
+            'isProduitsDerives' => 'required|boolean',
+            'isBesoinSubvention' => 'required|boolean',
+            'isBesoinPromo' => 'required|boolean',
+            'isBesoinDigitalMarketing' => 'required|boolean',
+            'isBesoinContacts' => 'required|boolean',
             'isActive' => 'nullable|boolean',
             'release_type_id' => 'required|exists:release_types,id',
             'release_format_ids' => 'required|array',
@@ -156,10 +188,10 @@ class ReleaseController extends Controller
             'members.*.firstname' => 'required|string',
             'members.*.lastname' => 'required|string',
             'members.*.IPI' => 'nullable|string',
-            'members.*.city' => 'required|string',
-            'members.*.street' => 'required|string',
-            'members.*.zip_code' => 'required|string',
-            'members.*.phone_number' => 'required|string',
+            'members.*.city' => 'nullable|string',
+            'members.*.street' => 'nullable|string',
+            'members.*.zip_code' => 'nullable|string',
+            'members.*.phone_number' => 'nullable|string',
             'members.*.birth_date' => 'required|date',
             'members.*.is_reference' => 'nullable',
             'socials' => 'array',
@@ -185,7 +217,6 @@ class ReleaseController extends Controller
             'besoinFinancement' => $validated['besoinFinancement'],
             'isProduitsDerives' => $validated['isProduitsDerives'],
             'isBesoinSubvention' => $validated['isBesoinSubvention'],
-            'isBesoinBooking' => $validated['isBesoinBooking'],
             'isBesoinPromo' => $validated['isBesoinPromo'],
             'isBesoinDigitalMarketing' => $validated['isBesoinDigitalMarketing'],
             'isBesoinContacts' => $validated['isBesoinContacts'],

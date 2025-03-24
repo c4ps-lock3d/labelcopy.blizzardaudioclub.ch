@@ -22,11 +22,11 @@ Route::get('/', function () {
 
 // Dashboard
 Route::get('/dashboard', [ReleaseController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
-
+Route::put('/releases/{release}/status', [ReleaseController::class, 'updateStatus'])->name('update-release-status');
 // Add
 Route::get('/dashboard/add-release', [ReleaseController::class, 'add'])->middleware(['auth', 'verified'])->name('dashboard.addrelease');
 Route::post('/dashboard/store-release', [ReleaseController::class, 'store'])->middleware(['auth', 'verified'])->name('store-release');
-
+Route::post('/check-email', [ReleaseController::class, 'checkEmail'])->name('check-email');
 // Edit
 Route::get('/dashboard/{release}/edit-release', [ReleaseController::class, 'edit'])->middleware(['auth', 'verified'])->name('dashboard.editrelease');
 Route::put('/dashboard/{release}/update-release', [ReleaseController::class, 'update'])->middleware(['auth', 'verified'])->name('update-release');

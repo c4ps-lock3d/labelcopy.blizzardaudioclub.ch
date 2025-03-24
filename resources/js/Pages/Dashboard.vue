@@ -9,6 +9,20 @@ defineProps({
     }
 });
 const { props } = usePage();
+const releases = props.releases.map(release => ({
+    ...release,
+    isActive: Boolean(release.isActive), // Convertit en booléen
+}));
+
+const toggleIsActive = async (release) => {
+    try {
+        await axios.put(route('update-release-status', release.id), {
+            isActive: release.isActive,
+        });
+    } catch (error) {
+        console.error('Erreur lors de la mise à jour de l\'état de la release :', error);
+    }
+};
 </script>
 
 <template>
@@ -46,6 +60,7 @@ const { props } = usePage();
                                         <th scope="col" class="px-2.5 py-3 text-left text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Artiste</th>
                                         <th scope="col" class="px-2.5 py-3 w-full text-left text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Titre</th>
                                         <th scope="col" class="px-2.5 py-3 w-16 text-left text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap"></th>
+                                        <th scope="col" class="px-2.5 py-3 w-16 text-left text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap"></th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-gray-700">
@@ -58,6 +73,14 @@ const { props } = usePage();
                                         </td>
                                         <td class="px-2.5 py-3">
                                             <div v-if="release.name">{{ release.name }}</div>
+                                        </td>
+                                        <td class="px-2.5 py-3 text-center">
+                                            <input
+                                                type="checkbox"
+                                                v-model="release.isActive"
+                                                @change="toggleIsActive(release)"
+                                                class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                            />
                                         </td>
                                         <td class="px-2.5 py-3">
                                             <Link :href="route('dashboard.editrelease', release.id)">
