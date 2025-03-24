@@ -60,7 +60,7 @@ const toggleIsActive = async (release) => {
                                         <th scope="col" class="px-2.5 py-3 text-left text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Artiste</th>
                                         <th scope="col" class="px-2.5 py-3 w-full text-left text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Titre</th>
                                         <th scope="col" class="px-2.5 py-3 w-16 text-left text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap"></th>
-                                        <th scope="col" class="px-2.5 py-3 w-16 text-left text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap"></th>
+                                        <th v-if="props.auth.user.name === 'lynxadmin'" scope="col" class="px-2.5 py-3 w-16 text-left text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap"></th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-gray-700">
@@ -74,7 +74,7 @@ const toggleIsActive = async (release) => {
                                         <td class="px-2.5 py-3">
                                             <div v-if="release.name">{{ release.name }}</div>
                                         </td>
-                                        <td class="px-2.5 py-3 text-center">
+                                        <td v-if="props.auth.user.name === 'lynxadmin'" class="px-2.5 py-3 text-center">
                                             <input
                                                 type="checkbox"
                                                 v-model="release.isActive"

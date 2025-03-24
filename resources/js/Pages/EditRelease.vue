@@ -6,6 +6,7 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import TextArea from '@/Components/TextArea.vue';
 import { Head, useForm } from '@inertiajs/vue3';
+import { computed } from 'vue';
 
 const props = defineProps({
     auth: {
@@ -124,6 +125,8 @@ const form = useForm({
     releaseSocials: props.releaseSocials,
 });
 
+const isDisabled = computed(() => !props.release.isActive);
+
 const addNewTrack = () => {
     const nextTrackNumber = form.tracks.length + 1;
     form.tracks.push({
@@ -183,6 +186,7 @@ const deleteSocial = (index) => {
     });
 }; */
 
+
 const submit = () => {
     if (form.tracks.some(track => !track.title) || form.tracks.some(track => !track.number )) {
         return;
@@ -232,6 +236,7 @@ const submit = () => {
                                     v-model="form.artistName"
                                     required
                                     autocomplete="artistName"
+                                    :disabled="isDisabled"
                                 />
                                 <InputError class="mt-2" :message="form.errors.artistName" />
                        
