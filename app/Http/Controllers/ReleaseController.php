@@ -160,7 +160,7 @@ class ReleaseController extends Controller
             'credits' => 'required|string',
             'remerciements' => 'nullable|string',
             'style' => 'required|string',
-            'price' => 'required|integer',
+            'price' => 'nullable|integer',
             'description' => 'required|string',
             'remarques' => 'nullable|string',
             'envies' => 'nullable|string',

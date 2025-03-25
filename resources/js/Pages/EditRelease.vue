@@ -544,7 +544,7 @@ const submit = () => {
                                     </div>
                                 </div>
                                 <div>
-                                    <InputLabel for="price" value="Prix" class="required text-sm font-medium" />
+                                    <InputLabel for="price" value="Prix" class="text-sm font-medium" />
                                     <TextInput
                                         id="price"
                                         type="text"
@@ -553,7 +553,6 @@ const submit = () => {
                                                     'w-full mt-1 block transition duration-150 ease-in-out': true
                                                 }"
                                         v-model="form.price"
-                                        required
                                         autocomplete="price"
                                         :disabled="props.auth.user.name !== 'lynxadmin'"
                                     />
