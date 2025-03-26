@@ -6,7 +6,7 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import TextArea from '@/Components/TextArea.vue';
 import { Head, useForm } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import { computed, watch } from 'vue';
 
 const props = defineProps({
     auth: {
@@ -82,6 +82,12 @@ const form = useForm({
             isSingle: Boolean(track.isSingle),
             hasClip: Boolean(track.hasClip),
             IRSC: track.IRSC || '',
+            participations: props.release.release_members.map(member => ({
+                member_id: member.id,
+                firstname: member.firstname,
+                lastname: member.lastname,
+                percentage: 0, // Initialisé à 0 par défaut
+            })),
         }))
         : [{
             id: null,
@@ -90,6 +96,12 @@ const form = useForm({
             isSingle: false,
             hasClip: false,
             IRSC: '',
+            participations: props.release.release_members.map(member => ({
+                member_id: member.id,
+                firstname: member.firstname,
+                lastname: member.lastname,
+                percentage: 0,
+            })),
         }],
 
     members: props.release.release_members?.length > 0 
@@ -135,11 +147,18 @@ const addNewTrack = () => {
         number: nextTrackNumber,
         isSingle: false,
         hasClip: false,
+        participations: form.members.map(member => ({
+            member_id: member.id,
+            firstname: member.firstname,
+            lastname: member.lastname,
+            percentage: 0, // Initialize percentage to 0
+        })),
     });
 };
 
 const addNewMember = () => {
-    form.members.push({
+    // Ajouter un nouveau membre
+    const newMember = {
         id: null,
         firstname: '',
         lastname: '',
@@ -150,11 +169,18 @@ const addNewMember = () => {
         city: '',
         zip_code: '',
         phone_number: '',
-    });
-};
+    };
+    form.members.push(newMember);
 
-const initializeLink = (link) => {
-    return link.startsWith('http://') || link.startsWith('https://') ? link : `https://${link}`;
+    // Ajouter une participation pour ce membre dans chaque track
+    form.tracks.forEach(track => {
+        track.participations.push({
+            member_id: null, // ID null car le membre n'est pas encore sauvegardé
+            firstname: newMember.firstname,
+            lastname: newMember.lastname,
+            percentage: 0, // Initialisé à 0 par défaut
+        });
+    });
 };
 
 const addNewSocial = () => {
@@ -166,6 +192,9 @@ const addNewSocial = () => {
 
 const updateSocialLink = (index, event) => {
     form.socials[index].link = initializeLink(event.target.value);
+};
+const initializeLink = (link) => {
+    return link.startsWith('http://') || link.startsWith('https://') ? link : `https://${link}`;
 };
 
 const deleteTrack = (index) => {
@@ -180,12 +209,63 @@ const deleteSocial = (index) => {
     form.socials.splice(index, 1);
 };
 
-/* const updateReferenceMember = () => {
-    form.members.forEach((member, index) => {
-        member.is_reference = index === form.reference_member_id;
-    });
-}; */
+let isUpdatingParticipations = false;
 
+watch(
+    () => form.members,
+    (newMembers, oldMembers) => {
+        if (isUpdatingParticipations) {
+            return;
+        }
+
+        try {
+            isUpdatingParticipations = true;
+
+            // Si un membre a été supprimé
+            if (newMembers.length < oldMembers.length) {
+                const deletedIndex = oldMembers.findIndex(
+                    (oldMember, index) => !newMembers[index] || oldMember.id !== newMembers[index].id
+                );
+
+                if (deletedIndex !== -1) {
+                    // Mettre à jour chaque piste avec les participations mises à jour
+                    form.tracks = form.tracks.map(track => ({
+                        ...track,
+                        participations: track.participations.filter((_, pIndex) => pIndex !== deletedIndex)
+                    }));
+                }
+            }
+
+            // Synchroniser les participations existantes
+            form.tracks.forEach(track => {
+                track.participations = form.members.map((member, index) => ({
+                    member_id: member.id,
+                    firstname: member.firstname,
+                    lastname: member.lastname,
+                    percentage: track.participations[index]?.percentage || 0
+                }));
+            });
+
+        } finally {
+            isUpdatingParticipations = false;
+        }
+    },
+    { deep: true }
+);
+
+const validateMemberPercentage = (track, member) => {
+    if (member.percentage > 100) {
+        member.percentage = 100; // Force la valeur à 100 si elle dépasse
+    }
+    if (member.percentage < 0) {
+        member.percentage = 0; // Force la valeur à 0 si elle est négative
+    }
+    const totalPercentage = track.participations.reduce((sum, member) => sum + (member.percentage || 0), 0);
+    if (totalPercentage > 100) {
+        alert('La somme des participations ne peut pas dépasser 100%.');
+        member.percentage = 0;
+    }
+};
 
 const submit = () => {
     if (form.tracks.some(track => !track.title) || form.tracks.some(track => !track.number )) {
@@ -218,7 +298,6 @@ const submit = () => {
         <form @submit.prevent="submit" class="space-y-10">
         <div class="overflow-hidden bg-white shadow-lg rounded-lg dark:bg-gray-800">
             <div class="p-8">
-                
                     <!-- Section Informations Principales -->
                     <div class="space-y-6 border-gray-700 pb-6">
                         <h3 class="text-xl font-bold text-gray-100 flex items-center">
@@ -323,7 +402,7 @@ const submit = () => {
                         Informations sur le(s) membre(s)</h3>
                         <InputLabel value="" class="text-sm font-medium" />
                         <div class="overflow-x-auto">
-                            <table class="min-w-full rounded-md overflow-hidden border-gray-700 !mt-1">
+                            <table class="rounded-md overflow-hidden border-gray-700 !mt-1">
                                 <thead>
                                     <tr>
                                         <th scope="col" class="required w-16 px-3 py-2.5 text-left text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Prénom</th>
@@ -573,16 +652,20 @@ const submit = () => {
                                     <InputError class="mt-2" :message="form.errors.description" />
                                 </div>
                                 <InputLabel value="Tracklist" class="text-sm font-medium" />
-                                <div class="overflow-x-auto">
-                                    <table class="min-w-full rounded-md overflow-hidden border-gray-700 !mt-1">
+                                <div class="overflow-x-auto !mt-1">
+                                    <table class="min-w-full rounded-md overflow-hidden border-gray-700">
                                         <thead>
                                             <tr>
-                                                <th scope="col" class="w-8 px-3 py-2.5 text-left text-sm font-semibold text-gray-100 bg-gray-700">#</th>
-                                                <th scope="col" class="required w-full px-3 py-2.5 text-left text-sm font-semibold bg-gray-700 text-gray-100">Titre</th>
-                                                <th scope="col" class="px-3 py-2.5 text-center text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Single ?</th>
-                                                <th scope="col" class="px-3 py-2.5 text-center text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Vidéoclip ?</th>
-                                                <th v-if="props.auth.user.name === 'lynxadmin'" scope="col" class="px-3 py-2.5 text-left text-sm font-semibold bg-gray-700 text-gray-100">ISRC</th>
-                                                <th scope="col" class="px-3 py-2.5 text-center text-sm font-semibold bg-gray-700 text-gray-100">
+                                                <!-- Première ligne avec le titre qui s'étend sur plusieurs colonnes -->
+                                                <td rowspan="2" scope="col" class="w-8 px-3 py-2.5 text-left text-sm font-semibold text-gray-100 bg-gray-700">#</td>
+                                                <td rowspan="2" scope="col" class="required w-1/2 px-3 py-2.5 text-left text-sm font-semibold bg-gray-700 text-gray-100">Titre</td>
+                                                <td rowspan="2" scope="col" class="px-3 py-2.5 text-center text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Single ?</td>
+                                                <td rowspan="2" scope="col" class="px-3 py-2.5 text-center text-sm font-semibold bg-gray-700 text-gray-100 whitespace-nowrap">Vidéoclip ?</td>
+                                                <td v-if="props.auth.user.name === 'lynxadmin'" rowspan="2" scope="col" class="px-3 py-2.5 text-left text-sm font-semibold bg-gray-700 text-gray-100">ISRC</td>
+                                                <th scope="col" :colspan="form.members.length" class="px-3 pt-3 text-center text-sm font-semibold bg-gray-600 text-gray-100">
+                                                    Clé de répartition précise des morceaux
+                                                </th>
+                                                <td rowspan="2" scope="col" class="px-3 py-2.5 text-center text-sm font-semibold bg-gray-700 text-gray-100">
                                                     <button 
                                                             type="button" 
                                                             @click="addNewTrack"
@@ -592,6 +675,11 @@ const submit = () => {
                                                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                                                         </svg>
                                                     </button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th v-for="member in form.members" :key="member.id || 'new'" class="required px-3 py-2.5 text-center text-sm font-semibold bg-gray-600 text-gray-100 whitespace-nowrap">
+                                                    {{ member.firstname.charAt(0) }}. {{ member.lastname }}
                                                 </th>
                                             </tr>
                                         </thead>
@@ -629,6 +717,18 @@ const submit = () => {
                                                         class="transition duration-150 ease-in-out"
                                                     />
                                                 </td>
+                                                <!-- Dynamically generate percentage inputs for each member -->
+                                                <td v-for="participation in track.participations" :key="participation.member_id || 'new'" class="px-3 py-2 text-center bg-gray-600/80">
+                                                    <TextInput  
+                                                        type="number"
+                                                        v-model="participation.percentage"
+                                                        class="w-20 text-center transition duration-150 ease-in-out"
+                                                        placeholder="%"
+                                                        min="0"
+                                                        max="100"
+                                                        @input="validateMemberPercentage(track, member)"
+                                                    />
+                                                </td>
                                                 <td class="whitespace-nowrap px-3 py-2">
                                                     <button
                                                         v-if="form.tracks.length > 1 && index === form.tracks.length - 1"
@@ -646,18 +746,6 @@ const submit = () => {
                                     </table>
                                 </div>
                                 <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
-                                    <div>
-                                        <InputLabel for="cleRepartition" value="Clé de répartition précise des morceaux" class="text-sm font-medium" />
-                                        <TextArea
-                                            id="cleRepartition"
-                                            type="text"
-                                            class="mt-1 block w-full transition duration-150 ease-in-out"
-                                            v-model="form.cleRepartition"
-                                            rows="5"
-                                            autocomplete="cleRepartition"
-                                        />
-                                        <InputError class="" :message="form.errors.cleRepartition" />
-                                    </div>
                                     <div v-if="props.auth.user.name === 'lynxadmin'"
                                     >
                                         <InputLabel for="CodeBarre" value="Code-Barre(s)" class="text-sm font-medium" />

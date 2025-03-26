@@ -10,6 +10,7 @@ use App\Models\ReleaseType;
 use App\Models\ReleaseTrack;
 use App\Models\ReleaseMember;
 use App\Models\ReleaseSocial;
+use App\Models\ReleaseMemberReleaseTrack;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -56,6 +57,7 @@ class ReleaseController extends Controller
             'releaseTypes' => ReleaseType::all(),
             'releaseTracks' => ReleaseTrack::all(),
             'releaseMembers' => ReleaseMember::all(),
+            'releaseSocials' => ReleaseSocial::all(),
             'releaseSocials' => ReleaseSocial::all(),
             'auth' => [
                 'user' => auth()->user(),
@@ -183,6 +185,9 @@ class ReleaseController extends Controller
             'tracks.*.isSingle' => 'required|boolean',
             'tracks.*.hasClip' => 'required|boolean',
             'tracks.*.IRSC' => 'nullable|string',
+            'tracks.*.participations' => 'array',
+            'tracks.*.participations.*.member_id' => 'required|exists:release_members,id',
+            'tracks.*.participations.*.percentage' => 'required|numeric|min:0|max:100',
             'members' => 'array',
             'members.*.id' => 'nullable',  // Permettre id null pour nouveaux membres
             'members.*.firstname' => 'required|string',
@@ -240,29 +245,61 @@ class ReleaseController extends Controller
 
          // Sauvegarde des pistes
         $updatedTrackIds = [];
-        foreach ($validated['tracks'] as $trackData) {
-            if (isset($trackData['id'])) {
-                $release->release_tracks()
-                    ->where('id', $trackData['id'])
-                    ->update([
-                        'title' => $trackData['title'],
-                        'number' => $trackData['number'],
-                        'isSingle' => $trackData['isSingle'],
-                        'hasClip' => $trackData['hasClip'],
-                        'IRSC' => $trackData['IRSC'],
-                    ]);
-                $updatedTrackIds[] = $trackData['id'];
-            } else {
-                $newTrack = $release->release_tracks()->create([
-                    'title' => $trackData['title'],
-                    'number' => $trackData['number'],
-                    'isSingle' => $trackData['isSingle'],
-                    'hasClip' => $trackData['hasClip'],
-                    'IRSC' => $trackData['IRSC'],
-                ]);
-                $updatedTrackIds[] = $newTrack->id;
-            }
+// Dans la boucle foreach des tracks, modifiez le code comme suit:
+    foreach ($validated['tracks'] as $trackData) {
+        if (isset($trackData['id'])) {
+            $track = $release->release_tracks()
+                ->where('id', $trackData['id'])
+                ->first(); // Récupérer l'instance de la piste
+    
+            $track->update([
+                'title' => $trackData['title'],
+                'number' => $trackData['number'],
+                'isSingle' => $trackData['isSingle'],
+                'hasClip' => $trackData['hasClip'],
+                'IRSC' => $trackData['IRSC'],
+            ]);
+            $updatedTrackIds[] = $trackData['id'];
+        } else {
+            $track = $release->release_tracks()->create([
+                'title' => $trackData['title'],
+                'number' => $trackData['number'],
+                'isSingle' => $trackData['isSingle'],
+                'hasClip' => $trackData['hasClip'],
+                'IRSC' => $trackData['IRSC'],
+            ]);
+            $updatedTrackIds[] = $track->id;
         }
+    
+        // Traitement des participations
+        if (isset($trackData['participations'])) {
+            $participationsData = [];
+            $totalPercentage = 0;
+            
+            foreach ($trackData['participations'] as $participation) {
+                // ... vérifications existantes ...
+                if (!isset($participation['member_id'])) {
+                    throw ValidationException::withMessages([
+                        'participations' => "L'ID du membre est manquant pour une participation"
+                    ]);
+                }
+    
+                $totalPercentage += $participation['percentage'];
+                if ($totalPercentage > 100) {
+                    throw ValidationException::withMessages([
+                        'participations' => "Le total des pourcentages pour la piste '{$track->title}' ne peut pas dépasser 100%"
+                    ]);
+                }
+    
+                $participationsData[$participation['member_id']] = [
+                    'percentage' => $participation['percentage']
+                ];
+            }
+    
+            // Synchroniser les participations avec la piste actuelle
+            $track->release_members()->sync($participationsData);
+        }
+    }
 
         // Sauvegarde des membres
         $updatedMemberIds = [];

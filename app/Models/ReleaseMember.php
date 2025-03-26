@@ -18,4 +18,16 @@ class ReleaseMember extends Model
     public function releases(){
         return $this->belongsToMany(Release::class);
     }
+
+    public function release_tracks()
+    {
+        return $this->belongsToMany(ReleaseTrack::class, 'releasemember_releasetrack')
+                    ->withPivot('percentage')
+                    ->withTimestamps();
+    }
+
+    public function release_members_release_tracks()
+    {
+        return $this->hasMany(ReleaseMemberReleaseTrack::class);
+    }
 }
