@@ -82,11 +82,11 @@ const form = useForm({
             isSingle: Boolean(track.isSingle),
             hasClip: Boolean(track.hasClip),
             IRSC: track.IRSC || '',
-            participations: props.release.release_members.map(member => ({
+            participations: track.release_members?.map(member => ({
                 member_id: member.id,
                 firstname: member.firstname,
                 lastname: member.lastname,
-                percentage: 0, // Initialisé à 0 par défaut
+                percentage: Number(member.pivot?.percentage || 0), // Utilisez la valeur du pivot
             })),
         }))
         : [{
@@ -175,7 +175,7 @@ const addNewMember = () => {
     // Ajouter une participation pour ce membre dans chaque track
     form.tracks.forEach(track => {
         track.participations.push({
-            member_id: null, // ID null car le membre n'est pas encore sauvegardé
+            member_id: newMember.id, // ID null car le membre n'est pas encore sauvegardé
             firstname: newMember.firstname,
             lastname: newMember.lastname,
             percentage: 0, // Initialisé à 0 par défaut
@@ -455,6 +455,7 @@ const submit = () => {
                                                 class="transition duration-150 ease-in-out"
                                                 placeholder="Date de naissance"
                                             />
+                                            <InputError class="mt-2" :message="form.errors.birth_date" />
                                         </td>
                                         <td class="px-1.5 py-2">
                                             <TextInput
@@ -726,7 +727,7 @@ const submit = () => {
                                                         placeholder="%"
                                                         min="0"
                                                         max="100"
-                                                        @input="validateMemberPercentage(track, member)"
+                                                        @input="validateMemberPercentage(track, participation)"
                                                     />
                                                 </td>
                                                 <td class="whitespace-nowrap px-3 py-2">

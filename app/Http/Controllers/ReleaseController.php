@@ -51,8 +51,18 @@ class ReleaseController extends Controller
 
     public function edit(Release $release): Response
     {
+        $releaseWithRelations = Release::with([
+            'release_type',
+            'release_formats',
+            'release_tracks.release_members' => function ($query) {
+                $query->withPivot('percentage');
+            },
+            'release_members',
+            'release_socials'
+        ])->findOrFail($release->id);
+
         return Inertia::render('EditRelease', [
-            'release' => Release::with('release_type', 'release_formats', 'release_tracks', 'release_members', 'release_socials')->findOrFail($release->id), // Récupérer la release à éditer
+            'release' => $releaseWithRelations, 
             'releaseFormats' => ReleaseFormat::all(),
             'releaseTypes' => ReleaseType::all(),
             'releaseTracks' => ReleaseTrack::all(),
@@ -186,7 +196,7 @@ class ReleaseController extends Controller
             'tracks.*.hasClip' => 'required|boolean',
             'tracks.*.IRSC' => 'nullable|string',
             'tracks.*.participations' => 'array',
-            'tracks.*.participations.*.member_id' => 'required|exists:release_members,id',
+            'tracks.*.participations.*.member_id' => 'nullable|exists:release_members,id',
             'tracks.*.participations.*.percentage' => 'required|numeric|min:0|max:100',
             'members' => 'array',
             'members.*.id' => 'nullable',  // Permettre id null pour nouveaux membres
@@ -245,61 +255,7 @@ class ReleaseController extends Controller
 
          // Sauvegarde des pistes
         $updatedTrackIds = [];
-// Dans la boucle foreach des tracks, modifiez le code comme suit:
-    foreach ($validated['tracks'] as $trackData) {
-        if (isset($trackData['id'])) {
-            $track = $release->release_tracks()
-                ->where('id', $trackData['id'])
-                ->first(); // Récupérer l'instance de la piste
-    
-            $track->update([
-                'title' => $trackData['title'],
-                'number' => $trackData['number'],
-                'isSingle' => $trackData['isSingle'],
-                'hasClip' => $trackData['hasClip'],
-                'IRSC' => $trackData['IRSC'],
-            ]);
-            $updatedTrackIds[] = $trackData['id'];
-        } else {
-            $track = $release->release_tracks()->create([
-                'title' => $trackData['title'],
-                'number' => $trackData['number'],
-                'isSingle' => $trackData['isSingle'],
-                'hasClip' => $trackData['hasClip'],
-                'IRSC' => $trackData['IRSC'],
-            ]);
-            $updatedTrackIds[] = $track->id;
-        }
-    
-        // Traitement des participations
-        if (isset($trackData['participations'])) {
-            $participationsData = [];
-            $totalPercentage = 0;
-            
-            foreach ($trackData['participations'] as $participation) {
-                // ... vérifications existantes ...
-                if (!isset($participation['member_id'])) {
-                    throw ValidationException::withMessages([
-                        'participations' => "L'ID du membre est manquant pour une participation"
-                    ]);
-                }
-    
-                $totalPercentage += $participation['percentage'];
-                if ($totalPercentage > 100) {
-                    throw ValidationException::withMessages([
-                        'participations' => "Le total des pourcentages pour la piste '{$track->title}' ne peut pas dépasser 100%"
-                    ]);
-                }
-    
-                $participationsData[$participation['member_id']] = [
-                    'percentage' => $participation['percentage']
-                ];
-            }
-    
-            // Synchroniser les participations avec la piste actuelle
-            $track->release_members()->sync($participationsData);
-        }
-    }
+
 
         // Sauvegarde des membres
         $updatedMemberIds = [];
@@ -332,6 +288,69 @@ class ReleaseController extends Controller
                     'phone_number' => $memberData['phone_number'],
                 ]);
                 $updatedMemberIds[] = $newMember->id;
+
+                // Mettre à jour les participations avec le nouvel ID
+                foreach ($validated['tracks'] as &$trackData) {
+                    foreach ($trackData['participations'] as &$participation) {
+                        if ($participation['member_id'] === null) {
+                            $participation['member_id'] = $newMember->id;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Sauvegarde des pistes
+        foreach ($validated['tracks'] as $trackData) {
+            if (isset($trackData['id'])) {
+                $track = $release->release_tracks()
+                    ->where('id', $trackData['id'])
+                    ->first(); // Récupérer l'instance de la piste
+        
+                $track->update([
+                    'title' => $trackData['title'],
+                    'number' => $trackData['number'],
+                    'isSingle' => $trackData['isSingle'],
+                    'hasClip' => $trackData['hasClip'],
+                    'IRSC' => $trackData['IRSC'] ?? null,
+                ]);
+                $updatedTrackIds[] = $trackData['id'];
+            } else {
+                $track = $release->release_tracks()->create([
+                    'title' => $trackData['title'],
+                    'number' => $trackData['number'],
+                    'isSingle' => $trackData['isSingle'],
+                    'hasClip' => $trackData['hasClip'],
+                    'IRSC' => $trackData['IRSC'] ?? null,
+                ]);
+                $updatedTrackIds[] = $track->id;
+            }
+                    
+            // Traitement des participations
+            if (isset($trackData['participations'])) {
+                $participationsData = [];
+                $totalPercentage = 0;
+                
+                foreach ($trackData['participations'] as $participation) {
+                    if (!isset($participation['member_id'])) {
+                        throw ValidationException::withMessages([
+                            'participations' => "L'ID du membre est manquant pour une participation"
+                        ]);
+                    }
+        
+                    $totalPercentage += $participation['percentage'];
+                    if ($totalPercentage > 100) {
+                        throw ValidationException::withMessages([
+                            'participations' => "Le total des pourcentages pour la piste '{$track->title}' ne peut pas dépasser 100%"
+                        ]);
+                    }
+        
+                    $participationsData[$participation['member_id']] = [
+                        'percentage' => $participation['percentage']
+                    ];
+                }
+                // Synchroniser les participations avec la piste actuelle
+                $track->release_members()->sync($participationsData);
             }
         }
 

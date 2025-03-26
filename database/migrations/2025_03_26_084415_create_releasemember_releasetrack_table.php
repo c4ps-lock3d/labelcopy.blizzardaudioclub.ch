@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignIdFor(\App\Models\ReleaseTrack::class)->constrained()->cascadeOnDelete();
             $table->primary(['release_member_id','release_track_id']);
             $table->integer('percentage')->nullable();
+            $table->timestamps();
         });
     }
 
