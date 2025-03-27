@@ -5,7 +5,7 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import TextArea from '@/Components/TextArea.vue';
-import { Head, useForm } from '@inertiajs/vue3';
+import { Head, useForm, Link } from '@inertiajs/vue3';
 import { computed, watch } from 'vue';
 
 const props = defineProps({
@@ -107,9 +107,9 @@ const form = useForm({
     members: props.release.release_members?.length > 0 
         ? props.release.release_members?.map(member => ({
         id: member.id,
-        firstname: member.firstname,
-        lastname: member.lastname,
-        birth_date: member.birth_date,
+        firstname: member.firstname || '',
+        lastname: member.lastname || '',
+        birth_date: member.birth_date || '',
         IPI: member.IPI || '',
         is_reference: Boolean(member.is_reference),
         street: member.street || '',
@@ -137,7 +137,9 @@ const form = useForm({
     releaseSocials: props.releaseSocials,
 });
 
-const isDisabled = computed(() => !props.release.isActive);
+const isDisabled = computed(() => {
+    return !props.release.isActive && props.auth.user.name !== 'lynxadmin';
+});
 
 const addNewTrack = () => {
     const nextTrackNumber = form.tracks.length + 1;
@@ -289,17 +291,31 @@ const submit = () => {
             <h2
                 class="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200"
             >
-                Dashboard > Labelcopy {{ form.catalog }}
+            <Link
+                :href="route('dashboard')"
+            >
+                Dashboard
+            </Link>
+             > Labelcopy ({{ form.catalog }})
             </h2>
         </template>
 
-        <div class="py-12">
+        <div class="py-10">
         <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+        <div v-if="isDisabled" class="mb-10 p-4 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400">
+            <div class="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="size-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                Le formulaire a été désactivé par le label
+            </div>
+        </div>
         <form @submit.prevent="submit" class="space-y-10">
         <div class="overflow-hidden bg-white shadow-lg rounded-lg dark:bg-gray-800">
             <div class="p-8">
                     <!-- Section Informations Principales -->
-                    <div class="space-y-6 border-gray-700 pb-6">
+                        <!-- Ajouter une alerte si le formulaire est désactivé -->
+                        <div class="space-y-6 border-gray-700 pb-6">
                         <h3 class="text-xl font-bold text-gray-100 flex items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mr-4 size-6">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
@@ -328,6 +344,7 @@ const submit = () => {
                                     rows="10"
                                     required
                                     autocomplete="artistBiography"
+                                    :disabled="isDisabled"
                                 />
                                 <InputError class="mt-2" :message="form.errors.artistBiography" />
                             </div>
@@ -340,6 +357,7 @@ const submit = () => {
                                     v-model="form.artistWebsite"
                                     autocomplete="artistWebsite"
                                     placeholder="https://example.ch"
+                                    :disabled="isDisabled"
                                 />
                                 <InputError class="mt-2" :message="form.errors.artistWebsite" />
 
@@ -352,7 +370,8 @@ const submit = () => {
                                                 <button 
                                                         type="button" 
                                                         @click="addNewSocial"
-                                                        class="w-9 h-9 bg-globalButtonColor text-black text-sm rounded-md hover:bg-globalButtonHoverColor transition-colors flex items-center justify-center"
+                                                        class="w-9 h-9 bg-indigo-600 text-white text-sm rounded-md border border-indigo-800 hover:bg-indigo-700 transition-colors flex items-center justify-center"
+                                                        :disabled="isDisabled"
                                                     >
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
                                                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
@@ -370,6 +389,7 @@ const submit = () => {
                                                     @input="updateSocialLink(index, $event)"
                                                     class="w-full transition duration-150 ease-in-out"
                                                     placeholder="Lien"
+                                                    :disabled="isDisabled"
                                                 />
                                             </td>
                                             <td class="whitespace-nowrap px-3 py-2">
@@ -377,7 +397,8 @@ const submit = () => {
                                                     v-if="form.socials.length > 0 && index === form.socials.length - 1"
                                                     type="button" 
                                                     @click="deleteSocial(index)"
-                                                    class="w-9 h-9 bg-globalButtonColor text-black rounded-md hover:bg-globalButtonHoverColor transition-colors flex items-center justify-center"
+                                                    class="w-9 h-9 bg-indigo-600 text-white rounded-md border border-indigo-800 hover:bg-indigo-700 transition-colors flex items-center justify-center"
+                                                    :disabled="isDisabled"
                                                 >
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
                                                         <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
@@ -413,7 +434,8 @@ const submit = () => {
                                             <button 
                                                 type="button" 
                                                 @click="addNewMember"
-                                                class="w-9 h-9 bg-globalButtonColor text-black text-sm rounded-md hover:bg-globalButtonHoverColor transition-colors flex items-center justify-center"
+                                                class="w-9 h-9 bg-indigo-600 text-white text-sm rounded-md border border-indigo-800 hover:bg-indigo-700 transition-colors flex items-center justify-center"
+                                                :disabled="isDisabled"
                                             >
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
@@ -433,7 +455,7 @@ const submit = () => {
                                                     'mt-1 block transition duration-150 ease-in-out': true
                                                 }"
                                                 placeholder="Prénom"
-                                                :disabled="member.is_reference"
+                                                :disabled="member.is_reference || isDisabled"
                                             />
                                         </td>
                                         <td class="px-1.5 py-2">
@@ -445,7 +467,7 @@ const submit = () => {
                                                     'mt-1 block transition duration-150 ease-in-out': true
                                                 }"
                                                 placeholder="Nom"
-                                                :disabled="member.is_reference"
+                                                :disabled="member.is_reference || isDisabled"
                                             />
                                         </td>
                                         <td class="px-1.5 py-2">
@@ -454,14 +476,16 @@ const submit = () => {
                                                 v-model="member.birth_date"
                                                 class="transition duration-150 ease-in-out"
                                                 placeholder="Date de naissance"
+                                                :disabled="isDisabled"
                                             />
-                                            <InputError class="mt-2" :message="form.errors.birth_date" />
+                                            <InputError class="mt-2" :message="form.errors[`members.${index}.birth_date`] || ''" />
                                         </td>
                                         <td class="px-1.5 py-2">
                                             <TextInput
                                                 type="text"
                                                 v-model="member.IPI"
                                                 class="w-full transition duration-150 ease-in-out"
+                                                :disabled="isDisabled"
                                             />
                                         </td>
                                         <td class="whitespace-nowrap px-3 py-2">
@@ -469,7 +493,8 @@ const submit = () => {
                                                 v-if="form.members.length > 1 && index === form.members.length - 1"
                                                 type="button" 
                                                 @click="deleteMember(index)"
-                                                class="w-9 h-9 bg-globalButtonColor text-black rounded-md hover:bg-globalButtonHoverColor transition-colors flex items-center justify-center"
+                                                class="w-9 h-9 bg-indigo-600 text-white rounded-md border border-indigo-800 hover:bg-indigo-700 transition-colors flex items-center justify-center"
+                                                :disabled="isDisabled"
                                             >
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
@@ -494,6 +519,7 @@ const submit = () => {
                                             v-model="member.zip_code"
                                             required
                                             autocomplete="zip_code"
+                                            :disabled="isDisabled"
                                         />
                                         <InputError class="" :message="form.errors.zip_code" />
                                         </div>
@@ -506,6 +532,7 @@ const submit = () => {
                                             v-model="member.city"
                                             required
                                             autocomplete="city"
+                                            :disabled="isDisabled"
                                         />
                                         <InputError class="" :message="form.errors.city" />
                                         </div>
@@ -518,6 +545,7 @@ const submit = () => {
                                             v-model="member.street"
                                             required
                                             autocomplete="street"
+                                            :disabled="isDisabled"
                                         />
                                         <InputError class="" :message="form.errors.street" />
                                         </div>
@@ -530,6 +558,7 @@ const submit = () => {
                                             v-model="member.phone_number"
                                             required
                                             autocomplete="phone_number"
+                                            :disabled="isDisabled"
                                         />
                                         <InputError class="" :message="form.errors.phone_number" />
                                         </div>
@@ -572,6 +601,7 @@ const submit = () => {
                                             v-model="form.name"
                                             required
                                             autocomplete="name"
+                                            :disabled="isDisabled"
                                         />
                                         <InputError class="" :message="form.errors.name" />
                                     </div>
@@ -584,6 +614,7 @@ const submit = () => {
                                             v-model="form.style"
                                             required
                                             autocomplete="style"
+                                            :disabled="isDisabled"
                                         />
                                         <InputError class="" :message="form.errors.style" />
                                     </div>
@@ -598,6 +629,7 @@ const submit = () => {
                                                 :value="format.id"
                                                 v-model="form.release_format_ids"
                                                 class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                                :disabled="isDisabled"
                                             />
                                             <label :for="'format-' + format.id" class="ml-2 text-sm text-gray-100">
                                                 {{ format.name }}
@@ -616,6 +648,7 @@ const submit = () => {
                                                 :value="type.id"
                                                 v-model="form.release_type_id"
                                                 class="border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                                :disabled="isDisabled"
                                             />
                                             <label :for="'type-' + type.id" class="ml-2 text-sm text-gray-100">
                                                 {{ type.name }}
@@ -635,6 +668,7 @@ const submit = () => {
                                         v-model="form.price"
                                         autocomplete="price"
                                         :disabled="props.auth.user.name !== 'lynxadmin'"
+                                        :placeholder="props.auth.user.name !== 'lynxadmin' ? 'Le prix sera défini par le label' : ''"
                                     />
                                     <InputError class="" :message="form.errors.price" />
                                 </div>
@@ -649,6 +683,7 @@ const submit = () => {
                                         rows="5"
                                         required
                                         autocomplete="description"
+                                        :disabled="isDisabled"
                                     />
                                     <InputError class="mt-2" :message="form.errors.description" />
                                 </div>
@@ -670,7 +705,8 @@ const submit = () => {
                                                     <button 
                                                             type="button" 
                                                             @click="addNewTrack"
-                                                            class="w-9 h-9 bg-globalButtonColor text-black text-sm rounded-md hover:bg-globalButtonHoverColor transition-colors flex items-center justify-center"
+                                                            class="w-9 h-9 bg-indigo-600 text-white text-sm border border-indigo-800 rounded-md hover:bg-indigo-700 transition-colors flex items-center justify-center"
+                                                            :disabled="isDisabled"
                                                         >
                                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
                                                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
@@ -695,6 +731,7 @@ const submit = () => {
                                                         v-model="track.title"
                                                         class="w-full min-w-[300px] transition duration-150 ease-in-out"
                                                         placeholder="Titre"
+                                                        :disabled="isDisabled"
                                                     />
                                                 </td>
                                                 <td class="whitespace-nowrap px-3 py-2 text-center">
@@ -702,13 +739,15 @@ const submit = () => {
                                                             type="checkbox"
                                                             v-model="track.isSingle"
                                                             class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                                                        />                                                
+                                                            :disabled="isDisabled"
+                                                        />
                                                 </td>
                                                 <td class="whitespace-nowrap px-3 py-2 text-center">
                                                     <input
                                                             type="checkbox"
                                                             v-model="track.hasClip"
                                                             class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                                            :disabled="isDisabled"
                                                     />
                                                 </td>
                                                 <td v-if="props.auth.user.name === 'lynxadmin'" class="px-3 py-2">
@@ -728,6 +767,7 @@ const submit = () => {
                                                         min="0"
                                                         max="100"
                                                         @input="validateMemberPercentage(track, participation)"
+                                                        :disabled="isDisabled"
                                                     />
                                                 </td>
                                                 <td class="whitespace-nowrap px-3 py-2">
@@ -735,7 +775,8 @@ const submit = () => {
                                                         v-if="form.tracks.length > 1 && index === form.tracks.length - 1"
                                                         type="button" 
                                                         @click="deleteTrack(index)"
-                                                        class="w-9 h-9 bg-globalButtonColor text-black rounded-md hover:bg-globalButtonHoverColor transition-colors flex items-center justify-center"
+                                                        class="w-9 h-9 bg-indigo-600 text-white rounded-md border border-indigo-800 hover:bg-indigo-700 transition-colors flex items-center justify-center"
+                                                        :disabled="isDisabled"
                                                     >
                                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
                                                             <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
@@ -771,6 +812,7 @@ const submit = () => {
                                             rows="5"
                                             required
                                             autocomplete="credits"
+                                            :disabled="isDisabled"
                                         />
                                         <InputError class="mt-2" :message="form.errors.credits" />
                                     </div>
@@ -783,6 +825,7 @@ const submit = () => {
                                             v-model="form.remerciements"
                                             rows="5"
                                             autocomplete="remerciements"
+                                            :disabled="isDisabled"
                                         />
                                         <InputError class="mt-2" :message="form.errors.remerciements" />
                                     </div>
@@ -804,6 +847,7 @@ const submit = () => {
                                             type="checkbox"
                                             v-model="form.isProduitsDerives"
                                             class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                            :disabled="isDisabled"
                                         />
                                         <InputLabel for="isProduitsDerives" value="la création de produits dérivés" class="text-sm font-medium" />
                                         <InputError class="mt-2" :message="form.errors.isProduitsDerives" />
@@ -813,6 +857,7 @@ const submit = () => {
                                             type="checkbox"
                                             v-model="form.isBesoinSubvention"
                                             class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                            :disabled="isDisabled"
                                         />
                                         <InputLabel for="isBesoinSubvention" value="les dossiers de demande de subventions" class="text-sm font-medium" />
                                         <InputError class="mt-2" :message="form.errors.isBesoinSubvention" />
@@ -822,6 +867,7 @@ const submit = () => {
                                             type="checkbox"
                                             v-model="form.isBesoinPromo"
                                             class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                            :disabled="isDisabled"
                                         />
                                         <InputLabel for="isBesoinPromo" value="la promo" class="text-sm font-medium" />
                                         <InputError class="mt-2" :message="form.errors.isBesoinPromo" />
@@ -831,6 +877,7 @@ const submit = () => {
                                             type="checkbox"
                                             v-model="form.isBesoinDigitalMarketing"
                                             class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                            :disabled="isDisabled"
                                         />
                                         <InputLabel for="isBesoinDigitalMarketing" value="faire/recourir à du digital marketing" class="text-sm font-medium" />
                                         <InputError class="mt-2" :message="form.errors.isBesoinDigitalMarketing" />
@@ -840,6 +887,7 @@ const submit = () => {
                                             type="checkbox"
                                             v-model="form.isBesoinContacts"
                                             class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                            :disabled="isDisabled"
                                         />
                                         <InputLabel for="isBesoinContacts" value="mix, mastering, graphisme, vidéos, photos, merch, etc." class="text-sm font-medium" />
                                         <InputError class="mt-2" :message="form.errors.isBesoinContacts" />
@@ -864,6 +912,7 @@ const submit = () => {
                                         class="mt-1 block w-full transition duration-150 ease-in-out"
                                         v-model="form.artistIBAN"
                                         autocomplete="artistIBAN"
+                                        :disabled="isDisabled"
                                     />
                                     <InputError class="mt-2" :message="form.errors.artistIBAN" />
                                 </div>
@@ -875,6 +924,7 @@ const submit = () => {
                                         class="mt-1 block w-full transition duration-150 ease-in-out"
                                         v-model="form.budget"
                                         autocomplete="budget"
+                                        :disabled="isDisabled"
                                     />
                                     <InputError class="mt-2" :message="form.errors.budget" />
                                 </div>
@@ -887,6 +937,7 @@ const submit = () => {
                                         v-model="form.sourceFinancement"
                                         rows="5"
                                         autocomplete="sourceFinancement"
+                                        :disabled="isDisabled"
                                     />
                                     <InputError class="mt-2" :message="form.errors.sourceFinancement" />
                                 </div>
@@ -899,6 +950,7 @@ const submit = () => {
                                         v-model="form.besoinFinancement"
                                         rows="5"
                                         autocomplete="besoinFinancement"
+                                        :disabled="isDisabled"
                                     />
                                     <InputError class="mt-2" :message="form.errors.besoinFinancement" />
                                 </div>
@@ -923,6 +975,7 @@ const submit = () => {
                                             v-model="form.remarques"
                                             rows="5"
                                             autocomplete="remarques"
+                                            :disabled="isDisabled"
                                         />
                                         <InputError class="mt-2" :message="form.errors.remarques" />
                                     </div>
@@ -935,6 +988,7 @@ const submit = () => {
                                             v-model="form.envies"
                                             rows="5"
                                             autocomplete="envies"
+                                            :disabled="isDisabled"
                                         />
                                         <InputError class="mt-2" :message="form.errors.envies" />
                                     </div>
@@ -943,7 +997,7 @@ const submit = () => {
                             <div class="flex justify-end pt-6">
                                 <PrimaryButton
                                     :class="{ 'opacity-25': form.processing }"
-                                    :disabled="form.processing"
+                                    :disabled="form.processing || isDisabled"
                                 >
                                     Sauvegarder
                                 </PrimaryButton>

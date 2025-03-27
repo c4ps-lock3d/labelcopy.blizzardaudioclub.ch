@@ -90,43 +90,42 @@ class ReleaseController extends Controller
         $existingUser = User::where('email', $validated['email'])->first();
         $existingMember = ReleaseMember::where('email', $validated['email'])->first();
 
-        if ($existingUser) {
-            // Si l'utilisateur existe, associez-le simplement à la release
-            $release = Release::create([
-                'catalog' => $validated['catalog'],
-                'isActive' => $validated['isActive'] ?? true, // Définit isActive à true par défaut
-            ]);
-    
-            $release->users()->attach($existingUser->id);
-            $release->release_members()->attach($existingMember->id);
-    
-            return redirect(route('dashboard'))->with('success', 'Release créée et utilisateur existant associé.');
-        }
-
         $release = Release::create([
             'catalog' => $validated['catalog'],
             'isActive' => $validated['isActive'] ?? true, // Définit isActive à true par défaut
         ]);
 
-        $releaseMember = ReleaseMember::create([
-            'firstname' => $validated['firstname'],
-            'lastname' => $validated['lastname'],
-            'email' => $validated['email'],
-            'is_reference' => $validated['is_reference'],
-        ]);
-        // Associer le membre à la release dans la table pivot
-        $release->release_members()->attach($releaseMember->id);
-
-        $user = User::create([
-            'name' => $validated['email'],
-            'email' => $validated['email'],
-            'password' => Hash::make($validated['email']),
-        ]);
-        // Associer l'utilisateur à la release dans la table pivot
-        $release->users()->attach($user->id);
-
-        $expiresAt = now()->addDay();
-        $user->sendWelcomeNotification($expiresAt);
+        if ($existingUser && $existingMember) {
+            // Si l'utilisateur existe, associez-le simplement à la release
+            $release->users()->attach($existingUser->id);
+            $release->release_members()->attach($existingMember->id);
+    
+        } else {
+            // Créer un nouveau membre si nécessaire
+            if (!$existingMember) {
+                $member = ReleaseMember::create([
+                    'firstname' => $validated['firstname'],
+                    'lastname' => $validated['lastname'],
+                    'email' => $validated['email'],
+                    'is_reference' => $validated['is_reference'],
+                ]);
+                $release->release_members()->attach($member->id);
+            }
+    
+            // Créer un nouvel utilisateur si nécessaire
+            if (!$existingUser) {
+                $user = User::create([
+                    'name' => $validated['email'],
+                    'email' => $validated['email'],
+                    'password' => Hash::make($validated['email']),
+                ]);
+                $release->users()->attach($user->id);
+    
+                // Envoyer l'email de bienvenue
+                $expiresAt = now()->addDay();
+                $user->sendWelcomeNotification($expiresAt);
+            }
+        }
 
         return redirect(route('dashboard'))->with('success', 'Release et utilisateur créés avec succès.');
     }

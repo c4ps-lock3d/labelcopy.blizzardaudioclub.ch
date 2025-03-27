@@ -4,5 +4,5 @@
 
 .required:after {
     content:" *";
-    color: red;
+    color: #ef4444;
   }
