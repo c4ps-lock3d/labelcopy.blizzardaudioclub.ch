@@ -166,7 +166,6 @@ class ReleaseController extends Controller
             'artistIBAN' => 'nullable|string',
             'artistBiography' => 'required|string',
             'artistWebsite' => 'nullable|string',
-            'CodeBarre' => 'nullable|string',
             'cleRepartition' => 'nullable|string',
             'credits' => 'required|string',
             'remerciements' => 'nullable|string',
@@ -187,6 +186,8 @@ class ReleaseController extends Controller
             'release_type_id' => 'required|exists:release_types,id',
             'release_format_ids' => 'required|array',
             'release_format_ids.*' => 'exists:release_formats,id',
+            'CodeBarre' => 'array',
+            'CodeBarre.*' => 'nullable|string',
             'tracks' => 'array',
             'tracks.*.id' => 'nullable',  // Permettre id null pour nouvelles pistes
             'tracks.*.title' => 'required|string',
@@ -220,7 +221,6 @@ class ReleaseController extends Controller
             'artistIBAN' => $validated['artistIBAN'],
             'artistBiography' => $validated['artistBiography'],
             'artistWebsite' => $validated['artistWebsite'],
-            'CodeBarre' => $validated['CodeBarre'],
             'cleRepartition' => $validated['cleRepartition'],
             'credits' => $validated['credits'],
             'remerciements' => $validated['remerciements'],
@@ -241,7 +241,12 @@ class ReleaseController extends Controller
             'release_type_id' => $validated['release_type_id']
         ]);
 
-        $release->release_formats()->sync($validated['release_format_ids']);
+        // Synchroniser les formats et leurs codes-barres
+        $release->release_formats()->sync(
+            collect($validated['release_format_ids'])->mapWithKeys(function ($formatId) use ($validated) {
+                return [$formatId => ['CodeBarre' => $validated['CodeBarre'][$formatId] ?? null]];
+            })->toArray()
+        );
         
         // Récupérer les IDs des pistes existantes
         $existingTrackIds = $release->release_tracks()->pluck('id')->toArray();

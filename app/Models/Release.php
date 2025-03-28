@@ -19,7 +19,8 @@ class Release extends Model
         return $this->belongsTo(ReleaseType::class);
     }
     public function release_formats (){
-        return $this->belongsToMany(ReleaseFormat::class, 'release_release_format');
+        return $this->belongsToMany(ReleaseFormat::class, 'release_release_format')
+        ->withPivot('CodeBarre');
     }
     public function release_tracks (){
         return $this->belongsToMany(ReleaseTrack::class, 'release_release_track');
