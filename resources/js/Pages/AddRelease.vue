@@ -64,60 +64,75 @@ const submit = () => {
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 mr-4">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
                             </svg>
-                            Informations préliminaires</h3>
+                            Informations préliminaires
+                        </h3>
                         <form @submit.prevent="submit">
-                            <div>
-                                <InputLabel for="catalog" value="N° de catalogue" class="required" />
-                                <TextInput
-                                    id="catalog"
-                                    type="text"
-                                    class="mt-1 block w-full"
-                                    v-model="form.catalog"
-                                    required
-                                    autofocus
-                                    autocomplete="catalog"
-                                />
-                                <InputError class="mt-2" :message="form.errors.catalog" />
+                            <div class="grid grid-cols-1 gap-6 md:grid-cols-2 mb-6">
+                                <div>
+                                    <InputLabel for="catalog" value="N° de catalogue" class="required" />
+                                    <TextInput
+                                        id="catalog"
+                                        type="text"
+                                        class="mt-1 block w-full"
+                                        v-model="form.catalog"
+                                        required
+                                        autofocus
+                                        autocomplete="catalog"
+                                    />
+                                    <InputError class="mt-2" :message="form.errors.catalog" />
+                                </div>
+                                <div class="">
+                                    <InputLabel for="email" value="E-mail de l'artiste de référence" class="required"/>
+                                    <TextInput
+                                        id="email"
+                                        type="text"
+                                        class="mt-1 block w-full"
+                                        v-model="form.email"
+                                        @input="checkEmail"
+                                        required
+                                        autocomplete="email"
+                                    />
+                                    <InputError class="mt-2" :message="form.errors.email" />
+                                </div>
                             </div>
-                            <div class="mt-4">
-                                <InputLabel for="email" value="E-mail de l'artiste de référence" class="required"/>
-                                <TextInput
-                                    id="email"
-                                    type="text"
-                                    class="mt-1 block w-full"
-                                    v-model="form.email"
-                                    @input="checkEmail"
-                                    required
-                                    autocomplete="email"
-                                />
-                                <InputError class="mt-2" :message="form.errors.email" />
+                            <div v-if="emailExists" class="flex items-center mt-8 mb-4 px-4 py-2 text-sm font-medium rounded-md transition bg-red-500/10 border border-red-500/20 text-red-400">
+                                E-mail trouvé ! Cet artiste existe déjà.
                             </div>
-                            <div v-if="emailExists" class="flex items-center mt-4 px-4 py-2 text-sm font-medium rounded-md transition bg-red-500/10 border border-red-500/20 text-red-400">E-mail trouvé ! Cet artiste existe déjà.</div>
-                            <div class="mt-4">
-                                <InputLabel for="firstname" value="Prénom de l'artiste de référence" class="required"/>
-                                <TextInput
-                                    id="firstname"
-                                    type="text"
-                                    class="mt-1 block w-full"
-                                    v-model="form.firstname"
-                                    autocomplete="firstname"
-                                    :disabled="emailExists"
-                                />
-                                <InputError class="mt-2" :message="form.errors.firstname" />
+                            <div class="grid grid-cols-1 gap-6 md:grid-cols-2 w-full">
+                                <div>
+                                    <InputLabel for="firstname" value="Prénom de l'artiste de référence" class="required"/>
+                                    <TextInput
+                                        id="firstname"
+                                        type="text"
+                                        :class="{
+                                                    '!bg-gray-700/10': emailExists,
+                                                    'w-full mt-1 block transition duration-150 ease-in-out': true
+                                                }"
+                                        v-model="form.firstname"
+                                        autocomplete="firstname"
+                                        required
+                                        :disabled="emailExists"
+                                    />
+                                    <InputError class="mt-2" :message="form.errors.firstname" />
+                                </div>
+                                <div>
+                                    <InputLabel for="lastname" value="Nom de l'artiste de référence" class="required"/>
+                                    <TextInput
+                                        id="lastname"
+                                        type="text"
+                                        :class="{
+                                                    '!bg-gray-700/10': emailExists,
+                                                    'w-full mt-1 block transition duration-150 ease-in-out': true
+                                                }"
+                                        v-model="form.lastname"
+                                        autocomplete="lastname"
+                                        required
+                                        :disabled="emailExists"
+                                    />
+                                    <InputError class="mt-2" :message="form.errors.lastname" />
+                                </div>
                             </div>
-                            <div class="mt-4">
-                                <InputLabel for="lastname" value="Nom de l'artiste de référence" class="required"/>
-                                <TextInput
-                                    id="lastname"
-                                    type="text"
-                                    class="mt-1 block w-full"
-                                    v-model="form.lastname"
-                                    autocomplete="lastname"
-                                    :disabled="emailExists"
-                                />
-                                <InputError class="mt-2" :message="form.errors.lastname" />
-                            </div>
-                            <div v-if="emailExists" class="mt-4 flex items-center justify-end">
+                            <div v-if="emailExists" class="mt-8 flex items-center justify-end">
                                 <PrimaryButton
                                     class="ms-4"
                                     :class="{ 'opacity-25': form.processing }"
@@ -126,7 +141,7 @@ const submit = () => {
                                     Créer une nouvelle sortie
                                 </PrimaryButton>
                             </div>
-                            <div v-else class="mt-4 flex items-center justify-end">
+                            <div v-else class="mt-8 flex items-center justify-end">
                                 <PrimaryButton
                                     class="ms-4"
                                     :class="{ 'opacity-25': form.processing }"

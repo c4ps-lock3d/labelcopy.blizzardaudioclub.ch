@@ -58,55 +58,62 @@ const toggleIsActive = async (release) => {
                                 </div>
                             </div>
                             <!-- Liste des releases -->
-                            <table class="min-w-full rounded-md overflow-hidden border border-gray-700 dark:border-gray-600 !mt-4">
-    <thead>
-        <tr class="bg-gray-100 dark:bg-gray-700">
-            <th scope="col" class="px-2.5 py-3 w-1/6 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 whitespace-nowrap">
-                Catalogue
-            </th>
-            <th scope="col" class="px-2.5 py-3 w-1/6 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 whitespace-nowrap">
-                Artiste
-            </th>
-            <th scope="col" class="px-2.5 py-3 w-full text-left text-sm font-semibold text-gray-800 dark:text-gray-100 whitespace-nowrap">
-                Titre
-            </th>
-            <th v-if="props.auth.user.name === 'lynxadmin'" scope="col" class="px-2.5 py-3 w-16 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 whitespace-nowrap">
-                Éditable
-            </th>
-        </tr>
-    </thead>
-    <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
-        <tr v-for="release in releases" :key="release.id" class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition">
-            <Link :href="route('dashboard.editrelease', release.id)" class="contents">
-                <td class="px-2.5 py-3 text-gray-900 dark:text-gray-100">
-                    <div v-if="release.catalog">{{ release.catalog }}</div>
-                </td>
-                <td class="px-2.5 py-3 text-gray-900 dark:text-gray-100">
-                    <div v-if="release.artistName">{{ release.artistName }}</div>
-                </td>
-                <td class="px-2.5 py-3 text-gray-900 dark:text-gray-100">
-                    <div v-if="release.name">{{ release.name }}</div>
-                </td>
-            </Link>
-            <td v-if="props.auth.user.name === 'lynxadmin'" class="px-2.5 text-center">
-                <label class="relative inline-flex items-center cursor-pointer">
-                    <input
-                        type="checkbox"
-                        v-model="release.isActive"
-                        @change="toggleIsActive(release)"
-                        class="sr-only peer"
-                    />
-                    <div
-                        class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-500 rounded-full peer dark:bg-gray-700 peer-checked:bg-indigo-600 mt-1.5"
-                    ></div>
-                    <div
-                        class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-5 mt-1.5"
-                    ></div>
-                </label>
-            </td>
-        </tr>
-    </tbody>
-</table>
+                            <div class="overflow-hidden rounded-md border border-gray-300 dark:border-gray-600 !mt-4">
+                                <table class="min-w-full">
+                                    <thead>
+                                        <tr class="bg-gray-100 dark:bg-gray-700">
+                                            <th scope="col" class="px-2.5 py-3 w-1/6 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 whitespace-nowrap">
+                                                Catalogue
+                                            </th>
+                                            <th scope="col" class="px-2.5 py-3 w-1/6 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 whitespace-nowrap">
+                                                Artiste
+                                            </th>
+                                            <th scope="col" class="px-2.5 py-3 w-full text-left text-sm font-semibold text-gray-800 dark:text-gray-100 whitespace-nowrap">
+                                                Titre
+                                            </th>
+                                            <th v-if="props.auth.user.name === 'lynxadmin'" scope="col" class="px-2.5 py-3 w-16 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 whitespace-nowrap">
+                                                Éditable
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
+                                        <tr v-if="releases.length === 0" class="bg-white dark:bg-gray-800">
+                                            <td colspan="4" class="px-2.5 py-3 text-center text-gray-500 dark:text-gray-400">
+                                                Aucune sortie existante pour le moment. Cliquer sur le bouton "Ajouter" pour en créer une nouvelle.
+                                            </td>
+                                        </tr>
+                                        <tr v-else v-for="release in releases" :key="release.id" class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition">
+                                            <Link :href="route('dashboard.editrelease', release.id)" class="contents">
+                                                <td class="px-2.5 py-3 text-gray-900 dark:text-gray-100">
+                                                    <div v-if="release.catalog">{{ release.catalog }}</div>
+                                                </td>
+                                                <td class="px-2.5 py-3 text-gray-900 dark:text-gray-100">
+                                                    <div v-if="release.artistName">{{ release.artistName }}</div>
+                                                </td>
+                                                <td class="px-2.5 py-3 text-gray-900 dark:text-gray-100">
+                                                    <div v-if="release.name">{{ release.name }}</div>
+                                                </td>
+                                            </Link>
+                                            <td v-if="props.auth.user.name === 'lynxadmin'" class="px-2.5 text-center">
+                                                <label class="relative inline-flex items-center cursor-pointer">
+                                                    <input
+                                                        type="checkbox"
+                                                        v-model="release.isActive"
+                                                        @change="toggleIsActive(release)"
+                                                        class="sr-only peer"
+                                                    />
+                                                    <div
+                                                        class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-500 rounded-full peer dark:bg-gray-700 peer-checked:bg-indigo-600 mt-1.5"
+                                                    ></div>
+                                                    <div
+                                                        class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-5 mt-1.5"
+                                                    ></div>
+                                                </label>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
