@@ -1,4 +1,5 @@
 <script setup>
+import { ref, computed } from 'vue'; // Ajoutez cette ligne
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import { usePage, Head, Link } from '@inertiajs/vue3';
@@ -25,6 +26,35 @@ const toggleIsActive = async (release) => {
         });
     } catch (error) {
         console.error('Erreur lors de la mise à jour de l\'état de la release :', error);
+    }
+};
+
+// Ajout des propriétés pour le tri
+let sortKey = ref(''); // Colonne actuellement triée
+let sortOrder = ref('asc'); // Ordre de tri : 'asc' ou 'desc'
+
+// Méthode pour trier les membres
+const sortedMembers = computed(() => {
+    if (!sortKey.value) return props.members;
+
+    return [...props.members].sort((a, b) => {
+        const valueA = a[sortKey.value] || ''; // Valeur par défaut si undefined
+        const valueB = b[sortKey.value] || ''; // Valeur par défaut si undefined
+
+        if (valueA < valueB) return sortOrder.value === 'asc' ? -1 : 1;
+        if (valueA > valueB) return sortOrder.value === 'asc' ? 1 : -1;
+        return 0;
+    });
+});
+
+const sortBy = (key) => {
+    if (sortKey.value === key) {
+        // Inverser l'ordre si la même colonne est cliquée
+        sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
+    } else {
+        // Sinon, définir une nouvelle colonne et réinitialiser l'ordre
+        sortKey.value = key;
+        sortOrder.value = 'asc';
     }
 };
 </script>
@@ -67,17 +97,17 @@ const toggleIsActive = async (release) => {
                                     <table class="min-w-full">
                                         <thead>
                                             <tr class="bg-gray-100 dark:bg-gray-700">
-                                                <th scope="col" class="px-2.5 py-3 w-1/6 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 whitespace-nowrap">
+                                                <th scope="col" class="px-2.5 py-3 w-1/6 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 whitespace-nowrap select-none">
                                                     Catalogue
                                                 </th>
-                                                <th scope="col" class="px-2.5 py-3 w-1/6 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 whitespace-nowrap">
+                                                <th scope="col" class="px-2.5 py-3 w-1/6 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 whitespace-nowrap select-none">
                                                     Artiste
                                                 </th>
-                                                <th scope="col" class="px-2.5 py-3 w-full text-left text-sm font-semibold text-gray-800 dark:text-gray-100 whitespace-nowrap">
+                                                <th scope="col" class="px-2.5 py-3 w-full text-left text-sm font-semibold text-gray-800 dark:text-gray-100 whitespace-nowrap select-none">
                                                     Titre
                                                 </th>
-                                                <th v-if="props.auth.user.name === 'lynxadmin'" scope="col" class="px-2.5 py-3 w-16 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 whitespace-nowrap">
-                                                    Éditable
+                                                <th v-if="props.auth.user.name === 'lynxadmin'" scope="col" class="px-2.5 py-3 w-16 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 whitespace-nowrap select-none">
+                                                    Statut
                                                 </th>
                                             </tr>
                                         </thead>
@@ -94,9 +124,11 @@ const toggleIsActive = async (release) => {
                                                     </td>
                                                     <td class="px-2.5 py-3 text-gray-900 dark:text-gray-100">
                                                         <div v-if="release.artistName">{{ release.artistName }}</div>
+                                                        <div v-else class="italic text-gray-500">Cliquer pour ajouter</div>
                                                     </td>
                                                     <td class="px-2.5 py-3 text-gray-900 dark:text-gray-100">
                                                         <div v-if="release.name">{{ release.name }}</div>
+                                                        <div v-else class="italic text-gray-500">Cliquer pour ajouter</div>
                                                     </td>
                                                 </Link>
                                                 <td v-if="props.auth.user.name === 'lynxadmin'" class="px-2.5 text-center">
@@ -122,7 +154,7 @@ const toggleIsActive = async (release) => {
                             </div>
                         </div>
                         <div
-                            class="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800"
+                            class="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800 mt-6"
                         >
                             <div v-if="props.auth.user.name === 'lynxadmin'">
                                 <div class="p-6 text-gray-900 dark:text-gray-100">
@@ -136,27 +168,45 @@ const toggleIsActive = async (release) => {
                                         <table class="min-w-full">
                                             <thead>
                                                 <tr class="bg-gray-100 dark:bg-gray-700">
-                                                    <th scope="col" class="px-2.5 py-3 w-1/4 text-left text-sm font-semibold text-gray-800 dark:text-gray-100">
+                                                    <th @click="sortBy('firstname')" scope="col" class="px-2.5 py-3 w-1/4 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 cursor-pointer select-none">
                                                         Prénom
+                                                        <span v-if="sortKey === 'firstname'">
+                                                            {{ sortOrder === 'asc' ? '↑' : '↓' }}
+                                                        </span>
                                                     </th>
-                                                    <th scope="col" class="px-2.5 py-3 w-1/4 text-left text-sm font-semibold text-gray-800 dark:text-gray-100">
+                                                    <th @click="sortBy('lastname')" scope="col" class="px-2.5 py-3 w-1/4 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 cursor-pointer select-none">
                                                         Nom
+                                                        <span v-if="sortKey === 'lastname'">
+                                                            {{ sortOrder === 'asc' ? '↑' : '↓' }}
+                                                        </span>
                                                     </th>
-                                                    <th scope="col" class="px-2.5 py-3 w-1/4 text-left text-sm font-semibold text-gray-800 dark:text-gray-100">
+                                                    <th @click="sortBy('birth_date')" scope="col" class="px-2.5 py-3 w-1/4 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 cursor-pointer select-none">
                                                         Date de naissance
+                                                        <span v-if="sortKey === 'birth_date'">
+                                                            {{ sortOrder === 'asc' ? '↑' : '↓' }}
+                                                        </span>
                                                     </th>
-                                                    <th scope="col" class="px-2.5 py-3 w-1/4 text-left text-sm font-semibold text-gray-800 dark:text-gray-100">
-                                                        Email
+                                                    <th @click="sortBy('is_reference')" scope="col" class="px-2.5 py-3 w-1/4 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 cursor-pointer select-none">
+                                                        Rôle
+                                                        <span v-if="sortKey === 'is_reference'">
+                                                            {{ sortOrder === 'asc' ? '↑' : '↓' }}
+                                                        </span>
+                                                    </th>
+                                                    <th @click="sortBy('email')" scope="col" class="px-2.5 py-3 w-1/4 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 cursor-pointer select-none">
+                                                        E-mail
+                                                        <span v-if="sortKey === 'email'">
+                                                            {{ sortOrder === 'asc' ? '↑' : '↓' }}
+                                                        </span>
                                                     </th>
                                                 </tr>
                                             </thead>
-                                            <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
-                                                <tr v-if="members.length === 0" class="bg-white dark:bg-gray-800">
-                                                    <td colspan="4" class="px-2.5 py-3 text-center text-gray-500 dark:text-gray-400">
+                                            <tbody>
+                                                <tr v-if="sortedMembers.length === 0" class="bg-white dark:bg-gray-800">
+                                                    <td colspan="5" class="px-2.5 py-3 text-center text-gray-500 dark:text-gray-400">
                                                         Aucun membre existant.
                                                     </td>
                                                 </tr>
-                                                <tr v-else v-for="member in members" :key="member.id" class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition">
+                                                <tr v-else v-for="member in sortedMembers" :key="member.id" class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition border-t border-gray-200 dark:border-gray-600">
                                                     <td class="px-2.5 py-3 text-gray-900 dark:text-gray-100">
                                                         {{ member.firstname }}
                                                     </td>
@@ -167,13 +217,19 @@ const toggleIsActive = async (release) => {
                                                         {{ member.birth_date }}
                                                     </td>
                                                     <td class="px-2.5 py-3 text-gray-900 dark:text-gray-100">
+                                                        {{ member.is_reference ? 'Membre référent' : 'Membre standard' }}
+                                                    </td>
+                                                    <td v-if="member.email" class="px-2.5 py-3 text-gray-900 dark:text-gray-100">
                                                         {{ member.email }}
+                                                    </td>
+                                                    <td v-else class="px-2.5 py-3 text-gray-900 dark:text-gray-100">
+                                                        -
                                                     </td>
                                                 </tr>
                                             </tbody>
                                         </table>
                                     </div>
-                                </div>
+                                </div>  
                             </div>
                         </div>
                     </div>

@@ -177,6 +177,22 @@ const addNewTrack = () => {
             percentage: 0, // Initialize percentage to 0
         })),
     });
+    form.tracks.forEach(track => {
+        track.participations = form.members.map((member, index) => ({
+            member_id: member.id,
+            firstname: member.firstname,
+            lastname: member.lastname,
+            percentage: track.participations[index]?.percentage || 0
+        }));
+        // Si un seul membre, définir son pourcentage à 100%
+        if (form.members.length === 1) {
+            track.participations[0].percentage = 100;
+        }
+        if (form.members.length === 2) {
+            track.participations[0].percentage = 50;
+            track.participations[1].percentage = 50;
+        }
+    });
 };
 
 const addNewMember = () => {
@@ -267,6 +283,9 @@ watch(
                     percentage: track.participations[index]?.percentage || 0
                 }));
                 // Si un seul membre, définir son pourcentage à 100%
+                if (form.members.length === 1) {
+                    track.participations[0].percentage = 100;
+                }
                 if (form.members.length === 2) {
                     track.participations[0].percentage = 50;
                     track.participations[1].percentage = 50;
