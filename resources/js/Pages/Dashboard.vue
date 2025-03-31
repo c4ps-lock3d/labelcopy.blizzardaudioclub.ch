@@ -168,31 +168,31 @@ const sortBy = (key) => {
                                         <table class="min-w-full">
                                             <thead>
                                                 <tr class="bg-gray-100 dark:bg-gray-700">
-                                                    <th @click="sortBy('firstname')" scope="col" class="px-2.5 py-3 w-1/4 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 cursor-pointer select-none">
+                                                    <th @click="sortBy('firstname')" scope="col" class="px-2.5 py-3 w-1/4 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 cursor-pointer whitespace-nowrap select-none">
                                                         Prénom
                                                         <span v-if="sortKey === 'firstname'">
                                                             {{ sortOrder === 'asc' ? '↑' : '↓' }}
                                                         </span>
                                                     </th>
-                                                    <th @click="sortBy('lastname')" scope="col" class="px-2.5 py-3 w-1/4 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 cursor-pointer select-none">
+                                                    <th @click="sortBy('lastname')" scope="col" class="px-2.5 py-3 w-1/4 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 cursor-pointer whitespace-nowrap select-none">
                                                         Nom
                                                         <span v-if="sortKey === 'lastname'">
                                                             {{ sortOrder === 'asc' ? '↑' : '↓' }}
                                                         </span>
                                                     </th>
-                                                    <th @click="sortBy('birth_date')" scope="col" class="px-2.5 py-3 w-1/4 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 cursor-pointer select-none">
+                                                    <th @click="sortBy('birth_date')" scope="col" class="px-2.5 py-3 w-1/4 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 cursor-pointer whitespace-nowrap select-none">
                                                         Date de naissance
                                                         <span v-if="sortKey === 'birth_date'">
                                                             {{ sortOrder === 'asc' ? '↑' : '↓' }}
                                                         </span>
                                                     </th>
-                                                    <th @click="sortBy('is_reference')" scope="col" class="px-2.5 py-3 w-1/4 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 cursor-pointer select-none">
+                                                    <th @click="sortBy('is_reference')" scope="col" class="px-2.5 py-3 w-1/4 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 cursor-pointer whitespace-nowrap select-none">
                                                         Rôle
                                                         <span v-if="sortKey === 'is_reference'">
                                                             {{ sortOrder === 'asc' ? '↑' : '↓' }}
                                                         </span>
                                                     </th>
-                                                    <th @click="sortBy('email')" scope="col" class="px-2.5 py-3 w-1/4 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 cursor-pointer select-none">
+                                                    <th @click="sortBy('email')" scope="col" class="px-2.5 py-3 w-1/4 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 cursor-pointer whitespace-nowrap select-none">
                                                         E-mail
                                                         <span v-if="sortKey === 'email'">
                                                             {{ sortOrder === 'asc' ? '↑' : '↓' }}
