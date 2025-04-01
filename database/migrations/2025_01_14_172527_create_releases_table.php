@@ -17,6 +17,12 @@ return new class extends Migration
             $table->string('name')->nullable();
             $table->string('artistName')->nullable();
             $table->string('artistIBAN')->nullable();
+            $table->string('remerciements')->nullable();
+            $table->string('credits')->nullable();
+            $table->string('style')->nullable();
+            $table->longText('artistBiography')->nullable();
+            $table->longText('description')->nullable();
+            $table->integer('price')->nullable();
             $table->timestamps();
         });
     }

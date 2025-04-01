@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue'; // Ajoutez cette ligne
+import axios from 'axios';  // Ajoutez cette ligne
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import { usePage, Head, Link } from '@inertiajs/vue3';
@@ -14,47 +15,73 @@ defineProps({
     }
 });
 const { props } = usePage();
-const releases = props.releases.map(release => ({
+
+const releases = ref(props.releases.map(release => ({
     ...release,
-    isActive: Boolean(release.isActive), // Convertit en booléen
-}));
+    isActive: Boolean(release.isActive),
+})));
 
 const toggleIsActive = async (release) => {
     try {
         await axios.put(route('update-release-status', release.id), {
             isActive: release.isActive,
         });
+        
+        // Mettre à jour l'état local
+        const index = releases.value.findIndex(r => r.id === release.id);
+        if (index !== -1) {
+            releases.value[index].isActive = release.isActive;
+        }
     } catch (error) {
         console.error('Erreur lors de la mise à jour de l\'état de la release :', error);
+        release.isActive = !release.isActive;
     }
 };
 
-// Ajout des propriétés pour le tri
-let sortKey = ref(''); // Colonne actuellement triée
-let sortOrder = ref('asc'); // Ordre de tri : 'asc' ou 'desc'
+// Fonction générique pour le tri
+const sortData = (data, key, order) => {
+    if (!key) return data;
 
-// Méthode pour trier les membres
-const sortedMembers = computed(() => {
-    if (!sortKey.value) return props.members;
+    return [...data].sort((a, b) => {
+        const valueA = a[key] || '';
+        const valueB = b[key] || '';
 
-    return [...props.members].sort((a, b) => {
-        const valueA = a[sortKey.value] || ''; // Valeur par défaut si undefined
-        const valueB = b[sortKey.value] || ''; // Valeur par défaut si undefined
-
-        if (valueA < valueB) return sortOrder.value === 'asc' ? -1 : 1;
-        if (valueA > valueB) return sortOrder.value === 'asc' ? 1 : -1;
+        if (valueA < valueB) return order === 'asc' ? -1 : 1;
+        if (valueA > valueB) return order === 'asc' ? 1 : -1;
         return 0;
     });
-});
+};
 
-const sortBy = (key) => {
-    if (sortKey.value === key) {
-        // Inverser l'ordre si la même colonne est cliquée
-        sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
-    } else {
-        // Sinon, définir une nouvelle colonne et réinitialiser l'ordre
-        sortKey.value = key;
-        sortOrder.value = 'asc';
+// Propriétés pour le tri des releases
+const releaseSortKey = ref('');
+const releaseSortOrder = ref('asc');
+
+// Propriétés pour le tri des members
+const memberSortKey = ref('');
+const memberSortOrder = ref('asc');
+
+// Méthode de tri unifiée pour les deux tableaux
+const sortedData = computed(() => ({
+    members: sortData(props.members, memberSortKey.value, memberSortOrder.value),
+    releases: sortData(releases.value, releaseSortKey.value, releaseSortOrder.value)
+}));
+
+// Fonction de tri unifiée
+const sortBy = (key, type) => {
+    if (type === 'releases') {
+        if (releaseSortKey.value === key) {
+            releaseSortOrder.value = releaseSortOrder.value === 'asc' ? 'desc' : 'asc';
+        } else {
+            releaseSortKey.value = key;
+            releaseSortOrder.value = 'asc';
+        }
+    } else if (type === 'members') {
+        if (memberSortKey.value === key) {
+            memberSortOrder.value = memberSortOrder.value === 'asc' ? 'desc' : 'asc';
+        } else {
+            memberSortKey.value = key;
+            memberSortOrder.value = 'asc';
+        }
     }
 };
 </script>
@@ -97,27 +124,39 @@ const sortBy = (key) => {
                                     <table class="min-w-full">
                                         <thead>
                                             <tr class="bg-gray-100 dark:bg-gray-700">
-                                                <th scope="col" class="px-2.5 py-3 w-1/6 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 whitespace-nowrap select-none">
+                                                <th @click="sortBy('catalog', 'releases')" scope="col" class="px-2.5 py-3 w-1/4 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 cursor-pointer select-none">
                                                     Catalogue
+                                                    <span v-if="releaseSortKey === 'catalog'">
+                                                        {{ releaseSortOrder === 'asc' ? '↑' : '↓' }}
+                                                    </span>
                                                 </th>
-                                                <th scope="col" class="px-2.5 py-3 w-1/6 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 whitespace-nowrap select-none">
+                                                <th @click="sortBy('artistName', 'releases')" scope="col" class="px-2.5 py-3 w-1/6 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 whitespace-nowrap select-none">
                                                     Artiste
+                                                    <span v-if="releaseSortKey === 'artistName'">
+                                                        {{ releaseSortOrder === 'asc' ? '↑' : '↓' }}
+                                                    </span>
                                                 </th>
-                                                <th scope="col" class="px-2.5 py-3 w-full text-left text-sm font-semibold text-gray-800 dark:text-gray-100 whitespace-nowrap select-none">
+                                                <th @click="sortBy('name', 'releases')" scope="col" class="px-2.5 py-3 w-full text-left text-sm font-semibold text-gray-800 dark:text-gray-100 whitespace-nowrap select-none">
                                                     Titre
+                                                    <span v-if="releaseSortKey === 'name'">
+                                                        {{ releaseSortOrder === 'asc' ? '↑' : '↓' }}
+                                                    </span>
                                                 </th>
-                                                <th v-if="props.auth.user.name === 'lynxadmin'" scope="col" class="px-2.5 py-3 w-16 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 whitespace-nowrap select-none">
+                                                <th v-if="props.auth.user.name === 'lynxadmin'" @click="sortBy('isActive', 'releases')" scope="col" class="px-2.5 py-3 w-16 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 whitespace-nowrap select-none">
                                                     Statut
+                                                    <span v-if="releaseSortKey === 'isActive'">
+                                                        {{ releaseSortOrder === 'asc' ? '↑' : '↓' }}
+                                                    </span>
                                                 </th>
                                             </tr>
                                         </thead>
-                                        <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
-                                            <tr v-if="releases.length === 0" class="bg-white dark:bg-gray-800">
+                                        <tbody>
+                                            <tr v-if="sortedData.releases.length === 0" class="bg-white dark:bg-gray-800">
                                                 <td colspan="4" class="px-2.5 py-3 text-center text-gray-500 dark:text-gray-400">
                                                     Aucune sortie existante pour le moment. Cliquer sur le bouton "Ajouter" pour en créer une nouvelle.
                                                 </td>
                                             </tr>
-                                            <tr v-else v-for="release in releases" :key="release.id" class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition">
+                                            <tr v-else v-for="release in sortedData.releases" :key="release.id" class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition border-t border-gray-200 dark:border-gray-600">
                                                 <Link :href="route('dashboard.editrelease', release.id)" class="contents">
                                                     <td class="px-2.5 py-3 text-gray-900 dark:text-gray-100">
                                                         <div v-if="release.catalog">{{ release.catalog }}</div>
@@ -168,45 +207,51 @@ const sortBy = (key) => {
                                         <table class="min-w-full">
                                             <thead>
                                                 <tr class="bg-gray-100 dark:bg-gray-700">
-                                                    <th @click="sortBy('firstname')" scope="col" class="px-2.5 py-3 w-1/4 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 cursor-pointer whitespace-nowrap select-none">
+                                                    <th @click="sortBy('firstname')" scope="col" class="px-2.5 py-3 w-1/4 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 cursor-pointer select-none">
                                                         Prénom
-                                                        <span v-if="sortKey === 'firstname'">
-                                                            {{ sortOrder === 'asc' ? '↑' : '↓' }}
+                                                        <span v-if="memberSortKey === 'firstname'">
+                                                            {{ memberSortOrder === 'asc' ? '↑' : '↓' }}
                                                         </span>
                                                     </th>
-                                                    <th @click="sortBy('lastname')" scope="col" class="px-2.5 py-3 w-1/4 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 cursor-pointer whitespace-nowrap select-none">
+                                                    <th @click="sortBy('lastname')" scope="col" class="px-2.5 py-3 w-1/4 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 cursor-pointer select-none">
                                                         Nom
-                                                        <span v-if="sortKey === 'lastname'">
-                                                            {{ sortOrder === 'asc' ? '↑' : '↓' }}
+                                                        <span v-if="memberSortKey === 'lastname'">
+                                                            {{ memberSortOrder === 'asc' ? '↑' : '↓' }}
                                                         </span>
                                                     </th>
-                                                    <th @click="sortBy('birth_date')" scope="col" class="px-2.5 py-3 w-1/4 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 cursor-pointer whitespace-nowrap select-none">
+                                                    <th @click="sortBy('birth_date')" scope="col" class="px-2.5 py-3 w-1/4 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 cursor-pointer select-none">
                                                         Date de naissance
-                                                        <span v-if="sortKey === 'birth_date'">
-                                                            {{ sortOrder === 'asc' ? '↑' : '↓' }}
+                                                        <span v-if="memberSortKey === 'birth_date'">
+                                                            {{ memberSortOrder === 'asc' ? '↑' : '↓' }}
                                                         </span>
                                                     </th>
-                                                    <th @click="sortBy('is_reference')" scope="col" class="px-2.5 py-3 w-1/4 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 cursor-pointer whitespace-nowrap select-none">
+                                                    <th @click="sortBy('IPI', 'members')" scope="col" class="px-2.5 py-3 w-1/4 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 cursor-pointer select-none">
+                                                        IPI
+                                                        <span v-if="memberSortKey === 'IPI'">
+                                                            {{ memberSortOrder === 'asc' ? '↑' : '↓' }}
+                                                        </span>
+                                                    </th>
+                                                    <th @click="sortBy('is_reference')" scope="col" class="px-2.5 py-3 w-1/4 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 cursor-pointer select-none">
                                                         Rôle
-                                                        <span v-if="sortKey === 'is_reference'">
-                                                            {{ sortOrder === 'asc' ? '↑' : '↓' }}
+                                                        <span v-if="memberSortKey === 'is_reference'">
+                                                            {{ memberSortOrder === 'asc' ? '↑' : '↓' }}
                                                         </span>
                                                     </th>
-                                                    <th @click="sortBy('email')" scope="col" class="px-2.5 py-3 w-1/4 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 cursor-pointer whitespace-nowrap select-none">
+                                                    <th @click="sortBy('email')" scope="col" class="px-2.5 py-3 w-1/4 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 cursor-pointer select-none">
                                                         E-mail
-                                                        <span v-if="sortKey === 'email'">
-                                                            {{ sortOrder === 'asc' ? '↑' : '↓' }}
+                                                        <span v-if="memberSortKey === 'email'">
+                                                            {{ memberSortOrder === 'asc' ? '↑' : '↓' }}
                                                         </span>
                                                     </th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr v-if="sortedMembers.length === 0" class="bg-white dark:bg-gray-800">
+                                                <tr v-if="sortedData.members.length === 0" class="bg-white dark:bg-gray-800">
                                                     <td colspan="5" class="px-2.5 py-3 text-center text-gray-500 dark:text-gray-400">
                                                         Aucun membre existant.
                                                     </td>
                                                 </tr>
-                                                <tr v-else v-for="member in sortedMembers" :key="member.id" class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition border-t border-gray-200 dark:border-gray-600">
+                                                <tr v-else v-for="member in sortedData.members" :key="member.id" class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition border-t border-gray-200 dark:border-gray-600">
                                                     <td class="px-2.5 py-3 text-gray-900 dark:text-gray-100">
                                                         {{ member.firstname }}
                                                     </td>
@@ -217,9 +262,12 @@ const sortBy = (key) => {
                                                         {{ member.birth_date }}
                                                     </td>
                                                     <td class="px-2.5 py-3 text-gray-900 dark:text-gray-100">
+                                                        {{ member.IPI }}
+                                                    </td>
+                                                    <td class="px-2.5 py-3 text-gray-900 dark:text-gray-100 whitespace-nowrap">
                                                         {{ member.is_reference ? 'Membre référent' : 'Membre standard' }}
                                                     </td>
-                                                    <td v-if="member.email" class="px-2.5 py-3 text-gray-900 dark:text-gray-100">
+                                                    <td v-if="member.email" class="px-2.5 py-3 text-gray-900 dark:text-gray-100 whitespace-nowrap">
                                                         {{ member.email }}
                                                     </td>
                                                     <td v-else class="px-2.5 py-3 text-gray-900 dark:text-gray-100">

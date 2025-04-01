@@ -186,6 +186,7 @@ class ReleaseController extends Controller
             'isBesoinPromo' => 'required|boolean',
             'isBesoinDigitalMarketing' => 'required|boolean',
             'isBesoinContacts' => 'required|boolean',
+            'besoinContacts' => 'nullable|string',
             'isActive' => 'nullable|boolean',
             'release_type_id' => 'required|exists:release_types,id',
             'release_format_ids' => 'required|array',
@@ -240,6 +241,7 @@ class ReleaseController extends Controller
             'isBesoinPromo' => $validated['isBesoinPromo'],
             'isBesoinDigitalMarketing' => $validated['isBesoinDigitalMarketing'],
             'isBesoinContacts' => $validated['isBesoinContacts'],
+            'besoinContacts' => $validated['besoinContacts'],
             'isActive' => $validated['isActive'],
             'style' => $validated['style'],
             'price' => $validated['price'],
@@ -295,6 +297,7 @@ class ReleaseController extends Controller
                 $existingMember = ReleaseMember::where('firstname', $memberData['firstname'])
                     ->where('lastname', $memberData['lastname'])
                     ->where('birth_date', $memberData['birth_date'])
+                    ->where('IPI', $memberData['IPI'])
                     ->first();
         
                 if ($existingMember) {
@@ -374,6 +377,7 @@ class ReleaseController extends Controller
                             $existingMember = ReleaseMember::where('firstname', $member['firstname'])
                                 ->where('lastname', $member['lastname'])
                                 ->where('birth_date', $member['birth_date'])
+                                ->where('IPI', $member['IPI'])
                                 ->first();
                             
                             $memberId = $existingMember ? $existingMember->id : $newMemberId;
