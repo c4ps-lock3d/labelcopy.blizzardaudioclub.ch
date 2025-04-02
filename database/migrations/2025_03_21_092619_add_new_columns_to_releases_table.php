@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::table('releases', function (Blueprint $table) {
             $table->boolean('isProduitsDerives')->nullable();
             $table->boolean('isBesoinSubvention')->nullable();
-            $table->boolean('isBesoinBooking')->nullable();
+            $table->string('soundcloud')->nullable();
             $table->boolean('isBesoinPromo')->nullable();
             $table->boolean('isBesoinDigitalMarketing')->nullable();
             $table->boolean('isBesoinContacts')->nullable();
@@ -30,7 +30,7 @@ return new class extends Migration
         Schema::table('release', function (Blueprint $table) {
             $table->dropColumn('isProduitsDerives');
             $table->dropColumn('isBesoinSubvention');
-            $table->dropColumn('isBesoinBooking');
+            $table->dropColumn('soundcloud');
             $table->dropColumn('isBesoinPromo');
             $table->dropColumn('isBesoinDigitalMarketing');
             $table->dropColumn('isBesoinContacts');
