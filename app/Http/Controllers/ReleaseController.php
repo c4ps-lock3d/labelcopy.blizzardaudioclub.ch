@@ -202,6 +202,7 @@ class ReleaseController extends Controller
             'tracks.*.isSingle' => 'required|boolean',
             'tracks.*.hasClip' => 'required|boolean',
             'tracks.*.IRSC' => 'nullable|string',
+            'tracks.*.release_date_single' => 'nullable|date',
             'tracks.*.participations' => 'array',
             'tracks.*.participations.*.member_id' => 'nullable|exists:release_members,id',
             'tracks.*.participations.*.percentage' => 'required|numeric|min:0|max:100',
@@ -352,6 +353,7 @@ class ReleaseController extends Controller
                     'isSingle' => $trackData['isSingle'],
                     'hasClip' => $trackData['hasClip'],
                     'IRSC' => $trackData['IRSC'] ?? null,
+                    'release_date_single' => $trackData['release_date_single'] ?? null,
                 ]);
                 $updatedTrackIds[] = $track->id;
             } else {
@@ -361,6 +363,7 @@ class ReleaseController extends Controller
                     'isSingle' => $trackData['isSingle'],
                     'hasClip' => $trackData['hasClip'],
                     'IRSC' => $trackData['IRSC'] ?? null,
+                    'release_date_single' => $trackData['release_date_single'] ?? null,
                 ]);
                 $updatedTrackIds[] = $track->id;
             }
