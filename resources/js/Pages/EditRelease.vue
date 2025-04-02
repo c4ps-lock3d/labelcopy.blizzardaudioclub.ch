@@ -70,7 +70,6 @@ const form = useForm({
     style: props.release.style,
     release_date: props.release.release_date,
     description: props.release.description,
-    cleRepartition: props.release.cleRepartition,
     credits: props.release.credits,
     remerciements: props.release.remerciements,
     remarques: props.release.remarques,
