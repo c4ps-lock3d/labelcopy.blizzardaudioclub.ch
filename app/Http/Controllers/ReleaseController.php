@@ -71,7 +71,6 @@ class ReleaseController extends Controller
             'releaseTypes' => ReleaseType::all(),
             'releaseTracks' => ReleaseTrack::all(),
             'releaseMembers' => ReleaseMember::all(),
-            'releaseSocials' => ReleaseSocial::all(),
             //'releaseSocials' => ReleaseSocial::all(),
             'auth' => [
                 'user' => auth()->user(),
