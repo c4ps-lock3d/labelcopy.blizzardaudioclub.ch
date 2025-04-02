@@ -46,10 +46,10 @@ const props = defineProps({
         type: Array,
         required: true
     },
-    releaseSocials: {
-        type: Array,
-        required: true
-    }
+    // releaseSocials: {
+    //     type: Array,
+    //     required: true
+    // }
 });
 
 const form = useForm({
@@ -101,10 +101,10 @@ const form = useForm({
         return acc;
     }, {}),
 
-    socials: props.release.release_socials.map(social => ({
-            id: social.id,
-            link: social.link
-        })),
+    // socials: props.release.release_socials.map(social => ({
+    //         id: social.id,
+    //         link: social.link
+    //     })),
     
     tracks: props.release.release_tracks?.length > 0 
         ? props.release.release_tracks.map(track => ({
@@ -172,12 +172,16 @@ const form = useForm({
     releaseFormats: props.releaseFormats,
     releaseTracks: props.releaseTracks,
     releaseMembers: props.releaseMembers,
-    releaseSocials: props.releaseSocials,
+    //releaseSocials: props.releaseSocials,
 });
 
+// Constante de désactivation d'input, si le label désactive le formulaire de l'artiste.
 const isDisabled = computed(() => {
     return !props.release.isActive && props.auth.user.name !== 'lynxadmin';
 });
+
+// Permet d'afficher l'entête "Date de sortie" du tableau "Liste des titres" seulement si
+// au moins un titre de la liste est un single.
 const hasSingleTrack = computed(() => {
     return form.tracks.some(track => track.isSingle);
 });
@@ -244,16 +248,16 @@ const addNewMember = () => {
     });
 };
 
-const addNewSocial = () => {
-    form.socials.push({
-        id: null,
-        link: '',
-    });
-};
+// const addNewSocial = () => {
+//     form.socials.push({
+//         id: null,
+//         link: '',
+//     });
+// };
 
-const updateSocialLink = (index, event) => {
-    form.socials[index].link = event.target.value;
-};
+// const updateSocialLink = (index, event) => {
+//     form.socials[index].link = event.target.value;
+// };
 
 const deleteTrack = (index) => {
     form.tracks.splice(index, 1);
@@ -263,11 +267,11 @@ const deleteMember = (index) => {
     form.members.splice(index, 1);
 };
 
-const deleteSocial = (index) => {
-    form.socials.splice(index, 1);
-};
+// const deleteSocial = (index) => {
+//     form.socials.splice(index, 1);
+// };
 
-// Permet d'ajouter les membres 
+// Permet d'ajouter les membres au tableau des titres.
 let isUpdatingParticipations = false;
 watch(
     () => form.members,
@@ -406,9 +410,9 @@ const submit = () => {
     if (form.members.some(member => !member.firstname) || form.members.some(member => !member.lastname)) {
         return;
     }
-    if (form.socials.some(social => !social.link)) {
-        return;
-    }
+    // if (form.socials.some(social => !social.link)) {
+    //     return;
+    // }
     form.put(route('update-release', props.release.id));
 };
 </script>
@@ -471,7 +475,7 @@ const submit = () => {
                                     type="text"
                                     class="mt-1 block w-full transition duration-150 ease-in-out"
                                     v-model="form.artistBiography"
-                                    rows="10"
+                                    rows="15"
                                     required
                                     autocomplete="artistBiography"
                                     :disabled="isDisabled"
@@ -479,73 +483,117 @@ const submit = () => {
                                 <InputError class="mt-2" :message="form.errors.artistBiography" />
                             </div>
                             <div>
-                                <InputLabel for="artistWebsite" value="Site web de l’artiste" class="text-sm font-medium" />
-                                <TextInput
-                                    id="artistWebsite"
-                                    type="text"
-                                    class="mt-1 block w-full transition duration-150 ease-in-out"
-                                    v-model="form.artistWebsite"
-                                    autocomplete="artistWebsite"
-                                    placeholder="https://exemple.ch"
-                                    :disabled="isDisabled"
-                                />
-                                <InputError class="mt-2" :message="form.errors.artistWebsite" />
+                                <InputLabel for="liens" value="Liens" class="text-sm font-medium mb-1" />
 
-                                <InputLabel value="Réseaux sociaux" class="text-sm font-medium mt-6" />
-                                <div class="overflow-hidden rounded-md border border-gray-300 dark:border-gray-600 !mt-1">
-                                    <table class="min-w-full">
-                                        <thead>
-                                            <tr class="bg-gray-100 dark:bg-gray-700">
-                                                <th scope="col" class="w-full px-3 py-2.5 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 whitespace-nowrap">
-                                                    Lien
-                                                </th>
-                                                <th scope="col" class="w-16 px-3 py-2.5 text-sm font-semibold text-gray-800 dark:text-gray-100">
-                                                    <button 
-                                                        type="button" 
-                                                        @click="addNewSocial"
-                                                        class="w-8 h-8 bg-indigo-600 text-white text-sm rounded-md border border-indigo-800 hover:bg-indigo-700 transition-colors flex items-center justify-center"
-                                                        :disabled="isDisabled"
-                                                    >
-                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                                                        </svg>
-                                                    </button>
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
-                                            <tr v-if="form.socials.length === 0" class="bg-white dark:bg-gray-800">
-                                                <td colspan="4" class="px-2.5 py-3 text-center text-gray-500 dark:text-gray-400">
-                                                    Cliquer sur le bouton "+" pour ajouter un réseau social.
-                                                </td>
-                                            </tr>
-                                            <tr v-else v-for="(social, index) in form.socials" :key="social.id || 'new'" class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition">
-                                                <td class="px-1.5 py-2">
-                                                    <TextInput
-                                                        type="text"
-                                                        v-model="social.link"
-                                                        @input="updateSocialLink(index, $event)"
-                                                        class="w-full transition duration-150 ease-in-out"
-                                                        placeholder="https://exemple.ch"
-                                                        :disabled="isDisabled"
-                                                    />
-                                                </td>
-                                                <td class="whitespace-nowrap px-3 py-2">
-                                                    <button
-                                                        v-if="form.socials.length > 0 && index === form.socials.length - 1"
-                                                        type="button" 
-                                                        @click="deleteSocial(index)"
-                                                        class="w-8 h-8 bg-red-500/10 border border-red-500/20 rounded-md text-red-400 transition-colors flex items-center justify-center"
-                                                        :disabled="isDisabled"
-                                                    >
-                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-                                                        </svg>
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                <div class="space-y-3">
+                                    <div class="flex items-center gap-4">
+                                        <TextInput
+                                            id="artistWebsite"
+                                            type="text"
+                                            class="flex-1 transition duration-150 ease-in-out"
+                                            v-model="form.artistWebsite"
+                                            autocomplete="artistWebsite"
+                                            placeholder="Site web"
+                                            :disabled="isDisabled"
+                                        />
+                                    </div>
+                                    <InputError class="mt-2" :message="form.errors.artistWebsite" />
+                                    <div class="flex items-center gap-4">
+                                        <TextInput
+                                            id="facebook"
+                                            type="text"
+                                            class="flex-1 transition duration-150 ease-in-out"
+                                            v-model="form.facebook"
+                                            autocomplete="facebook"
+                                            placeholder="Facebook"
+                                            :disabled="isDisabled"
+                                        />
+                                    </div>
+                                    <InputError class="mt-2" :message="form.errors.facebook" />
+                                    <div class="flex items-center gap-4">
+                                        <TextInput
+                                            id="instagram"
+                                            type="text"
+                                            class="flex-1 transition duration-150 ease-in-out"
+                                            v-model="form.instagram"
+                                            autocomplete="instagram"
+                                            placeholder="Instagram"
+                                            :disabled="isDisabled"
+                                        />
+                                    </div>
+                                    <InputError class="mt-2" :message="form.errors.instagram" />
+                                    <div class="flex items-center gap-4">
+                                        <TextInput
+                                            id="tiktok"
+                                            type="text"
+                                            class="flex-1 transition duration-150 ease-in-out"
+                                            v-model="form.tiktok"
+                                            autocomplete="tiktok"
+                                            placeholder="Tik Tok"
+                                            :disabled="isDisabled"
+                                        />
+                                    </div>
+                                    <InputError class="mt-2" :message="form.errors.tiktok" />
+                                    <div class="flex items-center gap-4">
+                                        <TextInput
+                                            id="youtube"
+                                            type="text"
+                                            class="flex-1 transition duration-150 ease-in-out"
+                                            v-model="form.youtube"
+                                            autocomplete="youtube"
+                                            placeholder="Youtube"
+                                            :disabled="isDisabled"
+                                        />
+                                    </div>
+                                    <InputError class="mt-2" :message="form.errors.youtube" />
+                                    <div class="flex items-center gap-4">
+                                        <TextInput
+                                            id="bandcamp"
+                                            type="text"
+                                            class="flex-1 transition duration-150 ease-in-out"
+                                            v-model="form.bandcamp"
+                                            autocomplete="bandcamp"
+                                            placeholder="Bandcamp"
+                                            :disabled="isDisabled"
+                                        />
+                                    </div>
+                                    <InputError class="mt-2" :message="form.errors.bandcamp" />
+                                    <div class="flex items-center gap-4">
+                                        <TextInput
+                                            id="applemusic"
+                                            type="text"
+                                            class="flex-1 transition duration-150 ease-in-out"
+                                            v-model="form.applemusic"
+                                            autocomplete="applemusic"
+                                            placeholder="Apple Music"
+                                            :disabled="isDisabled"
+                                        />
+                                    </div>
+                                    <InputError class="mt-2" :message="form.errors.applemusic" />
+                                    <div class="flex items-center gap-4">
+                                        <TextInput
+                                            id="spotify"
+                                            type="text"
+                                            class="flex-1 transition duration-150 ease-in-out"
+                                            v-model="form.spotify"
+                                            autocomplete="spotify"
+                                            placeholder="Spotify"
+                                            :disabled="isDisabled"
+                                        />
+                                    </div>
+                                    <InputError class="mt-2" :message="form.errors.spotify" />
+                                    <div class="flex items-center gap-4">
+                                        <TextInput
+                                            id="soundcloud"
+                                            type="text"
+                                            class="flex-1 transition duration-150 ease-in-out"
+                                            v-model="form.soundcloud"
+                                            autocomplete="soundcloud"
+                                            placeholder="Soundcloud"
+                                            :disabled="isDisabled"
+                                        />
+                                    </div>
+                                    <InputError class="mt-2" :message="form.errors.soundcloud" />
                                 </div>
                             </div>
                         </div>

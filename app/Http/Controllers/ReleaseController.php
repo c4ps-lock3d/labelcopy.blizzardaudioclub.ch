@@ -62,7 +62,7 @@ class ReleaseController extends Controller
                 $query->withPivot('percentage');
             },
             'release_members',
-            'release_socials'
+            //'release_socials'
         ])->findOrFail($release->id);
 
         return Inertia::render('EditRelease', [
@@ -72,7 +72,7 @@ class ReleaseController extends Controller
             'releaseTracks' => ReleaseTrack::all(),
             'releaseMembers' => ReleaseMember::all(),
             'releaseSocials' => ReleaseSocial::all(),
-            'releaseSocials' => ReleaseSocial::all(),
+            //'releaseSocials' => ReleaseSocial::all(),
             'auth' => [
                 'user' => auth()->user(),
             ],
@@ -226,9 +226,9 @@ class ReleaseController extends Controller
             'members.*.phone_number' => 'nullable|string',
             'members.*.birth_date' => 'required|date',
             'members.*.is_reference' => 'nullable',
-            'socials' => 'array',
-            'socials.*.id' => 'nullable',  // Permettre id null pour nouveaux réseaux sociaux
-            'socials.*.link' => 'required|string',
+            //'socials' => 'array',
+            //'socials.*.id' => 'nullable',  // Permettre id null pour nouveaux réseaux sociaux
+            //'socials.*.link' => 'required|string',
         ]);
     
         $release->update([
@@ -236,13 +236,13 @@ class ReleaseController extends Controller
             'name' => $validated['name'],
             'artistName' => $validated['artistName'],
             'facebook' => $validated['facebook'],
-            'instagram' => $validated['facebook'],
-            'tiktok' => $validated['facebook'],
-            'youtube' => $validated['facebook'],
-            'bandcamp' => $validated['facebook'],
-            'applemusic' => $validated['facebook'],
-            'spotify' => $validated['facebook'],
-            'soundcloud' => $validated['facebook'],
+            'instagram' => $validated['instagram'],
+            'tiktok' => $validated['tiktok'],
+            'youtube' => $validated['youtube'],
+            'bandcamp' => $validated['bandcamp'],
+            'applemusic' => $validated['applemusic'],
+            'spotify' => $validated['spotify'],
+            'soundcloud' => $validated['soundcloud'],
             'artistIBAN' => $validated['artistIBAN'],
             'artistBiography' => $validated['artistBiography'],
             'artistWebsite' => $validated['artistWebsite'],
@@ -283,7 +283,7 @@ class ReleaseController extends Controller
         $existingMemberIds = $release->release_members()->pluck('id')->toArray();
 
         // Récupérer les IDs des réseaux sociaux existants
-        $existingSocialIds = $release->release_socials()->pluck('id')->toArray();
+        // $existingSocialIds = $release->release_socials()->pluck('id')->toArray();
 
          // Sauvegarde des pistes
         $updatedTrackIds = [];
@@ -430,22 +430,22 @@ class ReleaseController extends Controller
         }
 
         // Sauvegarde des réseaux sociaux
-        $updatedSocialIds = [];
-        foreach ($validated['socials'] as $socialData) {
-            if (isset($socialData['id'])) {
-                $release->release_socials()
-                    ->where('id', $socialData['id'])
-                    ->update([
-                        'link' => $socialData['link'],
-                    ]);
-                $updatedSocialIds[] = $socialData['id'];
-            } else {
-                $newSocial = $release->release_socials()->create([
-                    'link' => $socialData['link'],
-                ]);
-                $updatedSocialIds[] = $newSocial->id;
-            }
-        }
+        // $updatedSocialIds = [];
+        // foreach ($validated['socials'] as $socialData) {
+        //     if (isset($socialData['id'])) {
+        //         $release->release_socials()
+        //             ->where('id', $socialData['id'])
+        //             ->update([
+        //                 'link' => $socialData['link'],
+        //             ]);
+        //         $updatedSocialIds[] = $socialData['id'];
+        //     } else {
+        //         $newSocial = $release->release_socials()->create([
+        //             'link' => $socialData['link'],
+        //         ]);
+        //         $updatedSocialIds[] = $newSocial->id;
+        //     }
+        // }
 
         // Supprimer les pistes qui ne sont plus présentes dans la requête
         $tracksToDelete = array_diff($existingTrackIds, $updatedTrackIds);
@@ -456,8 +456,8 @@ class ReleaseController extends Controller
         $release->release_members()->whereIn('id', $membersToDelete)->delete();
 
         // Supprimer les réseaux sociaux qui ne sont plus présentes dans la requête
-        $socialsToDelete = array_diff($existingSocialIds, $updatedSocialIds);
-        $release->release_socials()->whereIn('id', $socialsToDelete)->delete();
+        // $socialsToDelete = array_diff($existingSocialIds, $updatedSocialIds);
+        // $release->release_socials()->whereIn('id', $socialsToDelete)->delete();
     
         return redirect(route('dashboard', absolute: false));
     }
