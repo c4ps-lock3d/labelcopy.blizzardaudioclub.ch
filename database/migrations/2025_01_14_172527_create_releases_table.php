@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('style')->nullable();
             $table->longText('artistBiography')->nullable();
             $table->longText('description')->nullable();
-            $table->integer('price')->nullable();
+            $table->date('release_date')->nullable();
             $table->timestamps();
         });
     }

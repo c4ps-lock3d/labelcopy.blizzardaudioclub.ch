@@ -60,7 +60,7 @@ const form = useForm({
     artistBiography: props.release.artistBiography,
     artistWebsite: props.release.artistWebsite,
     style: props.release.style,
-    price: props.release.price,
+    release_date: props.release.release_date,
     description: props.release.description,
     cleRepartition: props.release.cleRepartition,
     credits: props.release.credits,
@@ -798,20 +798,16 @@ const submit = () => {
                                     <InputError class="mt-2" :message="form.errors.release_type_id" />
                                 </div>
                                 <div>
-                                    <InputLabel for="price" value="Prix" class="text-sm font-medium" />
+                                    <InputLabel for="release_date" value="Date de sortie" class="required text-sm font-medium" />
                                     <TextInput
-                                        id="price"
-                                        type="number"
-                                        :class="{
-                                                    '!bg-gray-700/10': props.auth.user.name !== 'lynxadmin',
-                                                    'w-full mt-1 block transition duration-150 ease-in-out': true
-                                                }"
-                                        v-model="form.price"
-                                        autocomplete="price"
-                                        :disabled="props.auth.user.name !== 'lynxadmin'"
-                                        :placeholder="props.auth.user.name !== 'lynxadmin' ? 'Le prix sera défini par le label' : ''"
-                                    />
-                                    <InputError class="" :message="form.errors.price" />
+                                                type="date"
+                                                v-model="form.release_date"
+                                                class="w-full transition duration-150 ease-in-out"
+                                                placeholder="jj.mm.aaaa"
+                                                required
+                                                :disabled="isDisabled"
+                                            />
+                                    <InputError class="" :message="form.errors.release_date" />
                                 </div>
                             </div>
                             <div v-if="props.auth.user.name === 'lynxadmin'" class="grid grid-cols-1 gap-8 md:grid-cols-3">

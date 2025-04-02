@@ -174,7 +174,7 @@ class ReleaseController extends Controller
             'credits' => 'required|string',
             'remerciements' => 'nullable|string',
             'style' => 'required|string',
-            'price' => 'nullable|integer',
+            'release_date' => 'nullable|date',
             'description' => 'required|string',
             'remarques' => 'nullable|string',
             'envies' => 'nullable|string',
@@ -244,7 +244,7 @@ class ReleaseController extends Controller
             'besoinContacts' => $validated['besoinContacts'],
             'isActive' => $validated['isActive'],
             'style' => $validated['style'],
-            'price' => $validated['price'],
+            'release_date' => $validated['release_date'],
             'description' => $validated['description'],
             'release_type_id' => $validated['release_type_id']
         ]);
