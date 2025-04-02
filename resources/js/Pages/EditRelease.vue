@@ -87,6 +87,12 @@ const form = useForm({
         return acc;
     }, {}),
 
+    price: props.release.release_formats?.reduce((acc, format) => {
+        const price = format.pivot?.price;
+        acc[format.id] = price !== null && price !== undefined ? Number(price) : '';
+        return acc;
+    }, {}),
+
     socials: props.release.release_socials.map(social => ({
             id: social.id,
             link: social.link
@@ -302,11 +308,14 @@ watch(
 
 watch(
     () => form.release_format_ids,
-    (newFormats, oldFormats) => {
+    (newFormats) => {
         // Ajouter un champ CodeBarre pour les nouveaux formats sélectionnés
         newFormats.forEach(formatId => {
             if (!form.CodeBarre[formatId]) {
                 form.CodeBarre[formatId] = ''; // Initialiser avec une chaîne vide
+            }
+            if (!form.price[formatId]) {
+                form.price[formatId] = ''; // Initialiser avec une chaîne vide
             }
         });
 
@@ -314,6 +323,11 @@ watch(
         Object.keys(form.CodeBarre).forEach(formatId => {
             if (!newFormats.includes(Number(formatId))) {
                 delete form.CodeBarre[formatId];
+            }
+        });
+        Object.keys(form.price).forEach(formatId => {
+            if (!newFormats.includes(Number(formatId))) {
+                delete form.price[formatId];
             }
         });
     },
@@ -810,18 +824,38 @@ const submit = () => {
                                     <InputError class="" :message="form.errors.release_date" />
                                 </div>
                             </div>
-                            <div v-if="props.auth.user.name === 'lynxadmin'" class="grid grid-cols-1 gap-8 md:grid-cols-3">
+                            <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
                                 <div v-for="formatId in form.release_format_ids" :key="formatId">
                                     <InputLabel :for="'barcode-' + formatId" :value="`Code-barres sortie format ${props.releaseFormats.find(f => f.id === formatId)?.name}`" class="text-sm font-medium" />
                                     <TextInput
                                         :id="'barcode-' + formatId"
                                         type="text"
-                                        class="mt-1 block w-full transition duration-150 ease-in-out"
+                                        :class="{
+                                            'mt-1 block w-full transition duration-150 ease-in-out': true,
+                                            '!bg-gray-700/10': props.auth.user.name !== 'lynxadmin'
+                                        }"
                                         v-model="form.CodeBarre[formatId]"
-                                        placeholder="Entrez le code-barres"
-                                        :disabled="isDisabled"
+                                        :placeholder="(!form.CodeBarre[formatId] && props.auth.user.name !== 'lynxadmin') 
+                                            ? 'Sera défini par le label' 
+                                            : 'Entrez le code-barres'"
+                                        :disabled="isDisabled || props.auth.user.name !== 'lynxadmin'"
                                     />
                                     <InputError class="mt-2" :message="form.errors[`barcodes.${formatId}`]" />
+                                    <InputLabel :for="'price-' + formatId" :value="`Prix sortie format ${props.releaseFormats.find(f => f.id === formatId)?.name}`" class="text-sm font-medium mt-2" />
+                                    <TextInput
+                                        :id="'price-' + formatId"
+                                        type="number"
+                                        :class="{
+                                            'mt-1 block w-full transition duration-150 ease-in-out': true,
+                                            '!bg-gray-700/10': props.auth.user.name !== 'lynxadmin'
+                                        }"
+                                        v-model="form.price[formatId]"
+                                        :placeholder="(!form.price[formatId] && props.auth.user.name !== 'lynxadmin') 
+                                            ? 'Sera défini par le label' 
+                                            : 'Entrez le prix'"
+                                        :disabled="isDisabled || props.auth.user.name !== 'lynxadmin'"
+                                    />
+                                    <InputError class="mt-2" :message="form.errors[`price.${formatId}`]" />
                                 </div>
                             </div>
                                 <div>

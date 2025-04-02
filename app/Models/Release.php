@@ -20,7 +20,7 @@ class Release extends Model
     }
     public function release_formats (){
         return $this->belongsToMany(ReleaseFormat::class, 'release_release_format')
-        ->withPivot('CodeBarre');
+        ->withPivot('CodeBarre', 'price');
     }
     public function release_tracks (){
         return $this->belongsToMany(ReleaseTrack::class, 'release_release_track');

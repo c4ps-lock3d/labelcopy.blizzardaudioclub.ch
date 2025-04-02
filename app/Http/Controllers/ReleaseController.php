@@ -193,6 +193,8 @@ class ReleaseController extends Controller
             'release_format_ids.*' => 'exists:release_formats,id',
             'CodeBarre' => 'array',
             'CodeBarre.*' => 'nullable|string',
+            'price' => 'array',
+            'price.*' => 'nullable|integer',
             'tracks' => 'array',
             'tracks.*.id' => 'nullable',  // Permettre id null pour nouvelles pistes
             'tracks.*.title' => 'required|string',
@@ -252,7 +254,10 @@ class ReleaseController extends Controller
         // Synchroniser les formats et leurs codes-barres
         $release->release_formats()->sync(
             collect($validated['release_format_ids'])->mapWithKeys(function ($formatId) use ($validated) {
-                return [$formatId => ['CodeBarre' => $validated['CodeBarre'][$formatId] ?? null]];
+                return [$formatId => [
+                    'CodeBarre' => $validated['CodeBarre'][$formatId] ?? null,
+                    'price' => $validated['price'][$formatId] ?? null
+                    ]];
             })->toArray()
         );
         
