@@ -29,6 +29,8 @@ class artistSubmittedNotification extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
+            to: 'nicolas@blizzardaudioclub.ch',
+            cc: 'etienne@blizzardaudioclub.ch',
             from: new Address('info@blizzardaudioclub.ch', 'Blizzard Audio Club'),
             subject: 'Labelcopy - mise à jour d\'une sortie',
         );

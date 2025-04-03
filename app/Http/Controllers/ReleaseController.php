@@ -459,7 +459,7 @@ class ReleaseController extends Controller
         // $socialsToDelete = array_diff($existingSocialIds, $updatedSocialIds);
         // $release->release_socials()->whereIn('id', $socialsToDelete)->delete();
 
-        Mail::to('nicolas@blizzardaudioclub.ch')->send(new artistSubmittedNotification($release));
+        Mail::send(new artistSubmittedNotification($release));
 
         return redirect(route('dashboard', absolute: false));
     }

@@ -1,7 +1,13 @@
 <x-mail::message>
 # Kikou,
 
-Le membre de référence de la sortie {{ $release->catalog }} à fait un  <a href="{{ route('dashboard.editrelease', ['release' => $release->id]) }}">nouvel enregistrement</a> de son labelcopy.
+Le membre de référence 
+@foreach($release->release_members as $member)
+    @if ($member->is_reference)
+        {{ $member->firstname }} {{ $member->lastname }} ({{ $member->email }})
+    @endif
+@endforeach
+a fait un nouvel enregistrement de son labelcopy <a href="{{ route('dashboard.editrelease', ['release' => $release->id]) }}">{{ $release->catalog }}</a>.
 
-Salut
+Bisous
 </x-mail::message>
