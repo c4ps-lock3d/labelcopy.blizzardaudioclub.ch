@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\welcomeMail;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\ValidationException;
+use App\Mail\artistSubmittedNotification;
 
 class ReleaseController extends Controller
 {
@@ -457,7 +458,9 @@ class ReleaseController extends Controller
         // Supprimer les réseaux sociaux qui ne sont plus présentes dans la requête
         // $socialsToDelete = array_diff($existingSocialIds, $updatedSocialIds);
         // $release->release_socials()->whereIn('id', $socialsToDelete)->delete();
-    
+
+        Mail::to('nicolas@blizzardaudioclub.ch')->send(new artistSubmittedNotification($release));
+
         return redirect(route('dashboard', absolute: false));
     }
 }

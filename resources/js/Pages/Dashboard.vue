@@ -182,7 +182,7 @@ const sortBy = (key, type) => {
                                                             class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-500 rounded-full peer dark:bg-gray-700 peer-checked:bg-indigo-600 mt-1.5"
                                                         ></div>
                                                         <div
-                                                            class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-2.5 mt-1.5"
+                                                            class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-5 mt-1.5"
                                                         ></div>
                                                     </label>
                                                 </td>

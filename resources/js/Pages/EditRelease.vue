@@ -934,7 +934,7 @@ const submit = () => {
                             </div>
                             <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
                                 <div v-for="formatId in form.release_format_ids" :key="formatId" class="mt-2">
-                                    <InputLabel :for="'barcode-' + formatId" :value="`Code-barres sortie format ${props.releaseFormats.find(f => f.id === formatId)?.name}`" class="text-sm font-medium" />
+                                    <InputLabel :for="'barcode-' + formatId" :value="`Code-barres ${props.releaseFormats.find(f => f.id === formatId)?.name}`" class="text-sm font-medium" />
                                     <TextInput
                                         :id="'barcode-' + formatId"
                                         type="text"
@@ -949,7 +949,7 @@ const submit = () => {
                                         :disabled="isDisabled || props.auth.user.name !== 'lynxadmin'"
                                     />
                                     <InputError class="mt-2" :message="form.errors[`barcodes.${formatId}`]" />
-                                    <InputLabel :for="'price-' + formatId" :value="`Prix sortie format ${props.releaseFormats.find(f => f.id === formatId)?.name}`" class="text-sm font-medium mt-2" />
+                                    <InputLabel :for="'price-' + formatId" :value="`Prix ${props.releaseFormats.find(f => f.id === formatId)?.name}`" class="text-sm font-medium mt-2" />
                                     <TextInput
                                         :id="'price-' + formatId"
                                         type="number"
