@@ -13,19 +13,19 @@ return new class extends Migration
     {
         Schema::table('releases', function (Blueprint $table) {
             $table->string('artistWebsite')->nullable();
-            $table->integer('budget')->nullable();
-            $table->string('sourceFinancement')->nullable();
-            $table->string('besoinFinancement')->nullable();
+            $table->mediumInteger('budget')->nullable();
+            $table->text('sourceFinancement')->nullable();
+            $table->text('besoinFinancement')->nullable();
             $table->string('facebook')->nullable();
             $table->string('instagram')->nullable();
             $table->string('tiktok')->nullable();
             $table->string('youtube')->nullable();
             $table->string('bandcamp')->nullable();
-            $table->string('besoinContacts')->nullable();
+            $table->text('besoinContacts')->nullable();
             $table->string('spotify')->nullable();
             $table->string('applemusic')->nullable();
-            $table->string('envies')->nullable();
-            $table->string('remarques')->nullable();
+            $table->text('envies')->nullable();
+            $table->text('remarques')->nullable();
         });
     }
 

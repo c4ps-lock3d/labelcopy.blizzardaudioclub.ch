@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('release_tracks', function (Blueprint $table) {
             $table->id();
-            $table->integer('number')->nullable();
+            $table->tinyInteger('number')->nullable();
             $table->string('title')->nullable();
             $table->boolean('isSingle')->nullable();
             $table->boolean('hasClip')->nullable();
