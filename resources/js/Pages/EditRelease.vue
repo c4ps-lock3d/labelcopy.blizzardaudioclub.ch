@@ -454,7 +454,7 @@ const submit = () => {
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                             </svg>
                             Informations sur l'artiste</h3>
-                        <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
+                        <div class="grid grid-cols-1 gap-8 md:content-stretch content-stretch md:grid-cols-2">
                             <div>
                                 <InputLabel for="artistName" value="Nom d'artiste" class="required text-sm font-medium" />
                                 <TextInput
@@ -472,7 +472,7 @@ const submit = () => {
                                 <TextArea
                                     id="artistBiography"
                                     type="text"
-                                    class="mt-1 block w-full transition duration-150 ease-in-out"
+                                    class="mt-1 pb-[0.87rem] block w-full transition duration-150 ease-in-out"
                                     v-model="form.artistBiography"
                                     rows="15"
                                     required
@@ -483,114 +483,151 @@ const submit = () => {
                             </div>
                             <div>
                                 <InputLabel for="liens" value="Liens" class="text-sm font-medium mb-1" />
-
                                 <div class="space-y-3">
                                     <div class="flex items-center gap-4">
-                                        <TextInput
-                                            id="artistWebsite"
-                                            type="text"
-                                            class="flex-1 transition duration-150 ease-in-out"
-                                            v-model="form.artistWebsite"
-                                            autocomplete="artistWebsite"
-                                            placeholder="Site web"
-                                            :disabled="isDisabled"
-                                        />
+                                        <div class="relative flex items-center w-full">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="absolute left-3 size-5 text-gray-400 dark:text-gray-600">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 0 1 7.843 4.582M12 3a8.997 8.997 0 0 0-7.843 4.582m15.686 0A11.953 11.953 0 0 1 12 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0 1 21 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0 1 12 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 0 1 3 12c0-1.605.42-3.113 1.157-4.418" />
+                                            </svg>
+                                            <TextInput
+                                                id="artistWebsite"
+                                                type="text"
+                                                class="pl-10 w-full transition duration-150 ease-in-out"
+                                                v-model="form.artistWebsite"
+                                                autocomplete="artistWebsite"
+                                                placeholder="Site web"
+                                                :disabled="isDisabled"
+                                            />
+                                        </div>
                                     </div>
                                     <InputError class="mt-2" :message="form.errors.artistWebsite" />
                                     <div class="flex items-center gap-4">
-                                        <TextInput
-                                            id="facebook"
-                                            type="text"
-                                            class="flex-1 transition duration-150 ease-in-out"
-                                            v-model="form.facebook"
-                                            autocomplete="facebook"
-                                            placeholder="Facebook"
-                                            :disabled="isDisabled"
-                                        />
+                                        <div class="relative flex items-center w-full">
+                                            <svg class="absolute left-3 size-5 text-gray-400 dark:text-gray-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                                <path fill="currentColor" d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c5.05-.5 9-4.76 9-9.95"/>
+                                            </svg>
+                                            <TextInput
+                                                id="facebook"
+                                                type="text"
+                                                class="pl-10 w-full transition duration-150 ease-in-out"
+                                                v-model="form.facebook"
+                                                autocomplete="facebook"
+                                                placeholder="Facebook"
+                                                :disabled="isDisabled"
+                                            />
+                                        </div>
                                     </div>
                                     <InputError class="mt-2" :message="form.errors.facebook" />
                                     <div class="flex items-center gap-4">
-                                        <TextInput
-                                            id="instagram"
-                                            type="text"
-                                            class="flex-1 transition duration-150 ease-in-out"
-                                            v-model="form.instagram"
-                                            autocomplete="instagram"
-                                            placeholder="Instagram"
-                                            :disabled="isDisabled"
-                                        />
+                                        <div class="relative flex items-center w-full">
+                                            <svg class="absolute left-3 size-5 text-gray-400 dark:text-gray-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                                <path fill="currentColor" d="M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6m0 8a5 5 0 1 1 5-5 5 5 0 0 1-5 5m5-13.5a1.5 1.5 0 1 0 1.5 1.5 1.5 1.5 0 0 0-1.5-1.5M20.5 2h-17A1.5 1.5 0 0 0 2 3.5v17A1.5 1.5 0 0 0 3.5 22h17a1.5 1.5 0 0 0 1.5-1.5v-17A1.5 1.5 0 0 0 20.5 2M4 19V5h16v14z"/>
+                                            </svg>
+                                            <TextInput
+                                                id="instagram"
+                                                type="text"
+                                                class="pl-10 w-full transition duration-150 ease-in-out"
+                                                v-model="form.instagram"
+                                                placeholder="Instagram"
+                                                :disabled="isDisabled"
+                                            />
+                                        </div>
                                     </div>
                                     <InputError class="mt-2" :message="form.errors.instagram" />
                                     <div class="flex items-center gap-4">
-                                        <TextInput
-                                            id="tiktok"
-                                            type="text"
-                                            class="flex-1 transition duration-150 ease-in-out"
-                                            v-model="form.tiktok"
-                                            autocomplete="tiktok"
-                                            placeholder="Tik Tok"
-                                            :disabled="isDisabled"
-                                        />
+                                        <div class="relative flex items-center w-full">
+                                            <svg class="absolute left-3 size-5 text-gray-400 dark:text-gray-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                                <path fill="currentColor" d="M16.6 5.82s.51.5 0 0A4.278 4.278 0 0 1 15.54 3h-3.09v12.4a2.592 2.592 0 0 1-2.59 2.5c-1.42 0-2.6-1.16-2.6-2.6c0-1.72 1.66-3.01 3.37-2.48V9.66c-3.45-.46-6.47 2.22-6.47 5.64c0 3.33 2.76 5.7 5.69 5.7c3.14 0 5.69-2.55 5.69-5.7V9.01a7.35 7.35 0 0 0 4.3 1.38V7.3s-1.88.09-3.24-1.48"/>
+                                            </svg>
+                                            <TextInput
+                                                id="tiktok"
+                                                type="text"
+                                                class="pl-10 w-full transition duration-150 ease-in-out"
+                                                v-model="form.tiktok"
+                                                placeholder="TikTok"
+                                                :disabled="isDisabled"
+                                            />
+                                        </div>
                                     </div>
                                     <InputError class="mt-2" :message="form.errors.tiktok" />
                                     <div class="flex items-center gap-4">
-                                        <TextInput
-                                            id="youtube"
-                                            type="text"
-                                            class="flex-1 transition duration-150 ease-in-out"
-                                            v-model="form.youtube"
-                                            autocomplete="youtube"
-                                            placeholder="Youtube"
-                                            :disabled="isDisabled"
-                                        />
+                                        <div class="relative flex items-center w-full">
+                                            <svg class="absolute left-3 size-5 text-gray-400 dark:text-gray-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                                <path fill="currentColor" d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0C.488 3.45.029 5.804 0 12c.029 6.185.484 8.549 4.385 8.816c3.6.245 11.626.246 15.23 0C23.512 20.55 23.971 18.196 24 12c-.029-6.185-.484-8.549-4.385-8.816M9 16V8l8 3.993L9 16"/>
+                                            </svg>
+                                            <TextInput
+                                                id="youtube"
+                                                type="text"
+                                                class="pl-10 w-full transition duration-150 ease-in-out"
+                                                v-model="form.youtube"
+                                                placeholder="YouTube"
+                                                :disabled="isDisabled"
+                                            />
+                                        </div>
                                     </div>
                                     <InputError class="mt-2" :message="form.errors.youtube" />
                                     <div class="flex items-center gap-4">
-                                        <TextInput
-                                            id="bandcamp"
-                                            type="text"
-                                            class="flex-1 transition duration-150 ease-in-out"
-                                            v-model="form.bandcamp"
-                                            autocomplete="bandcamp"
-                                            placeholder="Bandcamp"
-                                            :disabled="isDisabled"
-                                        />
+                                        <div class="relative flex items-center w-full">
+                                            <svg class="absolute left-3 size-5 text-gray-400 dark:text-gray-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                                <path fill="currentColor" d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12s12-5.373 12-12S18.627 0 12 0m4.482 16.5H7.518L9.82 7.5h8.964l-2.302 9"/>
+                                            </svg>
+                                            <TextInput
+                                                id="bandcamp"
+                                                type="text"
+                                                class="pl-10 w-full transition duration-150 ease-in-out"
+                                                v-model="form.bandcamp"
+                                                placeholder="Bandcamp"
+                                                :disabled="isDisabled"
+                                            />
+                                        </div>
                                     </div>
                                     <InputError class="mt-2" :message="form.errors.bandcamp" />
                                     <div class="flex items-center gap-4">
-                                        <TextInput
-                                            id="applemusic"
-                                            type="text"
-                                            class="flex-1 transition duration-150 ease-in-out"
-                                            v-model="form.applemusic"
-                                            autocomplete="applemusic"
-                                            placeholder="Apple Music"
-                                            :disabled="isDisabled"
-                                        />
+                                        <div class="relative flex items-center w-full">
+                                            <svg class="absolute left-3 size-5 text-gray-400 dark:text-gray-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                                <path fill="currentColor" d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12s12-5.4 12-12S18.66 0 12 0m5.521 17.34c-.24.359-.66.48-1.021.24c-2.82-1.74-6.36-2.101-10.561-1.141c-.418.122-.779-.179-.899-.539c-.12-.421.18-.78.54-.9c4.56-1.021 8.52-.6 11.64 1.32c.36.18.48.659.301 1.02m1.44-3.3c-.301.42-.841.6-1.262.3c-3.239-1.98-8.159-2.58-11.939-1.38c-.479.12-1.02-.12-1.14-.6c-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2m.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.381-.721c-.18-.601.18-1.2.72-1.381c4.26-1.26 11.28-1.02 15.721 1.621c.539.3.719 1.02.419 1.56c-.299.421-1.02.599-1.559.3"/>
+                                            </svg>
+                                            <TextInput
+                                                id="spotify"
+                                                type="text"
+                                                class="pl-10 w-full transition duration-150 ease-in-out"
+                                                v-model="form.spotify"
+                                                placeholder="Spotify"
+                                                :disabled="isDisabled"
+                                            />
+                                        </div>
                                     </div>
                                     <InputError class="mt-2" :message="form.errors.applemusic" />
                                     <div class="flex items-center gap-4">
-                                        <TextInput
-                                            id="spotify"
-                                            type="text"
-                                            class="flex-1 transition duration-150 ease-in-out"
-                                            v-model="form.spotify"
-                                            autocomplete="spotify"
-                                            placeholder="Spotify"
-                                            :disabled="isDisabled"
-                                        />
+                                        <div class="relative flex items-center w-full">
+                                            <svg class="absolute left-3 size-5 text-gray-400 dark:text-gray-600" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                <path fill="currentColor" d="m24 6.124c0-.029.001-.063.001-.097 0-.743-.088-1.465-.253-2.156l.013.063c-.312-1.291-1.1-2.359-2.163-3.031l-.02-.012c-.536-.35-1.168-.604-1.847-.723l-.03-.004c-.463-.084-1.003-.138-1.553-.15h-.011c-.04 0-.083-.01-.124-.013h-12.025c-.152.01-.3.017-.455.026-.791.016-1.542.161-2.242.415l.049-.015c-1.306.501-2.327 1.495-2.853 2.748l-.012.033c-.17.409-.297.885-.36 1.38l-.003.028c-.051.343-.087.751-.1 1.165v.016c0 .032-.007.062-.01.093v12.224c.01.14.017.283.027.424.02.861.202 1.673.516 2.416l-.016-.043c.609 1.364 1.774 2.387 3.199 2.792l.035.009c.377.111.817.192 1.271.227l.022.001c.555.053 1.11.06 1.667.06h11.028c.554 0 1.099-.037 1.633-.107l-.063.007c.864-.096 1.645-.385 2.321-.823l-.021.013c.825-.539 1.47-1.29 1.867-2.176l.013-.032c.166-.383.295-.829.366-1.293l.004-.031c.084-.539.132-1.161.132-1.794 0-.086-.001-.171-.003-.256v.013q0-5.7 0-11.394zm-6.424 3.99v5.712c.001.025.001.054.001.083 0 .407-.09.794-.252 1.14l.007-.017c-.273.562-.771.979-1.373 1.137l-.015.003c-.316.094-.682.156-1.06.173h-.01c-.029.002-.062.002-.096.002-1.033 0-1.871-.838-1.871-1.871 0-.741.431-1.382 1.056-1.685l.011-.005c.293-.14.635-.252.991-.32l.027-.004c.378-.082.758-.153 1.134-.24.264-.045.468-.252.51-.513v-.003c.013-.057.02-.122.02-.189 0-.002 0-.003 0-.005q0-2.723 0-5.443c-.001-.066-.01-.13-.027-.19l.001.005c-.026-.134-.143-.235-.283-.235-.006 0-.012 0-.018.001h.001c-.178.013-.34.036-.499.07l.024-.004q-1.14.225-2.28.456l-3.7.748c-.016 0-.032.01-.048.013-.222.03-.392.219-.392.447 0 .015.001.03.002.045v-.002.13q0 3.9 0 7.801c.001.028.001.062.001.095 0 .408-.079.797-.224 1.152l.007-.021c-.264.614-.792 1.072-1.436 1.235l-.015.003c-.319.096-.687.158-1.067.172h-.008c-.031.002-.067.003-.104.003-.913 0-1.67-.665-1.815-1.536l-.001-.011c-.02-.102-.031-.218-.031-.338 0-.785.485-1.458 1.172-1.733l.013-.004c.315-.127.687-.234 1.072-.305l.036-.005c.287-.06.575-.116.86-.177.341-.05.6-.341.6-.693 0-.007 0-.015 0-.022v.001-.15q0-4.44 0-8.883c0-.002 0-.004 0-.007 0-.129.015-.254.044-.374l-.002.011c.066-.264.277-.466.542-.517l.004-.001c.255-.066.515-.112.774-.165.733-.15 1.466-.3 2.2-.444l2.27-.46c.67-.134 1.34-.27 2.01-.4.181-.042.407-.079.637-.104l.027-.002c.018-.002.04-.004.061-.004.27 0 .489.217.493.485.008.067.012.144.012.222v.001q0 2.865 0 5.732z"/>
+                                            </svg>
+                                            <TextInput
+                                                id="applemusic"
+                                                type="text"
+                                                class="pl-10 w-full transition duration-150 ease-in-out"
+                                                v-model="form.applemusic"
+                                                placeholder="Apple Music"
+                                                :disabled="isDisabled"
+                                            />
+                                        </div>
                                     </div>
                                     <InputError class="mt-2" :message="form.errors.spotify" />
                                     <div class="flex items-center gap-4">
-                                        <TextInput
-                                            id="soundcloud"
-                                            type="text"
-                                            class="flex-1 transition duration-150 ease-in-out"
-                                            v-model="form.soundcloud"
-                                            autocomplete="soundcloud"
-                                            placeholder="Soundcloud"
-                                            :disabled="isDisabled"
-                                        />
+                                        <div class="relative flex items-center w-full">
+                                            <svg class="absolute left-3 size-5 text-gray-400 dark:text-gray-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                                <path fill="currentColor" d="M1.175 12.225c-.051 0-.094.046-.101.1l-.233 2.154l.233 2.105c.007.058.05.098.101.098c.05 0 .09-.04.099-.098l.255-2.105l-.27-2.154c0-.057-.045-.1-.09-.1m-.899.828c-.06 0-.091.037-.104.094L0 14.479l.165 1.308c0 .057.045.094.09.094s.089-.037.104-.094l.21-1.319l-.21-1.334c0-.054-.05-.097-.104-.097m1.83-1.09c-.061 0-.099.04-.107.094l-.214 2.427l.214 2.349c.008.058.046.098.107.098c.06 0 .091-.04.099-.098l.248-2.35l-.248-2.426c0-.058-.045-.095-.1-.095M3.99 11.8c-.061 0-.091.038-.107.095l-.203 2.486l.195 2.4c.016.057.047.095.107.095c.066 0 .11-.038.11-.095l.24-2.4l-.24-2.486c0-.057-.044-.095-.11-.095m.885-.015c-.066 0-.11.038-.11.095l-.188 2.506l.188 2.427c0 .058.037.095.11.095c.06 0 .091-.037.107-.095l.211-2.427l-.211-2.506c-.016-.057-.047-.095-.107-.095m.974.057c-.055 0-.091.038-.091.095l-.188 2.448l.188 2.378c0 .058.036.095.09.095c.062 0 .098-.037.098-.095l.211-2.378l-.211-2.448c0-.057-.037-.095-.09-.095m1.002 2.543l-.172-2.407c0-.057-.045-.095-.106-.095c-.06 0-.106.038-.106.095l-.146 2.407l.146 2.405c0 .058.045.096.106.096c.061 0 .106-.038.106-.096l.172-2.405m.932-2.37c-.061 0-.106.038-.106.095l-.157 2.275l.157 2.262c0 .057.045.095.106.095c.055 0 .098-.038.098-.095l.182-2.262l-.182-2.275c0-.057-.043-.095-.098-.095m1.018.817l-.129-2.038c0-.057-.05-.098-.106-.098c-.066 0-.106.041-.106.098l-.113 2.038l.113 2.333c0 .058.04.099.106.099c.056 0 .106-.04.106-.099l.129-2.333m.96-.021l-.111-1.959c0-.057-.045-.098-.106-.098c-.066 0-.106.041-.106.098l-.098 1.959l.098 2.321c0 .057.04.098.106.098c.061 0 .106-.041.106-.098l.11-2.321m1.05.098l-.098-2.015c0-.057-.043-.098-.106-.098c-.06 0-.106.041-.106.098l-.079 2.015l.079 2.307c0 .057.046.098.106.098c.063 0 .106-.041.106-.098l.098-2.307m1.03-.098l-.076-1.904c0-.057-.047-.098-.106-.098c-.066 0-.113.041-.113.098l-.055 1.904l.055 2.262c0 .057.047.098.113.098c.059 0 .106-.041.106-.098l.076-2.262M11.128 11.8c-.06 0-.106.038-.106.095l-.055 2.39l.055 2.321c0 .061.046.098.106.098c.066 0 .113-.037.113-.098l.068-2.321l-.068-2.39c0-.057-.047-.095-.113-.095m1.04.058c-.066 0-.113.037-.113.098l-.037 2.329l.037 2.271c0 .061.047.098.113.098c.06 0 .106-.037.106-.098l.052-2.271l-.052-2.329c0-.06-.046-.098-.106-.098m7.737-3.817c-.352 0-.683.065-.989.185c-.203-2.289-2.11-4.093-4.453-4.093c-.573 0-1.129.115-1.622.321c-.191.094-.24.19-.242.376V16.74c.002.204.163.37.367.37h6.939c1.38 0 2.5-1.116 2.5-2.49c0-1.375-1.12-2.49-2.5-2.49c-.345 0-.674.07-.973.198c-.201-2.286-2.107-4.086-4.445-4.086"/>
+                                            </svg>
+                                            <TextInput
+                                                id="soundcloud"
+                                                type="text"
+                                                class="pl-10 w-full transition duration-150 ease-in-out"
+                                                v-model="form.soundcloud"
+                                                placeholder="SoundCloud"
+                                                :disabled="isDisabled"
+                                            />
+                                        </div>
                                     </div>
                                     <InputError class="mt-2" :message="form.errors.soundcloud" />
                                 </div>
@@ -639,7 +676,7 @@ const submit = () => {
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
-                                    <tr v-for="(member, index) in form.members" :key="member.id || 'new'" class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition">
+                                    <tr v-for="(member, index) in form.members" :key="member.id || 'new'" class="bg-white dark:bg-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition">
                                         <td class="whitespace-nowrap px-3 py-2">
                                             <button
                                                 v-if="form.members.length > 1 && !member.is_reference"
@@ -981,7 +1018,7 @@ const submit = () => {
                                             </tr>
                                         </thead>
                                         <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
-                                            <tr v-for="(track, index) in form.tracks" :key="track.id || 'new'" class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition">
+                                            <tr v-for="(track, index) in form.tracks" :key="track.id || 'new'" class="bg-white dark:bg-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition">
                                                 <td class="whitespace-nowrap px-3 py-2">
                                                     <button
                                                         v-if="form.tracks.length > 1 && index === form.tracks.length - 1"
@@ -1054,27 +1091,30 @@ const submit = () => {
                                         <thead>
                                             <tr class="bg-gray-100 dark:bg-gray-700">
                                                 <td scope="col" class="w-8 px-3 py-2.5 text-left text-sm font-semibold text-gray-800 dark:text-gray-100">
-                                                    #
+                                                    
                                                 </td>
                                                 <td scope="col" class="w-96 px-3 py-2.5 text-left text-sm font-semibold text-gray-800 dark:text-gray-100">
-                                                    Titre
+                                                    
                                                 </td>
                                                 <template v-for="member in form.members" :key="member.id">
                                                     <th scope="col" class="required px-3 py-2.5 text-center text-sm font-semibold text-gray-800 dark:text-gray-100 whitespace-nowrap">
-                                                        {{ member.firstname.charAt(0) }}. {{ member.lastname }}
+                                                        {{ member.firstname && member.lastname 
+                                                            ? `${member.firstname.charAt(0)}. ${member.lastname}` 
+                                                            : 'Non défini' 
+                                                        }}
                                                     </th>
                                                 </template>
                                             </tr>
                                         </thead>
-                                        <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
-                                            <tr v-for="(track, index) in form.tracks" :key="track.id" class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition">
+                                        <tbody class="divide-y divide-gray-200 dark:divide-gray-600 ">
+                                            <tr v-for="(track, index) in form.tracks" :key="track.id" class="bg-white dark:bg-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition">
                                                 <td class="px-3 py-2 text-gray-900 dark:text-gray-100">
                                                     {{ track.number }}
                                                 </td>
                                                 <td class="px-3 py-2 text-gray-900 dark:text-gray-100">
                                                     {{ track.title }}
                                                 </td>
-                                                <td v-for="participation in track.participations" :key="participation.member_id" class="px-3 py-2 text-center bg-gray-200/70 dark:bg-gray-500/70">
+                                                <td v-for="participation in track.participations" :key="participation.member_id" class="px-3 py-2 text-center">
                                                     <TextInput  
                                                         type="number"
                                                         v-model="participation.percentage"

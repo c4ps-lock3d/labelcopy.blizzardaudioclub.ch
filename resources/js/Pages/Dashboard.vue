@@ -151,12 +151,12 @@ const sortBy = (key, type) => {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr v-if="sortedData.releases.length === 0" class="bg-white dark:bg-gray-800">
+                                            <tr v-if="sortedData.releases.length === 0" class="bg-white dark:bg-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition border-t border-gray-200 dark:border-gray-600">
                                                 <td colspan="4" class="px-2.5 py-3 text-center text-gray-500 dark:text-gray-400">
                                                     Aucune sortie existante pour le moment. Cliquer sur le bouton "Ajouter" pour en créer une nouvelle.
                                                 </td>
                                             </tr>
-                                            <tr v-else v-for="release in sortedData.releases" :key="release.id" class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition border-t border-gray-200 dark:border-gray-600">
+                                            <tr v-else v-for="release in sortedData.releases" :key="release.id" class="bg-white dark:bg-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition border-t border-gray-200 dark:border-gray-600">
                                                 <Link :href="route('dashboard.editrelease', release.id)" class="contents">
                                                     <td class="px-2.5 py-3 text-gray-900 dark:text-gray-100">
                                                         <div v-if="release.catalog">{{ release.catalog }}</div>
@@ -246,12 +246,12 @@ const sortBy = (key, type) => {
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr v-if="sortedData.members.length === 0" class="bg-white dark:bg-gray-800">
+                                                <tr v-if="sortedData.members.length === 0" class="bg-white dark:bg-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition border-t border-gray-200 dark:border-gray-600">
                                                     <td colspan="5" class="px-2.5 py-3 text-center text-gray-500 dark:text-gray-400">
                                                         Aucun membre existant.
                                                     </td>
                                                 </tr>
-                                                <tr v-else v-for="member in sortedData.members" :key="member.id" class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition border-t border-gray-200 dark:border-gray-600">
+                                                <tr v-else v-for="member in sortedData.members" :key="member.id" class="bg-white dark:bg-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition border-t border-gray-200 dark:border-gray-600">
                                                     <td class="px-2.5 py-3 text-gray-900 dark:text-gray-100">
                                                         {{ member.firstname }}
                                                     </td>

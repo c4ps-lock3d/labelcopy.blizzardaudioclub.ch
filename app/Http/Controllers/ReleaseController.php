@@ -33,13 +33,13 @@ class ReleaseController extends Controller
         // Vérifier si l'utilisateur est "lynxadmin"
         if ($user->name === "lynxadmin") {
             // Récupérer toutes les releases
-            $releases = Release::with('release_type')->get();
+            $releases = Release::with('release_type')->orderBy('catalog', 'desc')->get();
         } else {
             // Récupérer uniquement les releases associées à l'utilisateur via la table pivot
-            $releases = $user->releases()->with('release_type')->get();
+            $releases = $user->releases()->with('release_type')->orderBy('catalog', 'desc')->get();
         }
 
-        $members = auth()->user()->name === 'lynxadmin' ? ReleaseMember::all() : [];
+        $members = auth()->user()->name === 'lynxadmin' ? ReleaseMember::orderBy('lastname', 'asc')->get() : [];
 
 
         return Inertia::render('Dashboard', [
