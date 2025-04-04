@@ -644,13 +644,14 @@ const submit = () => {
                             <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
                         </svg>
                         Informations sur le(s) membre(s)</h3>
-                        <InputLabel value="Liste des membres" class="required text-sm font-medium" />
+                        <InputLabel value="Liste des membres (tous les ayant-droits de l'œuvre)" class="required text-sm font-medium" />
                         <div class="overflow-hidden rounded-md border border-gray-300 dark:border-gray-600 !mt-1 !mb-8">
                             <table class="min-w-full">
                                 <thead>
                                     <tr class="bg-gray-100 dark:bg-gray-700">
-                                        <th scope="col" class="w-16 px-3 py-2.5 text-sm font-semibold text-gray-800 dark:text-gray-100">
-                                            <button 
+                                        <th scope="col" class="w-16 h-12 px-3 text-sm font-semibold text-gray-800 dark:text-gray-100">
+                                            <button
+                                                v-if="form.members.length < 12"
                                                 type="button" 
                                                 @click="addNewMember"
                                                 class="w-8 h-8 bg-indigo-600 text-white text-sm rounded-md border border-indigo-800 hover:bg-indigo-700 transition-colors flex items-center justify-center"
@@ -985,8 +986,9 @@ const submit = () => {
                                     <table class="min-w-full">
                                         <thead>
                                             <tr>
-                                                <td scope="col" class="w-10 px-3 py-2.5 text-center text-sm font-semibold text-gray-800 dark:text-gray-100 bg-gray-100 dark:bg-gray-700">
-                                                    <button 
+                                                <td scope="col" class="h-12 px-3 text-sm font-semibold text-gray-800 dark:text-gray-100 bg-gray-100 dark:bg-gray-700">
+                                                    <button
+                                                        v-if="form.tracks.length < 20"
                                                         type="button" 
                                                         @click="addNewTrack"
                                                         class="w-8 h-8 bg-indigo-600 text-white text-sm border border-indigo-800 rounded-md hover:bg-indigo-700 transition-colors flex items-center justify-center"
@@ -1019,7 +1021,7 @@ const submit = () => {
                                         </thead>
                                         <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
                                             <tr v-for="(track, index) in form.tracks" :key="track.id || 'new'" class="bg-white dark:bg-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition">
-                                                <td class="whitespace-nowrap px-3 py-2">
+                                                <td class="w-16 px-3 py-2">
                                                     <button
                                                         v-if="form.tracks.length > 1 && index === form.tracks.length - 1"
                                                         type="button" 
@@ -1035,7 +1037,7 @@ const submit = () => {
                                                 <td class="w-8 px-3 py-2 text-gray-900 dark:text-gray-100">
                                                     {{ track.number }}
                                                 </td>
-                                                <td class="px-3 py-2">
+                                                <td class="w-96 px-3 py-2">
                                                     <TextInput
                                                         type="text"
                                                         v-model="track.title"
@@ -1085,21 +1087,21 @@ const submit = () => {
                                     </table>
                                 </div>
                                 <!-- Deuxième tableau : Clé de répartition -->
-                                <InputLabel value="Clé de répartition des morceaux" class="required text-sm font-medium mt-8" />
+                                <InputLabel value="Clé de répartition précise des membres/morceaux" class="required text-sm font-medium mt-8" />
                                 <div class="overflow-hidden rounded-md border border-gray-300 dark:border-gray-600 !mt-1">
                                     <table class="min-w-full">
                                         <thead>
                                             <tr class="bg-gray-100 dark:bg-gray-700">
                                                 <td scope="col" class="w-8 px-3 py-2.5 text-left text-sm font-semibold text-gray-800 dark:text-gray-100">
-                                                    
+                                                    #
                                                 </td>
-                                                <td scope="col" class="w-96 px-3 py-2.5 text-left text-sm font-semibold text-gray-800 dark:text-gray-100">
-                                                    
+                                                <td v-if="form.members.length < 9" class="w-96 px-3 py-2 text-gray-900 dark:text-gray-100">
+                                                    Titre
                                                 </td>
                                                 <template v-for="member in form.members" :key="member.id">
-                                                    <th scope="col" class="required px-3 py-2.5 text-center text-sm font-semibold text-gray-800 dark:text-gray-100 whitespace-nowrap">
+                                                    <th scope="col" class="required px-1 py-2.5 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 whitespace-nowrap">
                                                         {{ member.firstname && member.lastname 
-                                                            ? `${member.firstname.charAt(0)}. ${member.lastname}` 
+                                                            ? `${member.firstname.slice(0, 1)}. ${member.lastname.slice(0, 3)}` 
                                                             : 'Non défini' 
                                                         }}
                                                     </th>
@@ -1108,24 +1110,28 @@ const submit = () => {
                                         </thead>
                                         <tbody class="divide-y divide-gray-200 dark:divide-gray-600 ">
                                             <tr v-for="(track, index) in form.tracks" :key="track.id" class="bg-white dark:bg-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition">
-                                                <td class="px-3 py-2 text-gray-900 dark:text-gray-100">
-                                                    {{ track.number }}
-                                                </td>
-                                                <td class="px-3 py-2 text-gray-900 dark:text-gray-100">
-                                                    {{ track.title }}
-                                                </td>
-                                                <td v-for="participation in track.participations" :key="participation.member_id" class="px-3 py-2 text-center">
-                                                    <TextInput  
-                                                        type="number"
-                                                        v-model="participation.percentage"
-                                                        class="w-20 text-center transition duration-150 ease-in-out"
-                                                        placeholder="%"
-                                                        min="0"
-                                                        max="100"
-                                                        @input="validateMemberPercentage(track, participation)"
-                                                        :disabled="isDisabled"
-                                                    />
-                                                </td>
+                                                
+                                                    <td class="w-8 px-3 py-2 text-gray-900 dark:text-gray-100">
+                                                        {{ track.number }}
+                                                    </td>
+                                                    <td v-if="form.members.length < 9" class="w-96 px-3 py-2 text-gray-900 dark:text-gray-100">
+                                                        {{ track.title }}
+                                                    </td>
+                                               
+                                                <template v-for="participation in track.participations" :key="participation.member_id">
+                                                    <td class="px-1 py-2">
+                                                        <TextInput  
+                                                            type="number"
+                                                            v-model="participation.percentage"
+                                                            class="w-20 text-center transition duration-150 ease-in-out"
+                                                            placeholder="%"
+                                                            min="0"
+                                                            max="100"
+                                                            @input="validateMemberPercentage(track, participation)"
+                                                            :disabled="isDisabled"
+                                                        />
+                                                    </td>
+                                                </template>
                                             </tr>
                                         </tbody>
                                     </table>

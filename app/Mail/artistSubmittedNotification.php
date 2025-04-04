@@ -10,6 +10,7 @@ use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Mail\Mailables\Address;
 use App\Models\Release;
+use Illuminate\Http\Request;
 
 class artistSubmittedNotification extends Mailable
 {
@@ -18,9 +19,10 @@ class artistSubmittedNotification extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct(public Release $release)
+    public function __construct(public Release $release, public array $release_before)
     {
-        //
+        $this->catalog = $release->catalog;
+        $release->toArray();
     }
 
     /**
@@ -32,7 +34,7 @@ class artistSubmittedNotification extends Mailable
             to: 'nicolas@blizzardaudioclub.ch',
             //cc: 'etienne@blizzardaudioclub.ch',
             from: new Address('info@blizzardaudioclub.ch', 'Blizzard Audio Club'),
-            subject: 'Labelcopy - mise à jour d\'une sortie',
+            subject: 'Labelcopy ' .$this->catalog. ' - mise à jour de la sortie !',
         );
     }
 

@@ -163,6 +163,8 @@ class ReleaseController extends Controller
 
     public function update(Request $request, Release $release): RedirectResponse
     {
+        $release_before = $release->toArray();
+
         $validated = $request->validate([
             'catalog' => 'required|string|max:6',
             'name' => 'required|string|max:255',
@@ -458,9 +460,9 @@ class ReleaseController extends Controller
         // Supprimer les réseaux sociaux qui ne sont plus présentes dans la requête
         // $socialsToDelete = array_diff($existingSocialIds, $updatedSocialIds);
         // $release->release_socials()->whereIn('id', $socialsToDelete)->delete();
-
-        Mail::send(new artistSubmittedNotification($release));
-
+        
+        Mail::send(new artistSubmittedNotification($release, $release_before));
+        
         return redirect(route('dashboard', absolute: false));
     }
 }
