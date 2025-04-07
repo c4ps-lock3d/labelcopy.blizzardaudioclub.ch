@@ -163,7 +163,8 @@ class ReleaseController extends Controller
 
     public function update(Request $request, Release $release): RedirectResponse
     {
-        $release_before = $release->toArray();
+        $release_before = $release->with('release_members')->with('release_tracks')->with('release_tracks.release_members')->with('release_type')->with('release_formats')->findOrFail($release->id);
+        //dd($release_before);
 
         $validated = $request->validate([
             'catalog' => 'required|string|max:6',
@@ -461,6 +462,6 @@ class ReleaseController extends Controller
         
         Mail::send(new artistSubmittedNotification($release, $release_before));
         
-        return redirect(route('dashboard', absolute: false));
+        return redirect()->to(route('dashboard'))->with('success', 'Modifications enregistrées.');
     }
 }

@@ -19,10 +19,11 @@ class artistSubmittedNotification extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct(public Release $release, public array $release_before)
+    public function __construct(public Release $release, public Release $release_before)
     {
         $this->catalog = $release->catalog;
         $release->toArray();
+        $release_before->toArray();
     }
 
     /**
