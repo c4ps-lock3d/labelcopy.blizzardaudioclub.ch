@@ -26,6 +26,36 @@ foreach ($release->getAttributes() as $key => $value) {
             $newValue = (bool)$newValue;
         }
 
+        // Traitement spécial pour les champs avec traduction
+        if ($key === 'artistName') {
+            $key = "Nom de l'artiste";
+        }elseif ($key === 'artistBiography') {
+            $key = "Biographie de l'artiste";
+        }elseif ($key === 'name') {
+            $key = "Nom de la sortie";
+        }elseif ($key === 'artistIBAN') {
+            $key = "IBAN de l'artiste";
+        }elseif ($key === 'description') {
+            $key = "Description de la sortie";
+        }elseif ($key === 'SourceFinancement') {
+            $key = "Source de financement du projet";
+        }elseif ($key === 'BesoinFinancement') {
+            $key = "Besoin de financement";
+        }elseif ($key === 'IsBesoinSubvention') {
+            $key = "Besoin de subvention";
+        }elseif ($key === 'IsBesoinDigitalMarketing') {
+            $key = "Besoin de marketing digital";
+        }elseif ($key === 'isProduitsDerives') {
+            $key = "Produits dérivés";
+        }elseif ($key === 'isBesoinPromo') {
+            $key = "Besoin de promo";
+        }elseif ($key === 'isBesoinContacts') {
+            $key = "Besoin de contacts";
+        }elseif ($key === 'besoinContacts') {
+            $key = "Raison(s) du besoin de contacts";
+        }
+        
+
         // Traitement spécial pour release_type_id
         if ($key === 'release_type_id') {
             $oldType = \App\Models\ReleaseType::find($oldValue);
@@ -155,6 +185,53 @@ foreach ($release->release_formats as $index => $format) {
             ];
         }
 
+        // Ajouter la vérification des coordonnées
+        if ($member['is_reference']) {
+            // Vérifier l'email
+            if ((string)($before_member['email'] ?? '') !== (string)($member['email'] ?? '')) {
+                $member_changes['email'] = [
+                    'old' => $before_member['email'] ?? 'N/A',
+                    'new' => $member['email'] ?? 'N/A'
+                ];
+            }
+
+            // Vérifier l'adresse
+            if (
+                (string)($before_member['street'] ?? '') !== (string)($member['street'] ?? '') ||
+                (string)($before_member['zip_code'] ?? '') !== (string)($member['zip_code'] ?? '') ||
+                (string)($before_member['city'] ?? '') !== (string)($member['city'] ?? '')
+            ) {
+                $member_changes['address'] = [
+                    'old' => trim(implode(' ', [
+                        $before_member['street'] ?? '',
+                        $before_member['zip_code'] ?? '',
+                        $before_member['city'] ?? ''
+                    ])) ?: 'N/A',
+                    'new' => trim(implode(' ', [
+                        $member['street'] ?? '',
+                        $member['zip_code'] ?? '',
+                        $member['city'] ?? ''
+                    ])) ?: 'N/A'
+                ];
+            }
+
+            // Vérifier le pays
+            if ((string)($before_member['country'] ?? '') !== (string)($member['country'] ?? '')) {
+                $member_changes['country'] = [
+                    'old' => $before_member['country'] ?? 'N/A',
+                    'new' => $member['country'] ?? 'N/A'
+                ];
+            }
+
+            // Vérifier le téléphone
+            if ((string)($before_member['phone_number'] ?? '') !== (string)($member['phone_number'] ?? '')) {
+                $member_changes['phone'] = [
+                    'old' => $before_member['phone_number'] ?? 'N/A',
+                    'new' => $member['phone_number'] ?? 'N/A'
+                ];
+            }
+        }
+
         // Vérifier la date de naissance avec normalisation
         $old_birthdate = trim((string)($before_member['birth_date'] ?? ''));
         $new_birthdate = trim((string)($member['birth_date'] ?? ''));
@@ -191,34 +268,40 @@ foreach ($release->release_formats as $index => $format) {
 
 @if (isset($changes['attributes']))
 @foreach ($changes['attributes'] as $change)
-- **{{ ucfirst($change['field']) }}** : 
+**{{ ucfirst($change['field']) }}** :
+<br>
 @if (is_bool($change['old']))
-{{ $change['old'] ? 'Oui' : 'Non' }} -> {{ $change['new'] ? 'Oui' : 'Non' }}
+{{ $change['old'] ? 'Oui' : 'Non' }} → {{ $change['new'] ? 'Oui' : 'Non' }}
+<br>
 @else
-{{ $change['old'] ?? 'N/A' }} -> {{ $change['new'] ?? 'N/A' }}
+{{ $change['old'] ?? 'N/A' }} → {{ $change['new'] ?? 'N/A' }}
+<br>
 @endif
 @endforeach
 @endif
 
 @if (isset($changes['formats']))
 @foreach ($changes['formats'] as $format)
-- **Format {{ $format['format_number'] }}** :
+**Format {{ $format['format_number'] }}** :
 @foreach ($format['changes'] as $change)
-    - {{ ucfirst($change['field']) }} : {{ $change['old'] }} -> {{ $change['new'] }}
+    - {{ ucfirst($change['field']) }} : {{ $change['old'] }} → {{ $change['new'] }}
 @endforeach
 @endforeach
 @endif
 
 @if (isset($changes['tracks']))
 @foreach ($changes['tracks'] as $track)
-- **Piste {{ $track['number'] }}** :
+**Piste {{ $track['number'] }}** :
+<br>
 @foreach ($track['changes'] as $key => $change)
     @if ($key === 'percentages')
         @foreach ($change as $percentage_change)
-        - Pourcentage {{ $percentage_change['member_name'] }} : {{ $percentage_change['old'] }} -> {{ $percentage_change['new'] }}
+        - Pourcentage {{ $percentage_change['member_name'] }} : {{ $percentage_change['old'] }} → {{ $percentage_change['new'] }}
         @endforeach
+        <br>
     @else
-        - {{ ucfirst($change['field']) }} : {{ $change['old'] }} -> {{ $change['new'] }}
+        - {{ ucfirst($change['field']) }} : {{ $change['old'] }} → {{ $change['new'] }}
+        <br>
     @endif
 @endforeach
 @endforeach
@@ -226,21 +309,34 @@ foreach ($release->release_formats as $index => $format) {
 
 @if (isset($changes['members']))
 @foreach ($changes['members'] as $member)
-- **Membre {{ $member['member_number'] }}** :
+**Membre {{ $member['member_number'] }}** :
+<br>
 @if (isset($member['changes']['name']))
-    - Nom : {{ $member['changes']['name']['old'] }} -> {{ $member['changes']['name']['new'] }}
+    - Nom : {{ $member['changes']['name']['old'] }} → {{ $member['changes']['name']['new'] }}
+    <br>
 @endif
-@if (isset($member['changes']['birthdate']))
-    - Date de naissance : {{ $member['changes']['birthdate']['old'] }} -> {{ $member['changes']['birthdate']['new'] }}
+@if (isset($member['changes']['email']))
+    - Email : {{ $member['changes']['email']['old'] }} → {{ $member['changes']['email']['new'] }}
+    <br>
 @endif
-@if (isset($member['changes']['ipi']))
-    - Numéro IPI : {{ $member['changes']['ipi']['old'] }} -> {{ $member['changes']['ipi']['new'] }}
+@if (isset($member['changes']['address']))
+    - Adresse : {{ $member['changes']['address']['old'] }} → {{ $member['changes']['address']['new'] }}
+    <br>
 @endif
+@if (isset($member['changes']['country']))
+    - Pays : {{ $member['changes']['country']['old'] }} → {{ $member['changes']['country']['new'] }}
+    <br>
+@endif
+@if (isset($member['changes']['phone']))
+    - Téléphone : {{ $member['changes']['phone']['old'] }} → {{ $member['changes']['phone']['new'] }}
+    <br>
+@endif
+
 @endforeach
 @endif
 
 @else
-**Aucune modification effectuée.**
+**Enregistrement effectué sans modifications.**
 @endif
 
 <br>
