@@ -462,5 +462,5 @@ class ReleaseController extends Controller
         
         Mail::send(new artistSubmittedNotification($release, $release_before));
         
-        return to_route('dashboard')->with('success', 'Modifications enregistrées.');    }
+        return redirect()->route('dashboard')->with('success', 'Modifications enregistrées.');    }
 }
