@@ -427,7 +427,7 @@ class ReleaseController extends Controller
         $membersToDelete = array_diff($existingMemberIds, $updatedMemberIds);
         $release->release_members()->whereIn('id', $membersToDelete)->delete();
         
-        Mail::send(new artistSubmittedNotification($release, $release_before));
+        Mail::queue(new artistSubmittedNotification($release, $release_before));
         
         return redirect()->route('dashboard')->with('success', 'Modifications enregistrées.');    }
 }
