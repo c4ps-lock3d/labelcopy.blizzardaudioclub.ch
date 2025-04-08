@@ -1,5 +1,6 @@
 import defaultTheme from 'tailwindcss/defaultTheme';
 import forms from '@tailwindcss/forms';
+import daisyui from 'daisyui';
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -10,7 +11,6 @@ export default {
         './resources/views/**/*.blade.php',
         './resources/js/**/*.vue',
     ],
-
     theme: {
         extend: {
             fontFamily: {
@@ -18,6 +18,19 @@ export default {
             },
         },
     },
+    plugins: [
+        forms,
+        daisyui
+    ],
 
-    plugins: [forms],
+    // Configuration DaisyUI
+    daisyui: {
+        themes: ["light", "dark"], // Seulement les thèmes light et dark
+        darkTheme: "dark", // Le thème à utiliser quand dark mode est activé
+        base: true, // Appliquer les styles de base
+        styled: true, // Inclure les styles par défaut
+        utils: true, // Inclure les classes utilitaires
+        prefix: "", // Préfixe pour les classes (ex: "daisy-btn" au lieu de "btn")
+        logs: false, // Désactiver les logs dans la console
+    },
 };
