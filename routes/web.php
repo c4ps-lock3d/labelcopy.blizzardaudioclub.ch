@@ -12,10 +12,6 @@ Route::get('/', function () {
     return redirect('/login');
 })->middleware('guest');
 
-Route::get('/queue', function () {
-    $exitCode = Artisan::call('queue:work --stop-when-empty');
-})->middleware('auth.basic');
-
 // Dashboard
 Route::get('/dashboard', [ReleaseController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 Route::put('/releases/{release}/status', [ReleaseController::class, 'updateStatus'])->name('update-release-status');

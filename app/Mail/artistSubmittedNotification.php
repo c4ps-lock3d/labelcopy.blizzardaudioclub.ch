@@ -12,7 +12,7 @@ use Illuminate\Mail\Mailables\Address;
 use App\Models\Release;
 use Illuminate\Http\Request;
 
-class artistSubmittedNotification extends Mailable implements ShouldQueue
+class artistSubmittedNotification extends Mailable
 {
     use Queueable, SerializesModels;
     public $catalog;
