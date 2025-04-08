@@ -6,6 +6,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Models\Release;
+use Illuminate\Support\Facades\Artisan;
 
 /* Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -19,6 +20,12 @@ use App\Models\Release;
 Route::get('/', function () {
     return redirect('/login');
 })->middleware('guest');
+
+Route::get('/queue', function (string $user) {
+    $exitCode = Artisan::call('queue:work --stop-when-empty');
+
+    // ...
+})->middleware('auth.basic');
 
 // Dashboard
 Route::get('/dashboard', [ReleaseController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
