@@ -1,5 +1,5 @@
 <x-mail::message>
-# Kikou,
+# KIKOU,
 
 Le membre de référence 
 @foreach($release->release_members as $member)
@@ -8,98 +8,98 @@ Le membre de référence
 @endif
 @endforeach
 a fait un nouvel enregistrement de son labelcopy <a href="{{ route('dashboard.editrelease', ['release' => $release->id]) }}">{{ $release->catalog }}</a>.
+<br>
 @php
     // Initialiser le suivi des modifications
     $hasChanges = false;
     $changes = [];
 
+    // Comparer les champs principaux
+    foreach ($release->getAttributes() as $key => $value) {
+        if (!in_array($key, ['created_at', 'updated_at', 'id'])) {
+            $oldValue = $release_before[$key] ?? null;
+            $newValue = $value;
 
-// Comparer les champs principaux
-foreach ($release->getAttributes() as $key => $value) {
-    if (!in_array($key, ['created_at', 'updated_at', 'id'])) {
-        $oldValue = $release_before[$key] ?? null;
-        $newValue = $value;
+            // Traitement spécial pour les booléens
+            if (in_array($key, ['isProduitsDerives', 'isBesoinSubvention', 'isBesoinPromo', 'isBesoinDigitalMarketing', 'isBesoinContacts', 'isActive'])) {
+                $oldValue = (bool)$oldValue;
+                $newValue = (bool)$newValue;
+            }
 
-        // Traitement spécial pour les booléens
-        if (in_array($key, ['isProduitsDerives', 'isBesoinSubvention', 'isBesoinPromo', 'isBesoinDigitalMarketing', 'isBesoinContacts', 'isActive'])) {
-            $oldValue = (bool)$oldValue;
-            $newValue = (bool)$newValue;
+            // Traitement spécial pour les champs avec traduction
+            if ($key === 'artistName') {
+                $key = "Nom de l'artiste";
+            }elseif ($key === 'artistBiography') {
+                $key = "Biographie de l'artiste";
+            }elseif ($key === 'name') {
+                $key = "Nom de la sortie";
+            }elseif ($key === 'artistIBAN') {
+                $key = "IBAN de l'artiste";
+            }elseif ($key === 'description') {
+                $key = "Description de la sortie";
+            }elseif ($key === 'SourceFinancement') {
+                $key = "Source de financement du projet";
+            }elseif ($key === 'BesoinFinancement') {
+                $key = "Besoin de financement";
+            }elseif ($key === 'isBesoinSubvention') {
+                $key = "Besoin de subvention";
+            }elseif ($key === 'isBesoinDigitalMarketing') {
+                $key = "Besoin de marketing digital";
+            }elseif ($key === 'isProduitsDerives') {
+                $key = "Produits dérivés";
+            }elseif ($key === 'isBesoinPromo') {
+                $key = "Besoin de promo";
+            }elseif ($key === 'isBesoinContacts') {
+                $key = "Besoin de contacts";
+            }elseif ($key === 'besoinContacts') {
+                $key = "Raison(s) du besoin de contacts";
+            }
+            
+
+            // Traitement spécial pour release_type_id
+            if ($key === 'release_type_id') {
+                $oldType = \App\Models\ReleaseType::find($oldValue);
+                $newType = \App\Models\ReleaseType::find($newValue);
+                $key = 'type'; // Modifier le nom du champ pour l'affichage
+                $oldValue = $oldType ? $oldType->name : 'N/A';
+                $newValue = $newType ? $newType->name : 'N/A';
+            }
+
+            if ($oldValue !== $newValue) {
+                $hasChanges = true;
+                $changes['attributes'][] = [
+                    'field' => $key,
+                    'old' => $oldValue,
+                    'new' => $newValue
+                ];
+            }
         }
 
-        // Traitement spécial pour les champs avec traduction
-        if ($key === 'artistName') {
-            $key = "Nom de l'artiste";
-        }elseif ($key === 'artistBiography') {
-            $key = "Biographie de l'artiste";
-        }elseif ($key === 'name') {
-            $key = "Nom de la sortie";
-        }elseif ($key === 'artistIBAN') {
-            $key = "IBAN de l'artiste";
-        }elseif ($key === 'description') {
-            $key = "Description de la sortie";
-        }elseif ($key === 'SourceFinancement') {
-            $key = "Source de financement du projet";
-        }elseif ($key === 'BesoinFinancement') {
-            $key = "Besoin de financement";
-        }elseif ($key === 'IsBesoinSubvention') {
-            $key = "Besoin de subvention";
-        }elseif ($key === 'IsBesoinDigitalMarketing') {
-            $key = "Besoin de marketing digital";
-        }elseif ($key === 'isProduitsDerives') {
-            $key = "Produits dérivés";
-        }elseif ($key === 'isBesoinPromo') {
-            $key = "Besoin de promo";
-        }elseif ($key === 'isBesoinContacts') {
-            $key = "Besoin de contacts";
-        }elseif ($key === 'besoinContacts') {
-            $key = "Raison(s) du besoin de contacts";
-        }
+    }   
+
+    // Comparer les formats
+    foreach ($release->release_formats as $index => $format) {
+        $before_format = $release_before['release_formats'][$index] ?? [];
+        $format_changes = [];
         
-
-        // Traitement spécial pour release_type_id
-        if ($key === 'release_type_id') {
-            $oldType = \App\Models\ReleaseType::find($oldValue);
-            $newType = \App\Models\ReleaseType::find($newValue);
-            $key = 'type'; // Modifier le nom du champ pour l'affichage
-            $oldValue = $oldType ? $oldType->name : 'N/A';
-            $newValue = $newType ? $newType->name : 'N/A';
+        // Vérifier le nom
+        if ((string)($before_format['name'] ?? '') !== (string)($format['name'] ?? '')) {
+            $format_changes['name'] = [
+                'field' => 'format',
+                'old' => $before_format['name'] ?? 'N/A',
+                'new' => $format['name']
+            ];
         }
 
-        if ($oldValue !== $newValue) {
+        // Si des changements sont détectés pour ce format
+        if (!empty($format_changes)) {
             $hasChanges = true;
-            $changes['attributes'][] = [
-                'field' => $key,
-                'old' => $oldValue,
-                'new' => $newValue
+            $changes['formats'][] = [
+                'format_number' => $index + 1,
+                'changes' => $format_changes
             ];
         }
     }
-
-}   
-
-// Comparer les formats
-foreach ($release->release_formats as $index => $format) {
-    $before_format = $release_before['release_formats'][$index] ?? [];
-    $format_changes = [];
-    
-    // Vérifier le nom
-    if ((string)($before_format['name'] ?? '') !== (string)($format['name'] ?? '')) {
-        $format_changes['name'] = [
-            'field' => 'format',
-            'old' => $before_format['name'] ?? 'N/A',
-            'new' => $format['name']
-        ];
-    }
-
-    // Si des changements sont détectés pour ce format
-    if (!empty($format_changes)) {
-        $hasChanges = true;
-        $changes['formats'][] = [
-            'format_number' => $index + 1,
-            'changes' => $format_changes
-        ];
-    }
-}
 
     // Comparer les pistes
     foreach ($release->release_tracks as $index => $track) {
@@ -236,7 +236,7 @@ foreach ($release->release_formats as $index => $format) {
         $old_birthdate = trim((string)($before_member['birth_date'] ?? ''));
         $new_birthdate = trim((string)($member['birth_date'] ?? ''));
         if ($old_birthdate !== $new_birthdate) {
-            $member_changes['birthdate'] = [
+            $member_changes['birth_date'] = [
                 'old' => $old_birthdate ?: 'N/A',
                 'new' => $new_birthdate ?: 'N/A'
             ];
@@ -246,7 +246,7 @@ foreach ($release->release_formats as $index => $format) {
         $old_ipi = trim((string)($before_member['IPI'] ?? ''));
         $new_ipi = trim((string)($member['IPI'] ?? ''));
         if ($old_ipi !== $new_ipi) {
-            $member_changes['ipi'] = [
+            $member_changes['IPI'] = [
                 'old' => $old_ipi ?: 'N/A',
                 'new' => $new_ipi ?: 'N/A'
             ];
@@ -261,15 +261,91 @@ foreach ($release->release_formats as $index => $format) {
             ];
         }
     }
-@endphp
 
+    // Détecter les suppressions de pistes
+    $old_tracks_count = count($release_before['release_tracks'] ?? []);
+    $new_tracks_count = count($release->release_tracks);
+    
+    if ($old_tracks_count > $new_tracks_count) {
+        $hasChanges = true;
+        $changes['deleted_tracks'] = [];
+        
+        // Identifier les pistes supprimées
+        for ($i = 0; $i < $old_tracks_count; $i++) {
+            $old_track = $release_before['release_tracks'][$i];
+            $found = false;
+            
+            foreach ($release->release_tracks as $new_track) {
+                if ($new_track['id'] === $old_track['id']) {
+                    $found = true;
+                    break;
+                }
+            }
+            
+            if (!$found) {
+                $changes['deleted_tracks'][] = [
+                    'number' => $old_track['number'],
+                    'title' => $old_track['title']
+                ];
+            }
+        }
+    }
+
+    // Détecter les suppressions de membres
+    $old_members_count = count($release_before['release_members'] ?? []);
+    $new_members_count = count($release->release_members);
+    
+    if ($old_members_count > $new_members_count) {
+        $hasChanges = true;
+        $changes['deleted_members'] = [];
+        
+        // Identifier les membres supprimés
+        for ($i = 0; $i < $old_members_count; $i++) {
+            $old_member = $release_before['release_members'][$i];
+            $found = false;
+            
+            foreach ($release->release_members as $new_member) {
+                if ($new_member['id'] === $old_member['id']) {
+                    $found = true;
+                    break;
+                }
+            }
+            
+            if (!$found) {
+                $changes['deleted_members'][] = [
+                    'name' => trim($old_member['firstname'] . ' ' . $old_member['lastname'])
+                ];
+            }
+        }
+    }
+@endphp
+<br>
+## Modifications effectuées
+<hr style="border: none;height: 0.5px;background-color: #000;">
 @if ($hasChanges)
-**Modifications effectuées :**
+
+@if (isset($changes['deleted_tracks']))
+@foreach ($changes['deleted_tracks'] as $track)
+
+**Piste supprimée :** 
+{{ $track['number'] }} - {{ $track['title'] }}
+<br>
+@endforeach
+@endif
+
+@if (isset($changes['deleted_members']))
+@foreach ($changes['deleted_members'] as $member)
+
+**Membre supprimé :**
+{{ $member['name'] }}
+<br>
+@endforeach
+@endif
 
 @if (isset($changes['attributes']))
 @foreach ($changes['attributes'] as $change)
-**{{ ucfirst($change['field']) }}** :
-<br>
+
+**{{ ucfirst($change['field']) }} :**
 @if (is_bool($change['old']))
 {{ $change['old'] ? 'Oui' : 'Non' }} → {{ $change['new'] ? 'Oui' : 'Non' }}
 <br>
@@ -282,64 +358,74 @@ foreach ($release->release_formats as $index => $format) {
 
 @if (isset($changes['formats']))
 @foreach ($changes['formats'] as $format)
-**Format {{ $format['format_number'] }}** :
+**Format {{ $format['format_number'] }} :**
 @foreach ($format['changes'] as $change)
-    - {{ ucfirst($change['field']) }} : {{ $change['old'] }} → {{ $change['new'] }}
-@endforeach
-@endforeach
-@endif
-
-@if (isset($changes['tracks']))
-@foreach ($changes['tracks'] as $track)
-**Piste {{ $track['number'] }}** :
+{{ $change['old'] }} → {{ $change['new'] }}
 <br>
-@foreach ($track['changes'] as $key => $change)
-    @if ($key === 'percentages')
-        @foreach ($change as $percentage_change)
-        - Pourcentage {{ $percentage_change['member_name'] }} : {{ $percentage_change['old'] }} → {{ $percentage_change['new'] }}
-        @endforeach
-        <br>
-    @else
-        - {{ ucfirst($change['field']) }} : {{ $change['old'] }} → {{ $change['new'] }}
-        <br>
-    @endif
 @endforeach
 @endforeach
 @endif
 
 @if (isset($changes['members']))
 @foreach ($changes['members'] as $member)
-**Membre {{ $member['member_number'] }}** :
+
+**Membre {{ $member['member_number'] }} :**
 <br>
 @if (isset($member['changes']['name']))
-    - Nom : {{ $member['changes']['name']['old'] }} → {{ $member['changes']['name']['new'] }}
-    <br>
+Nom : {{ $member['changes']['name']['old'] }} → {{ $member['changes']['name']['new'] }}
+<br>
 @endif
 @if (isset($member['changes']['email']))
-    - Email : {{ $member['changes']['email']['old'] }} → {{ $member['changes']['email']['new'] }}
-    <br>
+Email : {{ $member['changes']['email']['old'] }} → {{ $member['changes']['email']['new'] }}
+<br>
 @endif
 @if (isset($member['changes']['address']))
-    - Adresse : {{ $member['changes']['address']['old'] }} → {{ $member['changes']['address']['new'] }}
-    <br>
+Adresse : {{ $member['changes']['address']['old'] }} → {{ $member['changes']['address']['new'] }}
+<br>
 @endif
 @if (isset($member['changes']['country']))
-    - Pays : {{ $member['changes']['country']['old'] }} → {{ $member['changes']['country']['new'] }}
-    <br>
+Pays : {{ $member['changes']['country']['old'] }} → {{ $member['changes']['country']['new'] }}
+<br>
 @endif
 @if (isset($member['changes']['phone']))
-    - Téléphone : {{ $member['changes']['phone']['old'] }} → {{ $member['changes']['phone']['new'] }}
-    <br>
+Téléphone : {{ $member['changes']['phone']['old'] }} → {{ $member['changes']['phone']['new'] }}
+<br>
 @endif
-
+@if (isset($member['changes']['birth_date']))
+Date de naissance : {{ $member['changes']['birth_date']['old'] }} → {{ $member['changes']['birth_date']['new'] }}
+<br>
+@endif
+@if (isset($member['changes']['IPI']))
+Numéro IPI : {{ $member['changes']['IPI']['old'] }} → {{ $member['changes']['IPI']['new'] }}
+<br>
+@endif
 @endforeach
 @endif
 
+@if (isset($changes['tracks']))
+@foreach ($changes['tracks'] as $track)
+
+**Piste {{ $track['number'] }} :**
+<br>
+@foreach ($track['changes'] as $key => $change)
+@if ($key === 'percentages')
+@foreach ($change as $percentage_change)
+Pourcentage {{ $percentage_change['member_name'] }} : {{ $percentage_change['old'] }} → {{ $percentage_change['new'] }}
+<br>
+@endforeach
 @else
-**Enregistrement effectué sans modifications.**
+{{ ucfirst($change['field']) }} : {{ $change['old'] }} → {{ $change['new'] }}
+<br>
+@endif
+@endforeach
+@endforeach
+@endif
+@else
+<i>Enregistrement effectué sans modifications.</i>
 @endif
 
-<br>
+<hr style="border: none;height: 0.5px;background-color: #000;">
 
-Bisous
+<br>
+Merci de votre attention. Bisous
 </x-mail::message>
