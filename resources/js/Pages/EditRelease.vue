@@ -46,10 +46,6 @@ const props = defineProps({
         type: Array,
         required: true
     },
-    // releaseSocials: {
-    //     type: Array,
-    //     required: true
-    // }
 });
 
 const form = useForm({
@@ -98,11 +94,6 @@ const form = useForm({
         acc[format.id] = price !== null && price !== undefined ? Number(price) : '';
         return acc;
     }, {}),
-
-    // socials: props.release.release_socials.map(social => ({
-    //         id: social.id,
-    //         link: social.link
-    //     })),
     
     tracks: props.release.release_tracks?.length > 0 
         ? props.release.release_tracks.map(track => ({
@@ -170,7 +161,6 @@ const form = useForm({
     releaseFormats: props.releaseFormats,
     releaseTracks: props.releaseTracks,
     releaseMembers: props.releaseMembers,
-    //releaseSocials: props.releaseSocials,
 });
 
 // Constante de désactivation d'input, si le label désactive le formulaire de l'artiste.
@@ -246,17 +236,6 @@ const addNewMember = () => {
     });
 };
 
-// const addNewSocial = () => {
-//     form.socials.push({
-//         id: null,
-//         link: '',
-//     });
-// };
-
-// const updateSocialLink = (index, event) => {
-//     form.socials[index].link = event.target.value;
-// };
-
 const deleteTrack = (index) => {
     form.tracks.splice(index, 1);
 };
@@ -264,10 +243,6 @@ const deleteTrack = (index) => {
 const deleteMember = (index) => {
     form.members.splice(index, 1);
 };
-
-// const deleteSocial = (index) => {
-//     form.socials.splice(index, 1);
-// };
 
 // Permet d'ajouter les membres au tableau des titres.
 let isUpdatingParticipations = false;
@@ -408,9 +383,6 @@ const submit = () => {
     if (form.members.some(member => !member.firstname) || form.members.some(member => !member.lastname)) {
         return;
     }
-    // if (form.socials.some(social => !social.link)) {
-    //     return;
-    // }
     form.put(route('update-release', props.release.id));
 };
 </script>

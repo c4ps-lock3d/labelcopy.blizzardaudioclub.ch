@@ -9,7 +9,6 @@ use App\Models\ReleaseFormat;
 use App\Models\ReleaseType;
 use App\Models\ReleaseTrack;
 use App\Models\ReleaseMember;
-//use App\Models\ReleaseSocial;
 use App\Models\ReleaseMemberReleaseTrack;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -72,7 +71,6 @@ class ReleaseController extends Controller
             'releaseTypes' => ReleaseType::all(),
             'releaseTracks' => ReleaseTrack::all(),
             'releaseMembers' => ReleaseMember::all(),
-            //'releaseSocials' => ReleaseSocial::all(),
             'auth' => [
                 'user' => auth()->user(),
             ],
@@ -228,9 +226,6 @@ class ReleaseController extends Controller
             'members.*.phone_number' => 'nullable|string|max:255',
             'members.*.birth_date' => 'required|date',
             'members.*.is_reference' => 'nullable|boolean',
-            //'socials' => 'array',
-            //'socials.*.id' => 'nullable',  // Permettre id null pour nouveaux réseaux sociaux
-            //'socials.*.link' => 'required|string',
         ]);
     
         $release->update([
@@ -279,16 +274,10 @@ class ReleaseController extends Controller
         
         // Récupérer les IDs des pistes existantes
         $existingTrackIds = $release->release_tracks()->pluck('id')->toArray();
-
         // Récupérer les IDs des membres existants
         $existingMemberIds = $release->release_members()->pluck('id')->toArray();
-
-        // Récupérer les IDs des réseaux sociaux existants
-        // $existingSocialIds = $release->release_socials()->pluck('id')->toArray();
-
-         // Sauvegarde des pistes
+        // Sauvegarde des pistes
         $updatedTrackIds = [];
-
 
         // Sauvegarde des membres
         $updatedMemberIds = [];
@@ -430,24 +419,6 @@ class ReleaseController extends Controller
             }
         }
 
-        // Sauvegarde des réseaux sociaux
-        // $updatedSocialIds = [];
-        // foreach ($validated['socials'] as $socialData) {
-        //     if (isset($socialData['id'])) {
-        //         $release->release_socials()
-        //             ->where('id', $socialData['id'])
-        //             ->update([
-        //                 'link' => $socialData['link'],
-        //             ]);
-        //         $updatedSocialIds[] = $socialData['id'];
-        //     } else {
-        //         $newSocial = $release->release_socials()->create([
-        //             'link' => $socialData['link'],
-        //         ]);
-        //         $updatedSocialIds[] = $newSocial->id;
-        //     }
-        // }
-
         // Supprimer les pistes qui ne sont plus présentes dans la requête
         $tracksToDelete = array_diff($existingTrackIds, $updatedTrackIds);
         $release->release_tracks()->whereIn('id', $tracksToDelete)->delete();
@@ -455,10 +426,6 @@ class ReleaseController extends Controller
         // Supprimer les membres qui ne sont plus présentes dans la requête
         $membersToDelete = array_diff($existingMemberIds, $updatedMemberIds);
         $release->release_members()->whereIn('id', $membersToDelete)->delete();
-
-        // Supprimer les réseaux sociaux qui ne sont plus présentes dans la requête
-        // $socialsToDelete = array_diff($existingSocialIds, $updatedSocialIds);
-        // $release->release_socials()->whereIn('id', $socialsToDelete)->delete();
         
         Mail::send(new artistSubmittedNotification($release, $release_before));
         
