@@ -23,7 +23,7 @@ Route::get('/', function () {
 
 Route::get('/queue', function () {
     $exitCode = Artisan::call('queue:work --stop-when-empty');
-})->middleware('auth');
+});
 
 // Dashboard
 Route::get('/dashboard', [ReleaseController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
