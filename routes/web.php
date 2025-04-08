@@ -8,22 +8,13 @@ use Inertia\Inertia;
 use App\Models\Release;
 use Illuminate\Support\Facades\Artisan;
 
-/* Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-}); */
-
 Route::get('/', function () {
     return redirect('/login');
 })->middleware('guest');
 
 Route::get('/queue', function () {
     $exitCode = Artisan::call('queue:work --stop-when-empty');
-});
+})->middleware('auth.basic');
 
 // Dashboard
 Route::get('/dashboard', [ReleaseController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
