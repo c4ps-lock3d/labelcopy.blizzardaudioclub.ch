@@ -32,8 +32,6 @@ class artistSubmittedNotification extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            to: 'nicolas@blizzardaudioclub.ch',
-            //cc: 'etienne@blizzardaudioclub.ch',
             from: new Address('info@blizzardaudioclub.ch', 'Blizzard Audio Club'),
             subject: 'Labelcopy ' .$this->catalog. ' - mise à jour de la sortie !',
         );

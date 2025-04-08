@@ -427,7 +427,10 @@ class ReleaseController extends Controller
         $membersToDelete = array_diff($existingMemberIds, $updatedMemberIds);
         $release->release_members()->whereIn('id', $membersToDelete)->delete();
         
-        Mail::queue(new artistSubmittedNotification($release, $release_before));
+        Mail::queue((new artistSubmittedNotification($release, $release_before))
+            ->to(env('MAIL_TO_ETIENNE', 'nicolas.perrenoud@ik.me'))
+            ->cc('nicolas@blizzardaudioclub.ch'));
         
-        return redirect()->route('dashboard')->with('success', 'Modifications enregistrées.');    }
+        return redirect()->route('dashboard')->with('success', 'Modifications enregistrées.');
+    }
 }
