@@ -3,6 +3,7 @@ import { ref, computed } from 'vue'; // Ajoutez cette ligne
 import axios from 'axios';  // Ajoutez cette ligne
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
+import Success from '@/Components/Success.vue'
 import { usePage, Head, Link } from '@inertiajs/vue3';
 defineProps({
     releases: {
@@ -84,6 +85,8 @@ const sortBy = (key, type) => {
         }
     }
 };
+
+const successMessage = computed(() => usePage().props.flash?.success?.message);
 </script>
 
 <template>
@@ -100,6 +103,7 @@ const sortBy = (key, type) => {
             <div class="py-10">
                 <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <div class="grid grid-cols-1 gap-6 md:grid-cols-1 mb-6">
+                        <Success :message="successMessage" />
                         <div
                             class="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800"
                         >

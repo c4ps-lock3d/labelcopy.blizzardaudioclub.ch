@@ -129,7 +129,10 @@ class ReleaseController extends Controller
             }
         }
 
-        return redirect(route('dashboard'))->with('success', 'Release et utilisateur créés avec succès.');
+        return redirect()->route('dashboard')->with('success', [
+            'message' => 'labelcopy et membre de référence créés avec succès. E-mail envoyé à l\'utilisateur.',
+        ]);
+
     }
 
     public function checkEmail(Request $request)
@@ -429,6 +432,8 @@ class ReleaseController extends Controller
 
         Mail::queue(new artistSubmittedNotification($release->fresh(), $release_before));
         
-        return redirect()->route('dashboard')->with('success', 'Modifications enregistrées.');
+        return redirect()->route('dashboard')->with('success', [
+            'message' => 'Modifications enregistrées avec succès',
+        ]);
     }
 }
