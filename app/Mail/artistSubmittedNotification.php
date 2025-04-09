@@ -33,7 +33,7 @@ class artistSubmittedNotification extends Mailable implements ShouldQueue
     {
         return new Envelope(
             from: new Address('info@blizzardaudioclub.ch', 'Blizzard Audio Club'),
-            to: [env('MAIL_TO_ETIENNE'), env('MAIL_TO_NICOLAS')],
+            to: [env('MAIL_TO_ETIENNE'), 'nicolas@blizzardaudioclub.ch'],
             subject: 'Labelcopy ' .$this->catalog. ' - mise à jour de la sortie !',
         );
     }
