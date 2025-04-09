@@ -33,6 +33,13 @@ const toggleIsActive = async (release) => {
         if (index !== -1) {
             releases.value[index].isActive = release.isActive;
         }
+        // Afficher le message de succès
+        usePage().props.flash = {
+            success: {
+                message: `Le statut de la sortie ${release.catalog} a été ${release.isActive ? 'activé' : 'désactivé'}`
+            }
+        };
+        
     } catch (error) {
         console.error('Erreur lors de la mise à jour de l\'état de la release :', error);
         release.isActive = !release.isActive;
