@@ -16,14 +16,14 @@ class artistSubmittedNotification extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
     public $catalog;
+    public array $release_before_array;
     /**
      * Create a new message instance.
      */
-    public function __construct(public Release $release, public Release $release_before)
+    public function __construct(public Release $release, public array $release_before)
     {
         $this->catalog = $release->catalog;
-        $release->toArray();
-        $release_before->toArray();
+        $this->release_before_array = $release_before;
     }
 
     /**
@@ -45,6 +45,10 @@ class artistSubmittedNotification extends Mailable implements ShouldQueue
     {
         return new Content(
             markdown: 'mail.artistsubmitted.notification',
+            with: [
+                'release' => $this->release,
+                'release_before' => $this->release_before_array
+            ]
         );
     }
 

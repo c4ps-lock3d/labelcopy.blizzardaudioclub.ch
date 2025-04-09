@@ -161,8 +161,8 @@ class ReleaseController extends Controller
 
     public function update(Request $request, Release $release): RedirectResponse
     {
-        $release_before = $release->with('release_members')->with('release_tracks')->with('release_tracks.release_members')->with('release_type')->with('release_formats')->findOrFail($release->id);
-        //dd($release_before);
+        // Capturer l'état précédent et le convertir en tableau
+        $release_before = $release->fresh(['release_members', 'release_tracks','release_tracks.release_members', 'release_formats', 'release_type'])->toArray();
 
         $validated = $request->validate([
             'catalog' => 'required|string|max:6',
@@ -426,8 +426,8 @@ class ReleaseController extends Controller
         // Supprimer les membres qui ne sont plus présentes dans la requête
         $membersToDelete = array_diff($existingMemberIds, $updatedMemberIds);
         $release->release_members()->whereIn('id', $membersToDelete)->delete();
-        
-        Mail::queue(new artistSubmittedNotification($release, $release_before));
+
+        Mail::queue(new artistSubmittedNotification($release->fresh(), $release_before));
         
         return redirect()->route('dashboard')->with('success', 'Modifications enregistrées.');
     }

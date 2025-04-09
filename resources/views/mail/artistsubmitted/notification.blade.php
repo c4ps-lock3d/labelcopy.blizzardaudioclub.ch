@@ -13,68 +13,58 @@ a fait un nouvel enregistrement de son labelcopy <a href="{{ route('dashboard.ed
     // Initialiser le suivi des modifications
     $hasChanges = false;
     $changes = [];
+    $processedFields = [];  // Pour suivre les champs déjà traités
 
     // Comparer les champs principaux
     foreach ($release->getAttributes() as $key => $value) {
-        if (!in_array($key, ['created_at', 'updated_at', 'id'])) {
+        if (!in_array($key, ['created_at', 'updated_at', 'id']) && !in_array($key, $processedFields)) {
             $oldValue = $release_before[$key] ?? null;
             $newValue = $value;
+            $displayKey = $key;
+
+            // Convertir en string pour la comparaison
+            $oldValueStr = is_bool($oldValue) ? ($oldValue ? '1' : '0') : (string)$oldValue;
+            $newValueStr = is_bool($newValue) ? ($newValue ? '1' : '0') : (string)$newValue;
 
             // Traitement spécial pour les booléens
             if (in_array($key, ['isProduitsDerives', 'isBesoinSubvention', 'isBesoinPromo', 'isBesoinDigitalMarketing', 'isBesoinContacts', 'isActive'])) {
-                $oldValue = (bool)$oldValue;
-                $newValue = (bool)$newValue;
+                $oldValue = $oldValue ? 'Oui' : 'Non';
+                $newValue = $newValue ? 'Oui' : 'Non';
+                $oldValueStr = (string)$oldValue;
+                $newValueStr = (string)$newValue;
             }
 
             // Traitement spécial pour les champs avec traduction
-            if ($key === 'artistName') {
-                $key = "Nom de l'artiste";
-            }elseif ($key === 'artistBiography') {
-                $key = "Biographie de l'artiste";
-            }elseif ($key === 'name') {
-                $key = "Nom de la sortie";
-            }elseif ($key === 'artistIBAN') {
-                $key = "IBAN de l'artiste";
-            }elseif ($key === 'description') {
-                $key = "Description de la sortie";
-            }elseif ($key === 'SourceFinancement') {
-                $key = "Source de financement du projet";
-            }elseif ($key === 'BesoinFinancement') {
-                $key = "Besoin de financement";
-            }elseif ($key === 'isBesoinSubvention') {
-                $key = "Besoin de subvention";
-            }elseif ($key === 'isBesoinDigitalMarketing') {
-                $key = "Besoin de marketing digital";
-            }elseif ($key === 'isProduitsDerives') {
-                $key = "Produits dérivés";
-            }elseif ($key === 'isBesoinPromo') {
-                $key = "Besoin de promo";
-            }elseif ($key === 'isBesoinContacts') {
-                $key = "Besoin de contacts";
-            }elseif ($key === 'besoinContacts') {
-                $key = "Raison(s) du besoin de contacts";
-            }
-            
+            $displayKey = match($key) {
+                'artistName' => "Nom de l'artiste",
+                'artistBiography' => "Biographie de l'artiste",
+                'name' => "Nom de la sortie",
+                'artistIBAN' => "IBAN de l'artiste",
+                'description' => "Description de la sortie",
+                'SourceFinancement' => "Source de financement du projet",
+                'BesoinFinancement' => "Besoin de financement",
+                'isBesoinSubvention' => "Besoin de subvention",
+                'isBesoinDigitalMarketing' => "Besoin de marketing digital",
+                'isProduitsDerives' => "Produits dérivés",
+                'isBesoinPromo' => "Besoin de promo",
+                'isBesoinContacts' => "Besoin de contacts",
+                'besoinContacts' => "Raison(s) du besoin de contacts",
+                default => $key
+            };
 
-            // Traitement spécial pour release_type_id
-            if ($key === 'release_type_id') {
-                $oldType = \App\Models\ReleaseType::find($oldValue);
-                $newType = \App\Models\ReleaseType::find($newValue);
-                $key = 'type'; // Modifier le nom du champ pour l'affichage
-                $oldValue = $oldType ? $oldType->name : 'N/A';
-                $newValue = $newType ? $newType->name : 'N/A';
-            }
-
-            if ($oldValue !== $newValue) {
+            // Si les valeurs sont différentes, ajouter aux changements
+            if ($oldValueStr !== $newValueStr) {
                 $hasChanges = true;
                 $changes['attributes'][] = [
-                    'field' => $key,
+                    'field' => $displayKey,
                     'old' => $oldValue,
                     'new' => $newValue
                 ];
             }
-        }
 
+            // Marquer le champ comme traité
+            $processedFields[] = $key;
+        }
     }   
 
     // Comparer les formats
