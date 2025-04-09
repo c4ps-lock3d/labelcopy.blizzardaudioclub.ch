@@ -42,7 +42,7 @@ const startTimer = () => {
     isVisible.value = true;
     timeout = setTimeout(() => {
         isVisible.value = false;
-    }, 5000);
+    }, 4000);
 };
 
 watch(() => props.message, (newValue) => {
