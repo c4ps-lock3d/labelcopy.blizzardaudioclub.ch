@@ -113,4 +113,7 @@ return [
         'name' => env('MAIL_FROM_NAME', 'Example'),
     ],
 
+    'to_etienne' => env('MAIL_TO_ETIENNE'),
+    'to_nicolas' => env('MAIL_TO_NICOLAS'),
+
 ];
