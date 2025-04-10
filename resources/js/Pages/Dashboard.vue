@@ -36,7 +36,7 @@ const toggleIsActive = async (release) => {
         // Afficher le message de succès
         usePage().props.flash = {
             success: {
-                message: `Mode édition labelcopy ${release.catalog} ${release.isActive ? 'activé pour l\'utilisateur' : 'désactivé pour l\'utilisateur'}`
+                message: `${release.catalog} ${release.isActive ? ': édition activée pour l\'utilisateur' : ': édition désactivée pour l\'utilisateur'}`
             }
         };
         

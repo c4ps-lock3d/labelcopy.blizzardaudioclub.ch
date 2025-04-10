@@ -4,9 +4,20 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
+import Success from '@/Components/Success.vue';
 import { Head, useForm, Link } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import axios from 'axios';
+defineProps({
+    message: {
+        type: String,
+        default: null
+    },
+    customClass: {
+        type: String,
+        default: ''
+    }
+});
 
 const form = useForm({
     catalog: '',
@@ -18,6 +29,7 @@ const form = useForm({
 });
 
 const emailExists = ref(false);
+const successMessage = ref('');
 
 const checkEmail = async () => {
     if (form.email) {
@@ -27,9 +39,11 @@ const checkEmail = async () => {
         if (emailExists.value) {
             form.firstname = response.data.firstname || '';
             form.lastname = response.data.lastname || '';
+            successMessage.value = `Un compte existe déjà pour ${form.firstname} ${form.lastname}. Les champs ont été pré-remplis.`;
         } else {
             form.firstname = '';
             form.lastname = '';
+            successMessage.value = '';
         }
     }
 };
@@ -95,10 +109,8 @@ const submit = () => {
                                     <InputError class="mt-2" :message="form.errors.email" />
                                 </div>
                             </div>
-                            <div v-if="emailExists" class="flex items-center mt-8 mb-4 px-4 py-2 text-sm font-medium rounded-md transition bg-red-500/10 border border-red-500/20 text-red-400">
-                                E-mail trouvé ! Cet artiste existe déjà.
-                            </div>
-                            <div class="grid grid-cols-1 gap-6 md:grid-cols-2 w-full">
+                            <Success v-if="emailExists" :class="['mb-4', customClass]" :message="successMessage" />
+                            <div v-if="form.catalog && form.email" class="grid grid-cols-1 gap-6 md:grid-cols-2 w-full">
                                 <div>
                                     <InputLabel for="firstname" value="Prénom de l'artiste de référence" class="required"/>
                                     <TextInput
