@@ -23,6 +23,7 @@ use App\Mail\welcomeMail;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\ValidationException;
 use App\Mail\artistSubmittedNotification;
+use App\Mail\artistLabelcopyCreated;
 
 class ReleaseController extends Controller
 {
@@ -40,7 +41,6 @@ class ReleaseController extends Controller
         }
 
         $members = auth()->user()->name === 'lynxadmin' ? ReleaseMember::orderBy('lastname', 'asc')->get() : [];
-
 
         return Inertia::render('Dashboard', [
             'releases' => $releases,
@@ -101,7 +101,12 @@ class ReleaseController extends Controller
             // Si l'utilisateur existe, associez-le simplement à la release
             $release->users()->attach($existingUser->id);
             $release->release_members()->attach($existingMember->id);
-    
+
+            Mail::to($existingMember)->queue(new artistLabelcopyCreated($release));
+
+            return redirect()->route('dashboard')->with('success', [
+                'message' => 'Labelcopy créé avec succès. E-mail envoyé au membre de référence.',
+            ]);
         } else {
             // Créer un nouveau membre si nécessaire
             if (!$existingMember) {
@@ -123,16 +128,15 @@ class ReleaseController extends Controller
                 ]);
                 $release->users()->attach($user->id);
     
-                // Envoyer l'email de bienvenue
+                // Envoyer l'email d'initialisation du compte
                 $expiresAt = now()->addDay();
                 $user->sendWelcomeNotification($expiresAt);
             }
+
+            return redirect()->route('dashboard')->with('success', [
+                'message' => 'Labelcopy et membre de référence créés avec succès. E-mail envoyé au membre de référence.',
+            ]);
         }
-
-        return redirect()->route('dashboard')->with('success', [
-            'message' => 'labelcopy et membre de référence créés avec succès. E-mail envoyé à l\'utilisateur.',
-        ]);
-
     }
 
     public function checkEmail(Request $request)

@@ -248,7 +248,7 @@ const successMessage = computed(() => usePage().props.flash?.success?.message);
                                                             {{ memberSortOrder === 'asc' ? '↑' : '↓' }}
                                                         </span>
                                                     </th>
-                                                    <th @click="sortBy('email', 'members')" scope="col" class="px-2.5 py-3 w-1/4 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 cursor-pointer select-none">
+                                                    <th @click="sortBy('email', 'members')" scope="col" class="px-2.5 py-3 w-1/4 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 cursor-pointer whitespace-nowrap select-none">
                                                         E-mail
                                                         <span v-if="memberSortKey === 'email'">
                                                             {{ memberSortOrder === 'asc' ? '↑' : '↓' }}
@@ -258,7 +258,7 @@ const successMessage = computed(() => usePage().props.flash?.success?.message);
                                             </thead>
                                             <tbody>
                                                 <tr v-if="sortedData.members.length === 0" class="bg-white dark:bg-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition border-t border-gray-200 dark:border-gray-600">
-                                                    <td colspan="5" class="px-2.5 py-3 text-center text-gray-500 dark:text-gray-400">
+                                                    <td colspan="6" class="px-2.5 py-3 text-center text-gray-500 dark:text-gray-400">
                                                         Aucun membre existant.
                                                     </td>
                                                 </tr>
@@ -278,11 +278,8 @@ const successMessage = computed(() => usePage().props.flash?.success?.message);
                                                     <td class="px-2.5 py-3 text-gray-900 dark:text-gray-100 whitespace-nowrap">
                                                         {{ member.is_reference ? 'Membre référent' : 'Membre standard' }}
                                                     </td>
-                                                    <td v-if="member.email" class="px-2.5 py-3 text-gray-900 dark:text-gray-100 whitespace-nowrap">
-                                                        {{ member.email }}
-                                                    </td>
-                                                    <td v-else class="px-2.5 py-3 text-gray-900 dark:text-gray-100">
-                                                        -
+                                                    <td class="px-2.5 py-3 text-gray-900 dark:text-gray-100 whitespace-nowrap">
+                                                        {{ member.email ?? '-' }}
                                                     </td>
                                                 </tr>
                                             </tbody>

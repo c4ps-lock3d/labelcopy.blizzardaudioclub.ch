@@ -1208,7 +1208,7 @@ const submit = () => {
                                     </div>
                                 </div>
                                 <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
-                                    <div class="flex items-center space-x-4">
+                                    <div class="flex items-center space-x-4 mt-2">
                                         <input
                                             type="checkbox"
                                             v-model="form.isBesoinContacts"

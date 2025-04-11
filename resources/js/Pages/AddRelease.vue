@@ -74,14 +74,17 @@ const submit = () => {
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
                 <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800">
                     <div class="p-6 text-gray-900 dark:text-gray-100">
-                        <h3 class="text-lg font-medium flex items-center mb-4">
+                        <h3 class="text-lg font-medium flex items-center mb-1">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 mr-4">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
                             </svg>
                             Informations préliminaires
                         </h3>
+                        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                            Si le membre de référence a déjà un compte, il suffit de remplir le numéro de catalogue et l'adresse e-mail. Les autres champs seront pré-remplis.
+                        </p>
                         <form @submit.prevent="submit">
-                            <div class="grid grid-cols-1 gap-6 md:grid-cols-2 mb-6">
+                            <div class="grid grid-cols-1 gap-6 md:grid-cols-2 mb-6 mt-6">
                                 <div>
                                     <InputLabel for="catalog" value="N° de catalogue" class="required" />
                                     <TextInput

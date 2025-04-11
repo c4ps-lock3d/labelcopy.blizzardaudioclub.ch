@@ -48,6 +48,6 @@ class User extends Authenticatable
     }
 
     public function releases(){
-        return $this->belongsToMany(Release::class);
+        return $this->belongsToMany(Release::class, 'release_user');
     }
 }
