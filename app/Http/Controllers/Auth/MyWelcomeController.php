@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Symfony\Component\HttpFoundation\Response;
 use App\Models\Release;
 use Inertia\Inertia;
-use App\Mail\artistLabelcopyCreated;
+use App\Mail\artistLabelcopyCreatedSend;
 use Illuminate\Support\Facades\Mail;
 use Spatie\WelcomeNotification\WelcomeController as BaseWelcomeController;
 
@@ -42,7 +42,7 @@ class MyWelcomeController extends BaseWelcomeController
         })->first();
     
         if ($release) {
-            Mail::to(auth()->user()->email)->queue(new artistLabelcopyCreated($release));
+            Mail::to(auth()->user()->email)->send(new artistLabelcopyCreatedSend($release));
         }
         //return redirect(route('dashboard', absolute: false));
         return redirect()->to($this->redirectPath())->with('status', __('Bienvenue ! Tu es maintenant connecté !'));
