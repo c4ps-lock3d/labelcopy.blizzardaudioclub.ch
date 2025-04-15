@@ -10,7 +10,7 @@ use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use App\Models\Release;
 
-class artistLabelcopyCreatedSend extends Mailable
+class labelcopyCreated extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
     public $catalog;

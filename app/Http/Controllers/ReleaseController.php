@@ -22,8 +22,8 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\welcomeMail;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\ValidationException;
-use App\Mail\artistSubmittedNotification;
-use App\Mail\artistLabelcopyCreated;
+use App\Mail\labelcopyEdited;
+use App\Mail\labelcopyCreated;
 
 class ReleaseController extends Controller
 {
@@ -102,7 +102,7 @@ class ReleaseController extends Controller
             $release->users()->attach($existingUser->id);
             $release->release_members()->attach($existingMember->id);
 
-            Mail::to($existingMember)->queue(new artistLabelcopyCreated($release));
+            Mail::to($existingMember)->queue(new labelcopyCreated($release));
 
             return redirect()->route('dashboard')->with('success', [
                 'message' => 'Labelcopy créé avec succès. E-mail envoyé au membre de référence.',
@@ -434,7 +434,7 @@ class ReleaseController extends Controller
         $membersToDelete = array_diff($existingMemberIds, $updatedMemberIds);
         $release->release_members()->whereIn('id', $membersToDelete)->delete();
 
-        Mail::queue(new artistSubmittedNotification($release->fresh(), $release_before));
+        Mail::queue(new labelcopyEdited($release->fresh(), $release_before));
         
         return redirect()->route('dashboard')->with('success', [
             'message' => 'Modifications enregistrées avec succès',
