@@ -230,7 +230,7 @@ const successMessage = computed(() => usePage().props.flash?.success?.message);
                                                             {{ memberSortOrder === 'asc' ? '↑' : '↓' }}
                                                         </span>
                                                     </th>
-                                                    <th @click="sortBy('birth_date', 'members')" scope="col" class="px-2.5 py-3 w-1/4 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 cursor-pointer select-none">
+                                                    <th @click="sortBy('birth_date', 'members')" scope="col" class="px-2.5 py-3 w-1/4 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 cursor-pointer whitespace-nowrap select-none">
                                                         Date de naissance
                                                         <span v-if="memberSortKey === 'birth_date'">
                                                             {{ memberSortOrder === 'asc' ? '↑' : '↓' }}
@@ -263,16 +263,16 @@ const successMessage = computed(() => usePage().props.flash?.success?.message);
                                                     </td>
                                                 </tr>
                                                 <tr v-else v-for="member in sortedData.members" :key="member.id" class="bg-white dark:bg-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition border-t border-gray-200 dark:border-gray-600">
-                                                    <td class="px-2.5 py-3 text-gray-900 dark:text-gray-100">
+                                                    <td class="px-2.5 py-3 text-gray-900 dark:text-gray-100 whitespace-nowrap">
                                                         {{ member.firstname }}
                                                     </td>
-                                                    <td class="px-2.5 py-3 text-gray-900 dark:text-gray-100">
+                                                    <td class="px-2.5 py-3 text-gray-900 dark:text-gray-100 whitespace-nowrap">
                                                         {{ member.lastname }}
                                                     </td>
-                                                    <td class="px-2.5 py-3 text-gray-900 dark:text-gray-100">
+                                                    <td class="px-2.5 py-3 text-gray-900 dark:text-gray-100 whitespace-nowrap">
                                                         {{ member.birth_date }}
                                                     </td>
-                                                    <td class="px-2.5 py-3 text-gray-900 dark:text-gray-100">
+                                                    <td class="px-2.5 py-3 text-gray-900 dark:text-gray-100 whitespace-nowrap">
                                                         {{ member.IPI }}
                                                     </td>
                                                     <td class="px-2.5 py-3 text-gray-900 dark:text-gray-100 whitespace-nowrap">
