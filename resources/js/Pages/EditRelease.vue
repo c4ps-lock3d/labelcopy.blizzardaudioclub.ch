@@ -634,7 +634,7 @@ const submit = () => {
                         </svg>
                         Informations sur le(s) membre(s)</h3>
                         <InputLabel value="Liste des membres (tous les ayant-droits de l'œuvre)" class="required text-sm font-medium" />
-                        <div class="overflow-hidden rounded-md border border-gray-300 dark:border-gray-600 !mt-1 !mb-8">
+                        <div class="overflow-x-auto rounded-md border border-gray-300 dark:border-gray-600 !mt-1 !mb-8">
                             <table class="min-w-full">
                                 <thead>
                                     <tr class="bg-gray-100 dark:bg-gray-700">
@@ -971,7 +971,7 @@ const submit = () => {
                                     <InputError class="mt-2" :message="form.errors.description" />
                                 </div>
                                 <InputLabel value="Liste des titres" class="required text-sm font-medium" />
-                                <div class="overflow-hidden rounded-md border border-gray-300 dark:border-gray-600 !mt-1">
+                                <div class="overflow-x-auto rounded-md border border-gray-300 dark:border-gray-600 !mt-1">
                                     <table class="min-w-full">
                                         <thead>
                                             <tr>
@@ -1077,7 +1077,7 @@ const submit = () => {
                                 </div>
                                 <!-- Deuxième tableau : Clé de répartition -->
                                 <InputLabel value="Clé de répartition précise des membres/morceaux" class="required text-sm font-medium mt-8" />
-                                <div class="overflow-hidden rounded-md border border-gray-300 dark:border-gray-600 !mt-1">
+                                <div class="overflow-x-auto rounded-md border border-gray-300 dark:border-gray-600 !mt-1">
                                     <table class="min-w-full">
                                         <thead>
                                             <tr class="bg-gray-100 dark:bg-gray-700">

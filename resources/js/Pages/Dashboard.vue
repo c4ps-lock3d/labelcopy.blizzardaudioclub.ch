@@ -131,7 +131,7 @@ const successMessage = computed(() => usePage().props.flash?.success?.message);
                                     </div>
                                 </div>
                                 <!-- Liste des releases -->
-                                <div class="overflow-hidden rounded-md border border-gray-300 dark:border-gray-600 !mt-4">
+                                <div class="overflow-x-auto rounded-md border border-gray-300 dark:border-gray-600 !mt-4">
                                     <table class="min-w-full">
                                         <thead>
                                             <tr class="bg-gray-100 dark:bg-gray-700">
@@ -214,7 +214,7 @@ const successMessage = computed(() => usePage().props.flash?.success?.message);
                                         </svg>
                                         Liste des membres
                                     </h3>
-                                    <div class="overflow-hidden rounded-md border border-gray-300 dark:border-gray-600">
+                                    <div class="overflow-x-auto rounded-md border border-gray-300 dark:border-gray-600">
                                         <table class="min-w-full">
                                             <thead>
                                                 <tr class="bg-gray-100 dark:bg-gray-700">
