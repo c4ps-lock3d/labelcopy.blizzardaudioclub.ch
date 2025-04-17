@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\ValidationException;
 use App\Mail\labelcopyEdited;
 use App\Mail\labelcopyCreated;
+use Illuminate\Support\Facades\Storage;
 
 class ReleaseController extends Controller
 {
@@ -233,6 +234,8 @@ class ReleaseController extends Controller
             'members.*.phone_number' => 'nullable|string|max:255',
             'members.*.birth_date' => 'required|date',
             'members.*.is_reference' => 'nullable|boolean',
+            'file_release' => 'nullable|file|mimes:zip|max:2000000',
+            'file_cover' => 'nullable|file|mimes:png,jpg|max:20000',
         ]);
     
         $release->update([
@@ -266,7 +269,9 @@ class ReleaseController extends Controller
             'style' => $validated['style'],
             'release_date' => $validated['release_date'],
             'description' => $validated['description'],
-            'release_type_id' => $validated['release_type_id']
+            'release_type_id' => $validated['release_type_id'],
+            'file_release' => $validated['file_release'],
+            'file_cover' => $validated['file_cover']
         ]);
 
         // Synchroniser les formats et leurs codes-barres
@@ -434,8 +439,43 @@ class ReleaseController extends Controller
         $membersToDelete = array_diff($existingMemberIds, $updatedMemberIds);
         $release->release_members()->whereIn('id', $membersToDelete)->delete();
 
+        if ($request->hasFile('file_release')) {
+            try {
+                $file = $request->file('file_release');
+                $filename = $release->catalog . '_' . time() . '.zip';
+                
+                // Lecture du contenu du fichier
+                $fileContent = file_get_contents($file->getRealPath());
+                
+                // Envoi vers WebDAV
+                Storage::disk('webdav')->put($filename, $fileContent);
+                
+                \Log::info('Fichier uploadé avec succès vers WebDAV: ' . $filename);
+            } catch (\Exception $e) {
+                \Log::error('Erreur lors de l\'upload WebDAV: ' . $e->getMessage());
+            }
+        }
+
+        if ($request->hasFile('file_cover')) {
+            try {
+                $file = $request->file('file_cover');
+                $originalName = $file->getClientOriginalName(); // Récupère le nom original
+                $filename = $release->catalog . '_' . time() . '_' . $originalName; // Inclut le nom original
+                
+                // Lecture du contenu du fichier
+                $fileContent = file_get_contents($file->getRealPath());
+                
+                // Envoi vers WebDAV
+                Storage::disk('webdav')->put($filename, $fileContent);
+                
+                \Log::info('Fichier uploadé avec succès vers WebDAV: ' . $filename);
+            } catch (\Exception $e) {
+                \Log::error('Erreur lors de l\'upload WebDAV: ' . $e->getMessage());
+            }
+        }
+
         Mail::queue(new labelcopyEdited($release->fresh(), $release_before));
-        
+       
         return redirect()->route('dashboard')->with('success', [
             'message' => 'Modifications enregistrées avec succès',
         ]);

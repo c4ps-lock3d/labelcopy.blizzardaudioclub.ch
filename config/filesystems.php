@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'default' => env('FILESYSTEM_DISK', 'local'),
+    'default' => env('FILESYSTEM_DISK', 'webdav'),
 
     /*
     |--------------------------------------------------------------------------
@@ -55,6 +55,19 @@ return [
             'endpoint' => env('AWS_ENDPOINT'),
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
             'throw' => false,
+        ],
+
+        'webdav' => [
+            'driver'     => 'webdav',
+            'baseUri'    => env("WEBDAV_BASEURL"),
+            'userName'   => env("WEBDAV_USERNAME"),
+            'password'   => env("WEBDAV_PASSWORD"),
+            'pathPrefix' => env("WEBDAV_PATHPREFIX", ''),
+
+            // Optional prameters
+            // 'proxy'      => env("WEBDAV_PROXY", 'locahost:8888'),
+            // 'authType'   => env("WEBDAV_AUTHTYPE", null),
+            // 'encoding'   => env("WEBDAV_ENCODING", null),
         ],
 
     ],
