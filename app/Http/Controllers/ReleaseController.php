@@ -234,8 +234,10 @@ class ReleaseController extends Controller
             'members.*.phone_number' => 'nullable|string|max:255',
             'members.*.birth_date' => 'required|date',
             'members.*.is_reference' => 'nullable|boolean',
-            'file_release' => 'nullable|file|mimes:zip|max:2000000',
-            'file_cover' => 'nullable|file|mimes:png,jpg|max:20000',
+            'file_release' => 'nullable|file|mimes:zip|max:2500000',
+            'file_cover' => 'nullable|file|mimes:png,jpg|max:25000',
+            'file_release_name' => 'nullable|string|max:255',
+            'file_cover_name' => 'nullable|string|max:255',
         ]);
     
         $release->update([
@@ -271,7 +273,9 @@ class ReleaseController extends Controller
             'description' => $validated['description'],
             'release_type_id' => $validated['release_type_id'],
             'file_release' => $validated['file_release'],
-            'file_cover' => $validated['file_cover']
+            'file_cover' => $validated['file_cover'],
+            //'file_release_name' => $validated['file_release_name'],
+            //'file_cover_name' => $validated['file_cover_name']
         ]);
 
         // Synchroniser les formats et leurs codes-barres
@@ -442,13 +446,16 @@ class ReleaseController extends Controller
         if ($request->hasFile('file_release')) {
             try {
                 $file = $request->file('file_release');
-                $filename = $release->catalog . '_' . time() . '.zip';
+                $filename = $file->getClientOriginalName();
                 
                 // Lecture du contenu du fichier
                 $fileContent = file_get_contents($file->getRealPath());
                 
                 // Envoi vers WebDAV
                 Storage::disk('webdav')->put($filename, $fileContent);
+                $release->update([
+                    'file_release_name' => $filename
+                ]);
                 
                 \Log::info('Fichier uploadé avec succès vers WebDAV: ' . $filename);
             } catch (\Exception $e) {
@@ -459,14 +466,16 @@ class ReleaseController extends Controller
         if ($request->hasFile('file_cover')) {
             try {
                 $file = $request->file('file_cover');
-                $originalName = $file->getClientOriginalName(); // Récupère le nom original
-                $filename = $release->catalog . '_' . time() . '_' . $originalName; // Inclut le nom original
+                $filename = $file->getClientOriginalName();
                 
                 // Lecture du contenu du fichier
                 $fileContent = file_get_contents($file->getRealPath());
                 
                 // Envoi vers WebDAV
                 Storage::disk('webdav')->put($filename, $fileContent);
+                $release->update([
+                    'file_cover_name' => $filename
+                ]);
                 
                 \Log::info('Fichier uploadé avec succès vers WebDAV: ' . $filename);
             } catch (\Exception $e) {
