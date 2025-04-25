@@ -63,10 +63,32 @@ class ReleaseController extends Controller
                 $query->withPivot('percentage');
             },
             'release_members',
-            //'release_socials'
         ])->findOrFail($release->id);
 
         return Inertia::render('EditRelease', [
+            'release' => $releaseWithRelations, 
+            'releaseFormats' => ReleaseFormat::all(),
+            'releaseTypes' => ReleaseType::all(),
+            'releaseTracks' => ReleaseTrack::all(),
+            'releaseMembers' => ReleaseMember::all(),
+            'auth' => [
+                'user' => auth()->user(),
+            ],
+        ]);
+    }
+
+    public function addupload(Release $release): Response
+    {
+        $releaseWithRelations = Release::with([
+            'release_type',
+            'release_formats',
+            'release_tracks.release_members' => function ($query) {
+                $query->withPivot('percentage');
+            },
+            'release_members',
+        ])->findOrFail($release->id);
+
+        return Inertia::render('UploadRelease', [
             'release' => $releaseWithRelations, 
             'releaseFormats' => ReleaseFormat::all(),
             'releaseTypes' => ReleaseType::all(),
@@ -234,10 +256,6 @@ class ReleaseController extends Controller
             'members.*.phone_number' => 'nullable|string|max:255',
             'members.*.birth_date' => 'required|date',
             'members.*.is_reference' => 'nullable|boolean',
-            'file_release' => 'nullable|file|mimes:zip|max:2500000',
-            'file_cover' => 'nullable|file|mimes:png,jpg|max:25000',
-            'file_release_name' => 'nullable|string|max:255',
-            'file_cover_name' => 'nullable|string|max:255',
         ]);
     
         $release->update([
@@ -272,10 +290,6 @@ class ReleaseController extends Controller
             'release_date' => $validated['release_date'],
             'description' => $validated['description'],
             'release_type_id' => $validated['release_type_id'],
-            'file_release' => $validated['file_release'],
-            'file_cover' => $validated['file_cover'],
-            //'file_release_name' => $validated['file_release_name'],
-            //'file_cover_name' => $validated['file_cover_name']
         ]);
 
         // Synchroniser les formats et leurs codes-barres
@@ -443,23 +457,78 @@ class ReleaseController extends Controller
         $membersToDelete = array_diff($existingMemberIds, $updatedMemberIds);
         $release->release_members()->whereIn('id', $membersToDelete)->delete();
 
+        Mail::queue(new labelcopyEdited($release->fresh(), $release_before));
+       
+        return redirect()->route('dashboard')->with('success', [
+            'message' => 'Modifications enregistrées avec succès',
+        ]);
+    }
+
+    public function upload(Request $request, Release $release): RedirectResponse
+    {
+        $validated = $request->validate([
+            'catalog' => 'required|string|max:6',
+            'file_release' => 'nullable|file|mimes:zip|max:2500000',
+            'file_cover' => 'nullable|file|mimes:zip|max:25000',
+            'file_release_name' => 'nullable|string|max:255',
+            'file_cover_name' => 'nullable|string|max:255',
+            'dzchunkindex' => 'nullable|integer',
+            'dztotalchunkcount' => 'nullable|integer',
+            'dzfilename' => 'nullable|string',
+        ]);
+
         if ($request->hasFile('file_release')) {
-            try {
-                $file = $request->file('file_release');
-                $filename = $file->getClientOriginalName();
-                
-                // Lecture du contenu du fichier
-                $fileContent = file_get_contents($file->getRealPath());
-                
-                // Envoi vers WebDAV
-                Storage::disk('webdav')->put($filename, $fileContent);
-                $release->update([
-                    'file_release_name' => $filename
-                ]);
-                
-                \Log::info('Fichier uploadé avec succès vers WebDAV: ' . $filename);
-            } catch (\Exception $e) {
-                \Log::error('Erreur lors de l\'upload WebDAV: ' . $e->getMessage());
+            // Gestion des chunks pour file_release
+            $file = $request->file('file_release');
+            $chunkNumber = $request->input('dzchunkindex');
+            $totalChunks = $request->input('dztotalchunkcount');
+            $fileName = $request->input('dzfilename') ?? $file->getClientOriginalName();
+            
+            // Créer le répertoire des chunks s'il n'existe pas
+            $chunksPath = storage_path('app/uploads/chunks');
+            if (!file_exists($chunksPath)) {
+                mkdir($chunksPath, 0777, true);
+            }
+
+            $chunkPath = $chunksPath . '/' . $fileName . '.part' . $chunkNumber;
+            
+            // Stocker le chunk actuel
+            $file->move($chunksPath, basename($chunkPath));
+
+            if ($chunkNumber == $totalChunks - 1) {
+                // Créer le nom du fichier final sans l'extension .part
+                $finalPath = storage_path('app/uploads/' . $fileName);
+                $finalFile = fopen($finalPath, 'wb');
+            
+                try {
+                    // Fusionner tous les chunks
+                    for ($i = 0; $i < $totalChunks; $i++) {
+                        $chunkFilePath = $chunksPath . '/' . $fileName . '.part' . $i;
+                        if (file_exists($chunkFilePath)) {
+                            $chunk = fopen($chunkFilePath, 'rb');
+                            stream_copy_to_stream($chunk, $finalFile);
+                            fclose($chunk);
+                            unlink($chunkFilePath); // Supprimer le chunk après fusion
+                        }
+                    }
+                    fclose($finalFile);
+            
+                    // Upload vers WebDAV avec le nom correct
+                    $stream = fopen($finalPath, 'r');
+                    Storage::disk('webdav')->put($release->catalog . '_' . time() . '_' . $fileName, $stream);
+                    fclose($stream);
+                    unlink($finalPath); // Nettoyer le fichier temporaire
+            
+                    // Mettre à jour la release avec le nom correct du fichier
+                    $release->update([
+                        'file_release_name' => $fileName // Nom original sans .part
+                    ]);
+            
+                    \Log::info('Fichier uploadé avec succès vers WebDAV: ' . $fileName);
+                } catch (\Exception $e) {
+                    \Log::error('Erreur lors de la fusion/upload : ' . $e->getMessage());
+                    throw $e;
+                }
             }
         }
 
@@ -482,8 +551,6 @@ class ReleaseController extends Controller
                 \Log::error('Erreur lors de l\'upload WebDAV: ' . $e->getMessage());
             }
         }
-
-        Mail::queue(new labelcopyEdited($release->fresh(), $release_before));
        
         return redirect()->route('dashboard')->with('success', [
             'message' => 'Modifications enregistrées avec succès',

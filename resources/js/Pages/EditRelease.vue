@@ -162,8 +162,8 @@ const form = useForm({
     releaseTracks: props.releaseTracks,
     releaseMembers: props.releaseMembers,
 
-    file_release: null,
-    file_cover: null,
+    //file_release: null,
+    //file_cover: null,
     _method: 'PUT'
 });
 
@@ -387,31 +387,6 @@ const submit = () => {
     if (form.members.some(member => !member.firstname) || form.members.some(member => !member.lastname)) {
         return;
     }
-
-/*     // Créer un FormData si un fichier est présent
-    if (form.file_release) {
-        let formData = new FormData();
-        formData.append('file', form.file_release);
-        
-        // Ajouter tous les autres champs du formulaire
-        Object.keys(form).forEach(key => {
-            if (key !== 'file') {
-                formData.append(key, form[key]);
-            }
-        });
-    }
-
-    if (form.file_cover) {
-        let formData = new FormData();
-        formData.append('file', form.file_cover);
-        
-        // Ajouter tous les autres champs du formulaire
-        Object.keys(form).forEach(key => {
-            if (key !== 'file') {
-                formData.append(key, form[key]);
-            }
-        });
-    } */
 
     form.post(route('update-release', props.release.id), {
         preserveScroll: true,
@@ -1334,52 +1309,6 @@ const submit = () => {
                                             :disabled="isDisabled"
                                         />
                                         <InputError class="mt-2" :message="form.errors.besoinFinancement" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="overflow-hidden bg-white shadow-lg rounded-lg dark:bg-gray-800">
-                        <div class="p-8">
-                            <div class="space-y-6 border-gray-700 text-gray-900 dark:text-gray-100 pb-6">
-                                <h3 class="text-lg font-medium flex items-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mr-4 size-6">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 8.25H7.5a2.25 2.25 0 0 0-2.25 2.25v9a2.25 2.25 0 0 0 2.25 2.25h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25H15m0-3-3-3m0 0-3 3m3-3V15" />
-                                    </svg>
-                                Upload</h3>
-                                <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
-                                    <div>
-                                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="file_release">Masters audio</label>
-                                        <div class="relative">
-                                        <input 
-                                            class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-sm file:font-semibold file:bg-indigo-700 file:text-gray-100 hover:file:bg-indigo-800 dark:hover:file:bg-indigo-800 dark:file:bg-indigo-700 dark:file:text-gray-100" 
-                                            aria-describedby="file_input_help" 
-                                            id="file_release" 
-                                            type="file"
-                                            @change="form.file_release = $event.target.files[0]"
-                                            accept=".zip"
-                                            :disabled="isDisabled"
-                                        >
-                                        </div>
-                                        <p class="mt-1 text-xs text-gray-500 dark:text-gray-300" id="file_input_help">Format accepté : ZIP</p>
-                                        <InputError class="mt-2" :message="form.errors.file_release" />
-                                    </div>
-
-                                    <div>
-                                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="file_cover">Pochette(s)</label>
-                                        <div class="relative">
-                                        <input 
-                                            class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-sm file:font-semibold file:bg-indigo-700 file:text-gray-100 hover:file:bg-indigo-800 dark:hover:file:bg-indigo-800 dark:file:bg-indigo-700 dark:file:text-gray-100" 
-                                            aria-describedby="file_input_help" 
-                                            id="file_cover" 
-                                            type="file"
-                                            @change="form.file_cover = $event.target.files[0]"
-                                            accept=".png, .jpg, .jpeg"
-                                            :disabled="isDisabled"
-                                        >
-                                        </div>
-                                        <p class="mt-1 text-xs text-gray-500 dark:text-gray-300" id="file_input_help">Format accepté : PNG, JPG</p>
-                                        <InputError class="mt-2" :message="form.errors.file_cover" />
                                     </div>
                                 </div>
                             </div>

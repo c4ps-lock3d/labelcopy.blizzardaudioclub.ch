@@ -23,9 +23,14 @@ Route::put('/releases/{release}/status', [ReleaseController::class, 'updateStatu
 Route::get('/dashboard/add-release', [ReleaseController::class, 'add'])->middleware(['auth', 'verified'])->name('dashboard.addrelease');
 Route::post('/dashboard/store-release', [ReleaseController::class, 'store'])->middleware(['auth', 'verified'])->name('store-release');
 Route::post('/check-email', [ReleaseController::class, 'checkEmail'])->name('check-email');
+
 // Edit
 Route::get('/dashboard/{release}/edit-release', [ReleaseController::class, 'edit'])->middleware(['auth', 'verified'])->name('dashboard.editrelease');
 Route::put('/dashboard/{release}/update-release', [ReleaseController::class, 'update'])->middleware(['auth', 'verified'])->name('update-release');
+
+// Add upload
+Route::get('/dashboard/{release}/add-upload-release', [ReleaseController::class, 'addupload'])->middleware(['auth', 'verified'])->name('dashboard.adduploadrelease');
+Route::put('/dashboard/{release}/upload-release', [ReleaseController::class, 'upload'])->middleware(['auth', 'verified'])->name('upload-release');
 
 // Profil
 Route::middleware('auth')->group(function () {

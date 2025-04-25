@@ -153,12 +153,16 @@ const successMessage = computed(() => usePage().props.flash?.success?.message);
                                                         {{ releaseSortOrder === 'asc' ? '↑' : '↓' }}
                                                     </span>
                                                 </th>
+                                                <th scope="col" class="px-2.5 py-3 w-16 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 whitespace-nowrap select-none">
+                                                    Upload
+                                                </th>
                                                 <th v-if="props.auth.user.name === 'lynxadmin'" @click="sortBy('isActive', 'releases')" scope="col" class="px-2.5 py-3 w-16 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 whitespace-nowrap select-none">
                                                     Statut
                                                     <span v-if="releaseSortKey === 'isActive'">
                                                         {{ releaseSortOrder === 'asc' ? '↑' : '↓' }}
                                                     </span>
                                                 </th>
+
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -179,6 +183,13 @@ const successMessage = computed(() => usePage().props.flash?.success?.message);
                                                     <td class="px-2.5 py-3 text-gray-900 dark:text-gray-100">
                                                         <div v-if="release.name">{{ release.name }}</div>
                                                         <div v-else class="italic text-gray-500">Cliquer pour ajouter</div>
+                                                    </td>
+                                                    <td class="px-2.5 py-3 text-gray-900 dark:text-gray-100">
+                                                        <Link :href="route('dashboard.adduploadrelease', release.id)" class="contents">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 8.25H7.5a2.25 2.25 0 0 0-2.25 2.25v9a2.25 2.25 0 0 0 2.25 2.25h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25H15m0-3-3-3m0 0-3 3m3-3V15" />
+                                                            </svg>
+                                                        </Link>
                                                     </td>
                                                 </Link>
                                                 <td v-if="props.auth.user.name === 'lynxadmin'" class="px-2.5 text-center">

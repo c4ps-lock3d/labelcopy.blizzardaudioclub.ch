@@ -63,11 +63,14 @@ return [
             'userName'   => env("WEBDAV_USERNAME"),
             'password'   => env("WEBDAV_PASSWORD"),
             'pathPrefix' => env("WEBDAV_PATHPREFIX", ''),
+            'timeout' => 300, // Augmenter le timeout
+            'verify' => env('WEBDAV_VERIFY', false),
+            'retry' => 3, // Ajouter des tentatives
 
             // Optional prameters
             // 'proxy'      => env("WEBDAV_PROXY", 'locahost:8888'),
-            // 'authType'   => env("WEBDAV_AUTHTYPE", null),
-            // 'encoding'   => env("WEBDAV_ENCODING", null),
+            'authType'   => env("WEBDAV_AUTHTYPE", null),
+            'encoding'   => env("WEBDAV_ENCODING", null),
         ],
 
     ],
