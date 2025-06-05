@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'default' => env('FILESYSTEM_DISK', 'webdav'),
+    'default' => env('FILESYSTEM_DISK', 'local'),
 
     /*
     |--------------------------------------------------------------------------

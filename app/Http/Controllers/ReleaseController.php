@@ -464,7 +464,7 @@ class ReleaseController extends Controller
         ]);
     }
 
-    public function upload(Request $request, Release $release): RedirectResponse
+    /* public function upload(Request $request, Release $release): RedirectResponse
     {
         $validated = $request->validate([
             'catalog' => 'required|string|max:6',
@@ -555,5 +555,5 @@ class ReleaseController extends Controller
         return redirect()->route('dashboard')->with('success', [
             'message' => 'Modifications enregistrées avec succès',
         ]);
-    }
+    } */
 }
