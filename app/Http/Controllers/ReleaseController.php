@@ -152,7 +152,7 @@ class ReleaseController extends Controller
                 $release->users()->attach($user->id);
     
                 // Envoyer l'email d'initialisation du compte
-                $expiresAt = now()->addDay();
+                $expiresAt = now()->addDay(4);
                 $user->sendWelcomeNotification($expiresAt);
             }
 
