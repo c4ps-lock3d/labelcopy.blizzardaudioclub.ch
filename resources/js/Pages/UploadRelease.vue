@@ -4,8 +4,8 @@
     import PrimaryButton from '@/Components/PrimaryButton.vue';
     import { Head, useForm, Link } from '@inertiajs/vue3';
     import { computed, onMounted } from 'vue';
-    import Dropzone from 'dropzone';
-    import 'dropzone/dist/dropzone.css';
+    //import Dropzone from 'dropzone';
+    //import 'dropzone/dist/dropzone.css';
 
     const props = defineProps({
         auth: {
