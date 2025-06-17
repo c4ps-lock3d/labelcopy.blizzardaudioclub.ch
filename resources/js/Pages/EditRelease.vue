@@ -134,6 +134,7 @@ const form = useForm({
         lastname: member.lastname || '',
         birth_date: member.birth_date || '',
         IPI: member.IPI || '',
+        shirtsize: member.shirtsize || '',
         is_reference: Boolean(member.is_reference),
         street: member.street || '',
         city: member.city || '',
@@ -148,6 +149,7 @@ const form = useForm({
             lastname: '',
             birth_date: '',
             IPI: '',
+            shirtsize: '',
             is_reference: false,
             street: '',
             city: '',
@@ -668,6 +670,9 @@ const submit = () => {
                                         <th scope="col" class="required px-3 py-2.5 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 whitespace-nowrap">
                                             Date de naissance
                                         </th>
+                                        <th scope="col" class="required w-32 px-3 py-2.5 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 whitespace-nowrap">
+                                            Taille de T-shirt
+                                        </th>
                                         <th scope="col" class="required w-full px-3 py-2.5 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 whitespace-nowrap">
                                             N° IPI (SUISA)
                                         </th>
@@ -724,6 +729,20 @@ const submit = () => {
                                                 :disabled="isDisabled"
                                             />
                                             <InputError class="mt-2" :message="form.errors[`members.${index}.birth_date`] || ''" />
+                                        </td>
+                                        <td class="px-1.5 py-2">
+                                            <select
+                                                v-model="member.shirtsize"
+                                                class="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 text-gray-900 dark:focus:border-indigo-600 dark:focus:ring-indigo-600 w-32 transition duration-150 ease-in-out"
+                                                required
+                                                :disabled="isDisabled"
+                                            >
+                                                <option value="" disabled>Choisir une taille</option>
+                                                <option value="S">S</option>
+                                                <option value="M">M</option>
+                                                <option value="L">L</option>
+                                                <option value="XL">XL</option>
+                                            </select>
                                         </td>
                                         <td class="px-1.5 py-2">
                                             <TextInput
