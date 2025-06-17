@@ -670,7 +670,7 @@ const submit = () => {
                                         <th scope="col" class="required px-3 py-2.5 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 whitespace-nowrap">
                                             Date de naissance
                                         </th>
-                                        <th scope="col" class="required w-32 px-3 py-2.5 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 whitespace-nowrap">
+                                        <th scope="col" class="required w-48 px-3 py-2.5 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 whitespace-nowrap">
                                             Taille de T-shirt
                                         </th>
                                         <th scope="col" class="required w-full px-3 py-2.5 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 whitespace-nowrap">
@@ -733,7 +733,7 @@ const submit = () => {
                                         <td class="px-1.5 py-2">
                                             <select
                                                 v-model="member.shirtsize"
-                                                class="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 text-gray-900 dark:focus:border-indigo-600 dark:focus:ring-indigo-600 w-32 transition duration-150 ease-in-out"
+                                                class="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 text-gray-900 dark:focus:border-indigo-600 dark:focus:ring-indigo-600 w-48 transition duration-150 ease-in-out"
                                                 required
                                                 :disabled="isDisabled"
                                             >
