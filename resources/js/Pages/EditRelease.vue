@@ -645,102 +645,102 @@ const submit = () => {
                             <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
                         </svg>
                         Informations sur le(s) membre(s)</h3>
-<InputLabel value="Liste des membres (tous les ayant-droits de l'œuvre)" class="required text-sm font-medium" />
-<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-2 mb-8">
-    <div
-        v-for="(member, index) in form.members"
-        :key="member.id || 'new-' + index"
-        class="bg-white dark:bg-gray-700 rounded-lg shadow p-4 flex flex-col gap-3 border border-gray-200 dark:border-gray-600 relative"
-    >
-        <div class="flex items-center justify-between mb-2">
-            <span class="font-semibold text-indigo-700 dark:text-indigo-300">
-                {{ member.is_reference ? 'Membre de référence' : `Membre ${index + 1}` }}
-            </span>
-            <button
-                v-if="form.members.length > 1 && !member.is_reference"
-                type="button"
-                @click="deleteMember(index)"
-                class="w-8 h-8 bg-red-500/10 border border-red-500/20 rounded-md text-red-400 transition-colors flex items-center justify-center"
-                :disabled="isDisabled"
-                title="Supprimer ce membre"
-            >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-                </svg>
-            </button>
-        </div>
-        <TextInput
-            type="text"
-            v-model="member.firstname"
-            :class="{
-                '!bg-gray-700/10': member.is_reference,
-                'block transition duration-150 ease-in-out': true
-            }"
-            placeholder="Prénom"
-            required
-            :disabled="member.is_reference || isDisabled"
-        />
-        <TextInput
-            type="text"
-            v-model="member.lastname"
-            :class="{
-                '!bg-gray-700/10': member.is_reference,
-                'block transition duration-150 ease-in-out': true
-            }"
-            placeholder="Nom"
-            required
-            :disabled="member.is_reference || isDisabled"
-        />
-        <TextInput
-            type="date"
-            v-model="member.birth_date"
-            class="transition duration-150 ease-in-out"
-            placeholder="jj.mm.aaaa"
-            required
-            :disabled="isDisabled"
-        />
-        <select
-            v-model="member.shirtsize"
-            class="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 text-gray-900 dark:focus:border-indigo-600 dark:focus:ring-indigo-600 w-full transition duration-150 ease-in-out"
-            required
-            :disabled="isDisabled"
-        >
-            <option value="" disabled>Choisir une taille</option>
-            <option value="S">S</option>
-            <option value="M">M</option>
-            <option value="L">L</option>
-            <option value="XL">XL</option>
-        </select>
-        <TextInput
-            type="text"
-            v-model="member.IPI"
-            class="w-full transition duration-150 ease-in-out"
-            required
-            :disabled="isDisabled"
-            placeholder="N° IPI (SUISA)"
-        />
-    </div>
-    <!-- Carte d'ajout -->
-    <button
-        v-if="form.members.length < 12"
-        type="button"
-        @click="addNewMember"
-        class="flex flex-col items-center justify-center border-2 border-dashed border-indigo-400 rounded-lg h-44 bg-indigo-50 dark:bg-gray-900 text-indigo-600 hover:bg-indigo-100 transition-colors"
-        :disabled="isDisabled"
-        style="min-height:11rem"
-    >
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-10 mb-2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-        </svg>
-        <span class="font-medium">Ajouter un membre</span>
-    </button>
-</div>
-<div v-for="(member, index) in form.members" :key="member.id">
-    <div v-if="member.is_reference">
-        <div for="coordonnées" class="text-md font-medium">Coordonnées du membre de référence ({{ member.firstname}} {{ member.lastname}})</div>
-        <div class="mt-4 flex items-center rounded-lg transition-colors">
-            <div class="grid grid-cols-1 gap-6 md:grid-cols-4 w-full">
-                <div>
+                        <InputLabel value="Liste des membres (tous les ayant-droits de l'œuvre)" class="required text-sm font-medium" />
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 !mt-1 items-stretch">
+                            <div
+                                v-for="(member, index) in form.members"
+                                :key="member.id || 'new-' + index"
+                                class="bg-white dark:bg-gray-700 rounded-lg shadow p-4 flex flex-col gap-3 border border-gray-200 dark:border-gray-600 relative h-full"
+                            >
+                                <div class="flex items-center justify-between mb-2 min-h-[2rem]">
+                                    <span class="font-semibold text-indigo-700 dark:text-indigo-300">
+                                        {{ member.is_reference ? 'Membre de référence' : `Membre ${index + 1}` }}
+                                    </span>
+                                    <button
+                                        v-if="form.members.length > 1 && !member.is_reference"
+                                        type="button"
+                                        @click="deleteMember(index)"
+                                        class="w-8 h-8 bg-red-500/10 border border-red-500/20 rounded-md text-red-400 transition-colors flex items-center justify-center"
+                                        :disabled="isDisabled"
+                                        title="Supprimer ce membre"
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                                        </svg>
+                                    </button>
+                                </div>
+                                <TextInput
+                                    type="text"
+                                    v-model="member.firstname"
+                                    :class="{
+                                        '!bg-gray-700/10': member.is_reference,
+                                        'block transition duration-150 ease-in-out': true
+                                    }"
+                                    placeholder="Prénom"
+                                    required
+                                    :disabled="member.is_reference || isDisabled"
+                                />
+                                <TextInput
+                                    type="text"
+                                    v-model="member.lastname"
+                                    :class="{
+                                        '!bg-gray-700/10': member.is_reference,
+                                        'block transition duration-150 ease-in-out': true
+                                    }"
+                                    placeholder="Nom"
+                                    required
+                                    :disabled="member.is_reference || isDisabled"
+                                />
+                                <TextInput
+                                    type="date"
+                                    v-model="member.birth_date"
+                                    class="transition duration-150 ease-in-out"
+                                    placeholder="jj.mm.aaaa"
+                                    required
+                                    :disabled="isDisabled"
+                                />
+                                <select
+                                    v-model="member.shirtsize"
+                                    class="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 text-gray-900 dark:focus:border-indigo-600 dark:focus:ring-indigo-600 w-full transition duration-150 ease-in-out"
+                                    required
+                                    :disabled="isDisabled"
+                                >
+                                    <option value="" disabled>Choisir une taille</option>
+                                    <option value="S">S</option>
+                                    <option value="M">M</option>
+                                    <option value="L">L</option>
+                                    <option value="XL">XL</option>
+                                </select>
+                                <TextInput
+                                    type="text"
+                                    v-model="member.IPI"
+                                    class="w-full transition duration-150 ease-in-out"
+                                    required
+                                    :disabled="isDisabled"
+                                    placeholder="N° IPI (SUISA)"
+                                />
+                            </div>
+                            <!-- Carte d'ajout -->
+                            <button
+                                v-if="form.members.length < 12"
+                                type="button"
+                                @click="addNewMember"
+                                class="flex flex-col items-center justify-center border-2 border-dashed border-indigo-400 rounded-lg bg-indigo-50 dark:bg-gray-900 text-indigo-600 hover:bg-indigo-100 transition-colors h-full"
+                                :disabled="isDisabled"
+                                style="min-height:11rem"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-10 mb-2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                </svg>
+                                <span class="font-medium">Ajouter un membre</span>
+                            </button>
+                        </div>
+                        <div v-for="(member, index) in form.members" :key="member.id">
+                            <div v-if="member.is_reference">
+                                <div for="coordonnées" class="text-md font-medium">Coordonnées du membre de référence ({{ member.firstname}} {{ member.lastname}})</div>
+                                <div class="mt-4 flex items-center rounded-lg transition-colors">
+                                    <div class="grid grid-cols-1 gap-6 md:grid-cols-4 w-full">
+                                        <div>
                                             <InputLabel for="street" value="Rue et N°" class="required text-sm font-medium" />
                                             <TextInput
                                                 id="street"
@@ -976,26 +976,30 @@ const submit = () => {
                                     <InputError class="mt-2" :message="form.errors.description" />
                                 </div>
                                 <InputLabel value="Liste des titres" class="required text-sm font-medium" />
-                                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-2">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 !mt-1 items-stretch">
                                     <div
                                         v-for="(track, index) in form.tracks"
                                         :key="track.id || 'new-' + index"
-                                        class="bg-white dark:bg-gray-700 rounded-lg shadow p-4 flex flex-col gap-3 border border-gray-200 dark:border-gray-600 relative"
+                                        class="bg-white dark:bg-gray-700 rounded-lg shadow p-4 flex flex-col gap-3 border border-gray-200 dark:border-gray-600 relative h-full"
                                     >
-                                        <div class="flex items-center justify-between mb-2">
+                                        <div class="flex items-center justify-between mb-2 min-h-[2.4rem]">
                                             <span class="font-semibold text-indigo-700 dark:text-indigo-300">Titre {{ track.number }}</span>
-                                            <button
-                                                v-if="form.tracks.length > 1 && index === form.tracks.length - 1"
-                                                type="button"
-                                                @click="deleteTrack(index)"
-                                                class="w-8 h-8 bg-red-500/10 border border-red-500/20 rounded-md text-red-400 transition-colors flex items-center justify-center"
-                                                :disabled="isDisabled"
-                                                title="Supprimer ce titre"
-                                            >
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-                                                </svg>
-                                            </button>
+                                            <span>
+                                                <button
+                                                    v-if="form.tracks.length > 1 && index === form.tracks.length - 1"
+                                                    type="button"
+                                                    @click="deleteTrack(index)"
+                                                    class="w-8 h-8 bg-red-500/10 border border-red-500/20 rounded-md text-red-400 transition-colors flex items-center justify-center"
+                                                    :disabled="isDisabled"
+                                                    title="Supprimer ce titre"
+                                                >
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                                                    </svg>
+                                                </button>
+                                                <!-- Espace réservé pour garder la hauteur -->
+                                                <span v-else class="inline-block w-8 h-8"></span>
+                                            </span>
                                         </div>
                                         <TextInput
                                             type="text"
@@ -1034,31 +1038,31 @@ const submit = () => {
                                             </label>
                                         </div>
                                         <!-- Pourcentages par membre -->
-<div class="flex flex-col gap-2 mt-2">
-    <div
-        v-for="(participation, pIndex) in track.participations"
-        :key="participation.member_id || 'new-' + pIndex"
-        class="flex items-center gap-2"
-    >
-        <span class="text-xs text-gray-500 dark:text-gray-400 w-32 truncate">
-            {{ participation.firstname && participation.lastname
-                ? `${participation.firstname} ${participation.lastname}`
-                : 'Membre'
-            }}
-        </span>
-        <TextInput
-            type="number"
-            v-model="participation.percentage"
-            class="w-20 text-center transition duration-150 ease-in-out"
-            placeholder="%"
-            min="0"
-            max="100"
-            @input="validateMemberPercentage(track, participation)"
-            :disabled="isDisabled"
-        />
-        <span class="text-xs text-gray-400">%</span>
-    </div>
-</div>
+                                        <div class="flex flex-col gap-2 mt-2">
+                                            <div
+                                                v-for="(participation, pIndex) in track.participations"
+                                                :key="participation.member_id || 'new-' + pIndex"
+                                                class="flex items-center gap-2"
+                                            >
+                                                <span class="text-xs text-gray-500 dark:text-gray-400 w-32 truncate">
+                                                    {{ participation.firstname && participation.lastname
+                                                        ? `${participation.firstname} ${participation.lastname}`
+                                                        : 'Membre'
+                                                    }}
+                                                </span>
+                                                <TextInput
+                                                    type="number"
+                                                    v-model="participation.percentage"
+                                                    class="w-20 text-center transition duration-150 ease-in-out"
+                                                    placeholder="%"
+                                                    min="0"
+                                                    max="100"
+                                                    @input="validateMemberPercentage(track, participation)"
+                                                    :disabled="isDisabled"
+                                                />
+                                                <span class="text-xs text-gray-400">%</span>
+                                            </div>
+                                        </div>
                                         <div v-if="track.isSingle" class="flex flex-col gap-2">
                                             <TextInput
                                                 type="date"
@@ -1080,7 +1084,7 @@ const submit = () => {
                                         v-if="form.tracks.length < 20"
                                         type="button"
                                         @click="addNewTrack"
-                                        class="flex flex-col items-center justify-center border-2 border-dashed border-indigo-400 rounded-lg h-44 bg-indigo-50 dark:bg-gray-900 text-indigo-600 hover:bg-indigo-100 transition-colors"
+                                        class="flex flex-col items-center justify-center border-2 border-dashed border-indigo-400 rounded-lg bg-indigo-50 dark:bg-gray-900 text-indigo-600 hover:bg-indigo-100 transition-colors h-full"
                                         :disabled="isDisabled"
                                         style="min-height:11rem"
                                     >
