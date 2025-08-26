@@ -641,34 +641,285 @@ const submit = () => {
                 <div class="p-8">
                     <div class="space-y-6 border-gray-700 text-gray-900 dark:text-gray-100 pb-6">
                         <h3 class="text-lg font-medium flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mr-4 size-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
-                        </svg>
-                        Informations sur le(s) membre(s)</h3>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mr-4 size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
+                            </svg>
+                            Informations sur le(s) membre(s)
+                            <button
+                                v-if="form.members.length < 12"
+                                type="button"
+                                @click="addNewMember"
+                                class="ml-auto flex items-center px-3 py-1.5 rounded-md bg-indigo-600 text-white hover:bg-indigo-700 transition text-sm font-medium"
+                                :disabled="isDisabled"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                </svg>
+                                Ajouter un membre
+                            </button>
+                        </h3>
                         <InputLabel value="Liste des membres (tous les ayant-droits de l'œuvre)" class="required text-sm font-medium" />
                         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 !mt-1 items-stretch">
+                            <div
+                                v-for="(member, index) in form.members"
+                                :key="member.id || 'new-' + index"
+                                :class="[
+                                    'bg-white dark:bg-gray-700 rounded-lg shadow p-4 flex flex-col gap-3 border border-gray-200 dark:border-gray-600 relative h-full',
+                                    member.is_reference ? 'col-span-full sm:col-span-2 md:col-span-3' : ''
+                                ]"
+                            >
+                                <div class="flex items-center justify-between mb-2 min-h-[2rem]">
+                                    <span class="font-semibold text-indigo-700 dark:text-indigo-300">
+                                        {{ member.is_reference ? 'Membre de référence' : `Membre ${index + 1}` }}
+                                    </span>
+                                    <button
+                                        v-if="form.members.length > 1 && !member.is_reference"
+                                        type="button"
+                                        @click="deleteMember(index)"
+                                        class="w-8 h-8 bg-red-500/10 border border-red-500/20 rounded-md text-red-400 transition-colors flex items-center justify-center"
+                                        :disabled="isDisabled"
+                                        title="Supprimer ce membre"
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                                        </svg>
+                                    </button>
+                                </div>
+                                <div v-if="member.is_reference" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-x-3 gap-y-2">
+                                    <div>
+                                        <InputLabel for="firstname" value="Prénom" class="text-sm flex items-center" />
+                                        <TextInput
+                                            id="firstname"
+                                            type="text"
+                                            v-model="member.firstname"
+                                            :class="{
+                                                'block transition duration-150 ease-in-out w-full': true
+                                            }"
+                                            required
+                                            :disabled="member.is_reference || isDisabled"
+                                        />
+                                    </div>
+                                    <div>
+                                        <InputLabel for="lastname" value="Nom" class="text-sm flex items-center" />
+                                        <TextInput
+                                            id="lastname"
+                                            type="text"
+                                            v-model="member.lastname"
+                                            :class="{
+                                                'block transition duration-150 ease-in-out w-full': true
+                                            }"
+                                            required
+                                            :disabled="member.is_reference || isDisabled"
+                                        />
+                                    </div>
+                                    <div>
+                                        <InputLabel for="birth_date" value="Date de naissance" class="text-sm flex items-center" />
+                                        <TextInput
+                                            id="birth_date"
+                                            type="date"
+                                            v-model="member.birth_date"
+                                            class="transition duration-150 ease-in-out w-full"
+                                            required
+                                            :disabled="isDisabled"
+                                        />
+                                    </div>
+                                    <div>
+                                        <InputLabel for="shirtsize" value="Taille t-shirt" class="text-sm flex items-center" />
+                                        <select
+                                            id="shirtsize"
+                                            v-model="member.shirtsize"
+                                            class="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 text-gray-900 dark:focus:border-indigo-600 dark:focus:ring-indigo-600 w-full transition duration-150 ease-in-out"
+                                            required
+                                            :disabled="isDisabled"
+                                        >
+                                            <option value="" disabled>Choisir une taille</option>
+                                            <option value="S">S</option>
+                                            <option value="M">M</option>
+                                            <option value="L">L</option>
+                                            <option value="XL">XL</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <InputLabel for="IPI" value="N° IPI (SUISA)" class="text-sm flex items-center" />
+                                        <TextInput
+                                            id="IPI"
+                                            type="text"
+                                            v-model="member.IPI"
+                                            class="w-full transition duration-150 ease-in-out"
+                                            required
+                                            :disabled="isDisabled"
+                                        />
+                                    </div>
+                                    <div>
+                                        <InputLabel for="street" value="Rue et N°" class="required text-sm flex items-center" />
+                                        <TextInput
+                                            id="street"
+                                            type="text"
+                                            class="w-full transition duration-150 ease-in-out"
+                                            v-model="member.street"
+                                            required
+                                            autocomplete="street"
+                                            :disabled="isDisabled"
+                                        />
+                                        <InputError class="" :message="form.errors.street" />
+                                    </div>
+                                    <div>
+                                        <InputLabel for="zip_code" value="NPA" class="required text-sm font-medium" />
+                                        <TextInput
+                                            id="zip_code"
+                                            type="text"
+                                            class="w-full transition duration-150 ease-in-out"
+                                            v-model="member.zip_code"
+                                            required
+                                            autocomplete="zip_code"
+                                            :disabled="isDisabled"
+                                        />
+                                        <InputError class="" :message="form.errors.zip_code" />
+                                    </div>
+                                    <div>
+                                        <InputLabel for="city" value="Ville" class="required text-sm font-medium" />
+                                        <TextInput
+                                            id="city"
+                                            type="text"
+                                            class="w-full transition duration-150 ease-in-out"
+                                            v-model="member.city"
+                                            required
+                                            autocomplete="city"
+                                            :disabled="isDisabled"
+                                        />
+                                        <InputError class="" :message="form.errors.city" />
+                                    </div>
+                                    <div>
+                                        <InputLabel for="country" value="Pays" class="required text-sm font-medium" />
+                                        <TextInput
+                                            id="country"
+                                            type="text"
+                                            class="w-full transition duration-150 ease-in-out"
+                                            v-model="member.country"
+                                            required
+                                            autocomplete="country"
+                                            :disabled="isDisabled"
+                                        />
+                                        <InputError class="" :message="form.errors.country" />
+                                    </div>
+                                    <div>
+                                        <InputLabel for="phone_number" value="Téléphone" class="required text-sm font-medium whitespace-nowrap" />
+                                        <TextInput
+                                            id="phone_number"
+                                            type="text"
+                                            class="w-full transition duration-150 ease-in-out"
+                                            v-model="member.phone_number"
+                                            required
+                                            autocomplete="phone_number"
+                                            :disabled="isDisabled"
+                                        />
+                                        <InputError class="" :message="form.errors.phone_number" />
+                                    </div>
+                                    <div>
+                                        <InputLabel for="email" value="E-mail" class="required text-sm font-medium" />
+                                        <TextInput
+                                            id="email"
+                                            type="text"
+                                            class="w-full transition duration-150 ease-in-out"
+                                            v-model="member.email"
+                                            required
+                                            autocomplete="email"
+                                            disabled
+                                        />
+                                        <InputError class="" :message="form.errors.email" />
+                                    </div>
+                                </div>
+                                <div v-else class="grid grid-cols-5 gap-x-3 gap-y-2">
+                                    <div>
+                                        <InputLabel for="firstname" value="Prénom" class="text-sm flex items-center" />
+                                        <TextInput
+                                            id="firstname"
+                                            type="text"
+                                            v-model="member.firstname"
+                                            :class="{
+                                                'block transition duration-150 ease-in-out w-full': true
+                                            }"
+                                            required
+                                            :disabled="member.is_reference || isDisabled"
+                                        />
+                                    </div>
+                                    <div>
+                                        <InputLabel for="lastname" value="Nom" class="text-sm flex items-center" />
+                                        <TextInput
+                                            id="lastname"
+                                            type="text"
+                                            v-model="member.lastname"
+                                            :class="{
+                                                'block transition duration-150 ease-in-out w-full': true
+                                            }"
+                                            required
+                                            :disabled="member.is_reference || isDisabled"
+                                        />
+                                    </div>
+                                    <div>
+                                        <InputLabel for="birth_date" value="Date de naissance" class="text-sm flex items-center" />
+                                        <TextInput
+                                            id="birth_date"
+                                            type="date"
+                                            v-model="member.birth_date"
+                                            class="transition duration-150 ease-in-out w-full"
+                                            required
+                                            :disabled="isDisabled"
+                                        />
+                                    </div>
+                                    <div>
+                                        <InputLabel for="shirtsize" value="Taille t-shirt" class="text-sm flex items-center" />
+                                        <select
+                                            id="shirtsize"
+                                            v-model="member.shirtsize"
+                                            class="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 text-gray-900 dark:focus:border-indigo-600 dark:focus:ring-indigo-600 w-full transition duration-150 ease-in-out"
+                                            required
+                                            :disabled="isDisabled"
+                                        >
+                                            <option value="" disabled>Choisir une taille</option>
+                                            <option value="S">S</option>
+                                            <option value="M">M</option>
+                                            <option value="L">L</option>
+                                            <option value="XL">XL</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <InputLabel for="IPI" value="N° IPI (SUISA)" class="text-sm flex items-center" />
+                                        <TextInput
+                                            id="IPI"
+                                            type="text"
+                                            v-model="member.IPI"
+                                            class="w-full transition duration-150 ease-in-out"
+                                            required
+                                            :disabled="isDisabled"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 !mt-1 items-stretch">
                             <div
                                 v-for="(member, index) in form.members"
                                 :key="member.id || 'new-' + index"
                                 class="bg-white dark:bg-gray-700 rounded-lg shadow p-4 flex flex-col gap-3 border border-gray-200 dark:border-gray-600 relative h-full"
                             >
                                 <div class="flex items-center justify-between mb-2 min-h-[2rem]">
-                                <span class="font-semibold text-indigo-700 dark:text-indigo-300">
-                                    {{ member.is_reference ? 'Membre de référence' : `Membre ${index + 1}` }}
-                                </span>
-                                <button
-                                    v-if="form.members.length > 1 && !member.is_reference"
-                                    type="button"
-                                    @click="deleteMember(index)"
-                                    class="w-8 h-8 bg-red-500/10 border border-red-500/20 rounded-md text-red-400 transition-colors flex items-center justify-center"
-                                    :disabled="isDisabled"
-                                    title="Supprimer ce membre"
-                                >
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-                                    </svg>
-                                </button>
-                            </div>
+                                    <span class="font-semibold text-indigo-700 dark:text-indigo-300">
+                                        {{ member.is_reference ? 'Membre de référence' : `Membre ${index + 1}` }}
+                                    </span>
+                                    <button
+                                        v-if="form.members.length > 1 && !member.is_reference"
+                                        type="button"
+                                        @click="deleteMember(index)"
+                                        class="w-8 h-8 bg-red-500/10 border border-red-500/20 rounded-md text-red-400 transition-colors flex items-center justify-center"
+                                        :disabled="isDisabled"
+                                        title="Supprimer ce membre"
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                                        </svg>
+                                    </button>
+                                </div>
                             <div class="grid grid-cols-2 gap-x-3 gap-y-2">
                                 <InputLabel for="firstname" value="Prénom" class="text-sm flex items-center" />
                                 <TextInput
@@ -729,23 +980,89 @@ const submit = () => {
                                     :disabled="isDisabled"
                                 />
                             </div>
+                            <div v-if="member.is_reference">
+                                <div class="grid grid-cols-2 gap-x-3 gap-y-2">
+                                            <InputLabel for="street" value="Rue et N°" class="required text-sm flex items-center" />
+                                            <TextInput
+                                                id="street"
+                                                type="text"
+                                                class="mt-1 block w-full transition duration-150 ease-in-out flex-grow"
+                                                v-model="member.street"
+                                                required
+                                                autocomplete="street"
+                                                :disabled="isDisabled"
+                                            />
+                                            <InputError class="" :message="form.errors.street" />
+                                        </div>
+                                        <div>
+                                            <InputLabel for="zip_code" value="NPA" class="required text-sm font-medium" />
+                                            <TextInput
+                                                id="zip_code"
+                                                type="text"
+                                                class="mt-1 block w-full transition duration-150 ease-in-out"
+                                                v-model="member.zip_code"
+                                                required
+                                                autocomplete="zip_code"
+                                                :disabled="isDisabled"
+                                            />
+                                            <InputError class="" :message="form.errors.zip_code" />
+                                        </div>
+                                        <div>
+                                            <InputLabel for="city" value="Ville" class="required text-sm font-medium" />
+                                            <TextInput
+                                                id="city"
+                                                type="text"
+                                                class="mt-1 block w-full transition duration-150 ease-in-out flex-grow"
+                                                v-model="member.city"
+                                                required
+                                                autocomplete="city"
+                                                :disabled="isDisabled"
+                                            />
+                                            <InputError class="" :message="form.errors.city" />
+                                        </div>
+                                        <div>
+                                            <InputLabel for="country" value="Pays" class="required text-sm font-medium" />
+                                            <TextInput
+                                                id="country"
+                                                type="text"
+                                                class="mt-1 block w-full transition duration-150 ease-in-out flex-grow"
+                                                v-model="member.country"
+                                                required
+                                                autocomplete="country"
+                                                :disabled="isDisabled"
+                                            />
+                                            <InputError class="" :message="form.errors.country" />
+                                        </div>
+                                        <div>
+                                            <InputLabel for="phone_number" value="Numéro de téléphone" class="required text-sm font-medium whitespace-nowrap" />
+                                            <TextInput
+                                                id="phone_number"
+                                                type="text"
+                                                class="mt-1 block w-full transition duration-150 ease-in-out"
+                                                v-model="member.phone_number"
+                                                required
+                                                autocomplete="phone_number"
+                                                :disabled="isDisabled"
+                                            />
+                                            <InputError class="" :message="form.errors.phone_number" />
+                                        </div>
+                                        <div>
+                                            <InputLabel for="email" value="E-mail" class="required text-sm font-medium" />
+                                            <TextInput
+                                                id="email"
+                                                type="text"
+                                                class="!bg-gray-700/10 mt-1 block w-full transition duration-150 ease-in-out flex-grow"
+                                                v-model="member.email"
+                                                required
+                                                autocomplete="email"
+                                                disabled
+                                            />
+                                            <InputError class="" :message="form.errors.email" />
+                                        </div>
+                                    </div>
                             </div>
-                            <!-- Carte d'ajout -->
-                            <button
-                                v-if="form.members.length < 12"
-                                type="button"
-                                @click="addNewMember"
-                                class="flex flex-col items-center justify-center border-2 border-dashed border-indigo-400 rounded-lg bg-indigo-50 dark:bg-gray-900 text-indigo-600 hover:bg-indigo-100 transition-colors h-full"
-                                :disabled="isDisabled"
-                                style="min-height:11rem"
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-10 mb-2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                                </svg>
-                                <span class="font-medium">Ajouter un membre</span>
-                            </button>
-                        </div>
-                        <div v-for="(member, index) in form.members" :key="member.id">
+                        </div> -->
+                        <!-- <div v-for="(member, index) in form.members" :key="member.id">
                             <div v-if="member.is_reference">
                                 <div for="coordonnées" class="text-md font-medium">Coordonnées du membre de référence ({{ member.firstname}} {{ member.lastname}})</div>
                                 <div class="mt-4 flex items-center rounded-lg transition-colors">
@@ -831,7 +1148,7 @@ const submit = () => {
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
             </div>
@@ -1014,6 +1331,31 @@ const submit = () => {
                                         <InputError class="mt-2" :message="form.errors.remerciements" />
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                <div class="overflow-hidden bg-white shadow-lg rounded-lg dark:bg-gray-800">
+                <div class="p-8">
+                    <!-- Section Types et Formats -->
+                    <div class="space-y-6 border-gray-700 text-gray-900 dark:text-gray-100 pb-6">
+                        <h3 class="text-lg font-medium flex items-center mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mr-4 size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m9 9 10.5-3m0 6.553v3.75a2.25 2.25 0 0 1-1.632 2.163l-1.32.377a1.803 1.803 0 1 1-.99-3.467l2.31-.66a2.25 2.25 0 0 0 1.632-2.163Zm0 0V2.25L9 5.25v10.303m0 0v3.75a2.25 2.25 0 0 1-1.632 2.163l-1.32.377a1.803 1.803 0 0 1-.99-3.467l2.31-.66A2.25 2.25 0 0 0 9 15.553Z" />
+                            </svg>
+                            Informations sur les titres
+                            <button
+                                v-if="form.tracks.length < 20"
+                                type="button"
+                                @click="addNewTrack"
+                                class="ml-auto flex items-center px-3 py-1.5 rounded-md bg-indigo-600 text-white hover:bg-indigo-700 transition text-sm font-medium"
+                                :disabled="isDisabled"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                </svg>
+                                Ajouter un titre
+                            </button>
+                        </h3>
                                 <InputLabel value="Liste des titres" class="required text-sm font-medium" />
                                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 !mt-1 items-stretch">
                                     <div
@@ -1118,74 +1460,11 @@ const submit = () => {
                                             />
                                         </div>
                                     </div>
-                                    <!-- Carte d'ajout -->
-                                    <button
-                                        v-if="form.tracks.length < 20"
-                                        type="button"
-                                        @click="addNewTrack"
-                                        class="flex flex-col items-center justify-center border-2 border-dashed border-indigo-400 rounded-lg bg-indigo-50 dark:bg-gray-900 text-indigo-600 hover:bg-indigo-100 transition-colors h-full"
-                                        :disabled="isDisabled"
-                                        style="min-height:11rem"
-                                    >
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-10 mb-2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                                        </svg>
-                                        <span class="font-medium">Ajouter un titre</span>
-                                    </button>
                                 </div>
-                                <!-- Deuxième tableau : Clé de répartition -->
-                                <!-- <InputLabel value="Clé de répartition précise des membres/morceaux" class="required text-sm font-medium mt-8" />
-                                <div class="overflow-x-auto rounded-md border border-gray-300 dark:border-gray-600 !mt-1">
-                                    <table class="min-w-full">
-                                        <thead>
-                                            <tr class="bg-gray-100 dark:bg-gray-700">
-                                                <td scope="col" class="w-8 px-3 py-2.5 text-left text-sm font-semibold text-gray-800 dark:text-gray-100">
-                                                    #
-                                                </td>
-                                                <td v-if="form.members.length < 9" class="w-96 px-3 py-2 text-gray-900 dark:text-gray-100">
-                                                    Titre
-                                                </td>
-                                                <template v-for="member in form.members" :key="member.id">
-                                                    <th scope="col" class="required px-1 py-2.5 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 whitespace-nowrap">
-                                                        {{ member.firstname && member.lastname 
-                                                            ? `${member.firstname.slice(0, 1)}. ${member.lastname.slice(0, 3)}` 
-                                                            : 'Non défini' 
-                                                        }}
-                                                    </th>
-                                                </template>
-                                            </tr>
-                                        </thead>
-                                        <tbody class="divide-y divide-gray-200 dark:divide-gray-600 ">
-                                            <tr v-for="(track, index) in form.tracks" :key="track.id" class="bg-white dark:bg-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition">
-                                                
-                                                    <td class="w-8 px-3 py-2 text-gray-900 dark:text-gray-100">
-                                                        {{ track.number }}
-                                                    </td>
-                                                    <td v-if="form.members.length < 9" class="w-96 px-3 py-2 text-gray-900 dark:text-gray-100">
-                                                        {{ track.title }}
-                                                    </td>
-                                               
-                                                <template v-for="participation in track.participations" :key="participation.member_id">
-                                                    <td class="px-1 py-2">
-                                                        <TextInput  
-                                                            type="number"
-                                                            v-model="participation.percentage"
-                                                            class="w-20 text-center transition duration-150 ease-in-out"
-                                                            placeholder="%"
-                                                            min="0"
-                                                            max="100"
-                                                            @input="validateMemberPercentage(track, participation)"
-                                                            :disabled="isDisabled"
-                                                        />
-                                                    </td>
-                                                </template>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div> -->
                             </div>
                         </div>
                     </div>
+
                     <div class="overflow-hidden bg-white shadow-lg rounded-lg dark:bg-gray-800">
                         <div class="p-8">
                             <div class="space-y-6 border-gray-700 text-gray-900 dark:text-gray-100 pb-6">
