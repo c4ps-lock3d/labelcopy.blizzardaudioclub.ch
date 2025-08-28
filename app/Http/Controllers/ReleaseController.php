@@ -68,7 +68,7 @@ class ReleaseController extends Controller
         return Inertia::render('EditRelease', [
             'release' => $releaseWithRelations, 
             'releaseFormats' => ReleaseFormat::all(),
-            'releaseTypes' => ReleaseType::all(),
+            'releaseTypes' => ReleaseType::orderBy('name')->get(),
             'releaseTracks' => ReleaseTrack::all(),
             'releaseMembers' => ReleaseMember::all(),
             'auth' => [
@@ -91,7 +91,7 @@ class ReleaseController extends Controller
         return Inertia::render('UploadRelease', [
             'release' => $releaseWithRelations, 
             'releaseFormats' => ReleaseFormat::all(),
-            'releaseTypes' => ReleaseType::all(),
+            'releaseTypes' => ReleaseType::orderBy('name')->get(),
             'releaseTracks' => ReleaseTrack::all(),
             'releaseMembers' => ReleaseMember::all(),
             'auth' => [
