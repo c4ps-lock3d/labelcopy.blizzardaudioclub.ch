@@ -104,6 +104,7 @@ const form = useForm({
             hasClip: Boolean(track.hasClip),
             IRSC: track.IRSC || '',
             release_date_single: track.release_date_single || '',
+            release_description: track.release_description || '',
             participations: track.release_members?.map(member => ({
                 member_id: member.id,
                 firstname: member.firstname,
@@ -119,6 +120,7 @@ const form = useForm({
             hasClip: false,
             IRSC: '',
             release_date_single: '',
+            release_description: '',
             participations: props.release.release_members.map(member => ({
                 member_id: member.id,
                 firstname: member.firstname,
@@ -1072,7 +1074,7 @@ const submit = () => {
                                                     <div v-if="form.release_type_id !== 1">est un single</div>
                                                 </td>
                                                 <td  scope="col" class="px-3 py-2.5 text-left text-sm font-semibold text-gray-800 dark:text-gray-100 bg-gray-100 dark:bg-gray-700 whitespace-nowrap">
-                                                    <div v-if="hasSingleTrack">Date de sortie/Description</div>
+                                                    <div v-if="hasSingleTrack && form.release_type_id !== 1">Date de sortie/Description</div>
                                                 </td>
                                                 
                                             </tr>
@@ -1133,7 +1135,7 @@ const submit = () => {
                                                 <td class="px-3 py-2">
                                                     <div class="min-h-[38px]"> <!-- Hauteur minimale pour maintenir l'espacement -->
                                                         <TextInput
-                                                            v-if="track.isSingle"
+                                                            v-if="track.isSingle && form.release_type_id !== 1"
                                                             type="date"
                                                             v-model="track.release_date_single"
                                                             class="transition duration-150 ease-in-out"
@@ -1142,9 +1144,10 @@ const submit = () => {
                                                     </div>
                                                     <div class="min-h-[38px]"> <!-- Hauteur minimale pour maintenir l'espacement -->
                                                         <TextArea
-                                                            v-if="track.isSingle"
+                                                            v-if="track.isSingle && form.release_type_id !== 1"
                                                             type="text"
-                                                            v-model="track.title"
+                                                            v-model="track.release_description"
+                                                            rows="3"
                                                             class="w-full transition duration-150 ease-in-out"
                                                             :disabled="isDisabled"
                                                         />
