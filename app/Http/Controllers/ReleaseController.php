@@ -243,7 +243,7 @@ class ReleaseController extends Controller
             'tracks.*.release_description' => 'nullable|string|max:21845',
             'tracks.*.participations' => 'array',
             'tracks.*.participations.*.member_id' => 'nullable|exists:release_members,id',
-            'tracks.*.participations.*.percentage' => 'required|integer|min:0|max:100',
+            'tracks.*.participations.*.percentage' => 'required|numeric|min:0|max:100',
             'members' => 'array',
             'members.*.id' => 'nullable',  // Permettre id null pour nouveaux membres
             'members.*.firstname' => 'required|string|max:255',

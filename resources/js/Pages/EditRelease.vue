@@ -109,7 +109,9 @@ const form = useForm({
                 member_id: member.id,
                 firstname: member.firstname,
                 lastname: member.lastname,
-                percentage: Number(member.pivot?.percentage || 0), // Utilisez la valeur du pivot
+                //percentage: Number(member.pivot?.percentage || 0), // Utilisez la valeur du pivot
+                percentage: parseFloat(member.pivot?.percentage ?? 0), // Float pour permettre décimales
+
             })),
         }))
         : [{
@@ -125,7 +127,7 @@ const form = useForm({
                 member_id: member.id,
                 firstname: member.firstname,
                 lastname: member.lastname,
-                percentage: 100,
+                percentage: 100.0,
             })),
         }],
 
@@ -194,7 +196,7 @@ const addNewTrack = () => {
             member_id: member.id,
             firstname: member.firstname,
             lastname: member.lastname,
-            percentage: 0, // Initialize percentage to 0
+            percentage: 0.0, // Initialize percentage to 0
         })),
     });
     form.tracks.forEach(track => {
@@ -202,15 +204,16 @@ const addNewTrack = () => {
             member_id: member.id,
             firstname: member.firstname,
             lastname: member.lastname,
-            percentage: track.participations[index]?.percentage || 0
+            //percentage: track.participations[index]?.percentage || 0
+            percentage: parseFloat(track.participations[index]?.percentage ?? 0)
         }));
         // Si un seul membre, définir son pourcentage à 100%
         if (form.members.length === 1) {
-            track.participations[0].percentage = 100;
+            track.participations[0].percentage = 100.0;
         }
         if (form.members.length === 2) {
-            track.participations[0].percentage = 50;
-            track.participations[1].percentage = 50;
+            track.participations[0].percentage = 50.0;
+            track.participations[1].percentage = 50.0;
         }
     });
 };
@@ -289,11 +292,11 @@ watch(
                 }));
                 // Si un seul membre, définir son pourcentage à 100%
                 if (form.members.length === 1) {
-                    track.participations[0].percentage = 100;
+                    track.participations[0].percentage = 100.0;
                 }
                 if (form.members.length === 2) {
-                    track.participations[0].percentage = 50;
-                    track.participations[1].percentage = 50;
+                    track.participations[0].percentage = 50.0;
+                    track.participations[1].percentage = 50.0;
                 }
             });
 
@@ -333,16 +336,21 @@ watch(
 );
 
 const validateMemberPercentage = (track, member) => {
-    if (member.percentage > 100) {
-        member.percentage = 100; // Force la valeur à 100 si elle dépasse
-    }
-    if (member.percentage < 0) {
-        member.percentage = 0; // Force la valeur à 0 si elle est négative
-    }
-    const totalPercentage = track.participations.reduce((sum, member) => sum + (member.percentage || 0), 0);
-    if (totalPercentage > 100) {
+    // Coerce en float
+    let value = parseFloat(member.percentage) || 0;
+    // Clamp 0..100
+    value = Math.min(100, Math.max(0, value));
+    // Arrondir au pas de 0.5
+    // value = Math.round(value * 2) / 2;
+    member.percentage = value;
+
+    // Calculer le total avec float
+    const totalPercentage = track.participations.reduce((sum, m) => sum + (parseFloat(m.percentage) || 0), 0);
+    if (totalPercentage > 100 + 1e-6) {
+        const over = totalPercentage - 100;
+        // Réduire la valeur courante pour ne pas dépasser (arrondi à 0.5)
+        member.percentage = Math.max(0, Math.round((member.percentage - over) * 2) / 2);
         alert('La somme des participations ne peut pas dépasser 100%.');
-        member.percentage = 0;
     }
 };
 
@@ -1348,6 +1356,7 @@ const submit = () => {
                                                             min="0"
                                                             max="100"
                                                             @input="validateMemberPercentage(track, participation)"
+                                                            step="0.1"
                                                             :disabled="isDisabled"
                                                         />
                                                     </td>
